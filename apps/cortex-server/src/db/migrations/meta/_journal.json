@@ -15,6 +15,13 @@
       "when": 1773334642652,
       "tag": "0001_living_goblin_queen",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1773338106205,
+      "tag": "0002_bizarre_boomer",
+      "breakpoints": true
     }
   ]
 }

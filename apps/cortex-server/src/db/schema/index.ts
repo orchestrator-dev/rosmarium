@@ -5,3 +5,4 @@ export * from "./api-keys";
 export * from "./content-types";
 export * from "./content-entries";
 export * from "./audit-log";
+export * from "./webhooks";
