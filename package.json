@@ -1,0 +1,39 @@
+{
+  "name": "rosmarium-cms",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Rosmarium CMS - an open-source, AI-native headless content repository",
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "infra:up": "COMPOSE=$(command -v podman >/dev/null 2>&1 && echo 'podman compose' || echo 'docker compose') && $COMPOSE up -d",
+    "infra:down": "COMPOSE=$(command -v podman >/dev/null 2>&1 && echo 'podman compose' || echo 'docker compose') && $COMPOSE down",
+    "infra:reset": "COMPOSE=$(command -v podman >/dev/null 2>&1 && echo 'podman compose' || echo 'docker compose') && $COMPOSE down -v",
+    "infra:init": "COMPOSE=$(command -v podman >/dev/null 2>&1 && echo 'podman compose' || echo 'docker compose') && $COMPOSE --profile init up",
+    "infra:logs": "COMPOSE=$(command -v podman >/dev/null 2>&1 && echo 'podman compose' || echo 'docker compose') && $COMPOSE logs -f",
+    "infra:status": "COMPOSE=$(command -v podman >/dev/null 2>&1 && echo 'podman compose' || echo 'docker compose') && $COMPOSE ps",
+    "infra:psql": "COMPOSE=$(command -v podman >/dev/null 2>&1 && echo 'podman' || echo 'docker') && $COMPOSE exec -it rosmarium-postgres psql -U rosmarium -d rosmarium",
+    "infra:redis": "COMPOSE=$(command -v podman >/dev/null 2>&1 && echo 'podman' || echo 'docker') && $COMPOSE exec -it rosmarium-redis redis-cli",
+    "db:generate": "pnpm --filter @rosmarium-cms/server db:generate",
+    "db:migrate": "pnpm --filter @rosmarium-cms/server db:migrate",
+    "db:studio": "pnpm --filter @rosmarium-cms/server db:studio"
+  },
+  "devDependencies": {
+    "turbo": "^1.13.0",
+    "typescript": "^5.4.0",
+    "vitest": "^1.4.0",
+    "prettier": "^3.2.0",
+    "eslint": "^8.57.0",
+    "@typescript-eslint/eslint-plugin": "^7.1.0",
+    "@typescript-eslint/parser": "^7.1.0",
+    "husky": "^9.0.0"
+  },
+  "engines": {
+    "node": ">=22.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "packageManager": "pnpm@9.0.0"
+}

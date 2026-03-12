@@ -1,0 +1,18 @@
+node_modules
+dist
+dist-types
+.turbo
+.next
+.DS_Store
+.env
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+.mypy_cache/
+.ruff_cache/
+rosmarium-cli/rosmarium-cli
+
+# Agent / planning artefacts
+.agent/
+Rosmarium_CMS_Project_Plan.md

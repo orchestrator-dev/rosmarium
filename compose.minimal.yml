@@ -1,0 +1,35 @@
+services:
+  postgres:
+    container_name: rosmarium-postgres
+    image: docker.io/pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: rosmarium
+      POSTGRES_PASSWORD: rosmarium
+      POSTGRES_DB: rosmarium
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U rosmarium -d rosmarium" ]
+      interval: "5s"
+      timeout: "5s"
+      retries: 5
+
+  redis:
+    container_name: rosmarium-redis
+    image: docker.io/library/redis:7-alpine
+    command: redis-server --appendonly yes --loglevel warning
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: "5s"
+      timeout: "5s"
+      retries: 5
+
+volumes:
+  postgres_data:
+  redis_data:

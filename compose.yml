@@ -1,0 +1,76 @@
+services:
+  postgres:
+    container_name: rosmarium-postgres
+    image: docker.io/pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: rosmarium
+      POSTGRES_PASSWORD: rosmarium
+      POSTGRES_DB: rosmarium
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U rosmarium -d rosmarium" ]
+      interval: "5s"
+      timeout: "5s"
+      retries: 5
+
+  pgvector-init:
+    container_name: rosmarium-pgvector-init
+    profiles: [ "init" ]
+    image: docker.io/pgvector/pgvector:pg16
+    restart: no
+    depends_on:
+      postgres:
+        condition: service_healthy
+    command: >
+      psql postgresql://rosmarium:rosmarium@rosmarium-postgres:5432/rosmarium  -c "CREATE EXTENSION IF NOT EXISTS vector;"
+
+  redis:
+    container_name: rosmarium-redis
+    image: docker.io/library/redis:7-alpine
+    command: redis-server --appendonly yes --loglevel warning
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: "5s"
+      timeout: "5s"
+      retries: 5
+
+  minio:
+    container_name: rosmarium-minio
+    image: docker.io/minio/minio:latest
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: rosmarium
+      MINIO_ROOT_PASSWORD: rosmarium_secret
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:9000/minio/health/live || exit 1" ]
+      interval: "5s"
+      timeout: "5s"
+      retries: 5
+
+  minio-init:
+    container_name: rosmarium-minio-init
+    profiles: [ "init" ]
+    image: docker.io/minio/mc:latest
+    restart: no
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c " mc alias set rosmarium-local http://rosmarium-minio:9000 rosmarium rosmarium_secret; mc mb rosmarium-local/rosmarium-assets --ignore-existing; mc anonymous set download rosmarium-local/rosmarium-assets; "
+
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:
