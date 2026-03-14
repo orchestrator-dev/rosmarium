@@ -132,10 +132,11 @@ cd rosmarium && pnpm install
 pnpm infra:up && pnpm infra:init
 
 # Configure environment
-cp .env.example .env
+cp .env.example .env   # set ADMIN_EMAIL and ADMIN_PASSWORD
 
-# Run database migrations
+# Run database migrations and seed the first admin account
 pnpm db:migrate
+pnpm db:seed
 
 # Start the server
 pnpm --filter @rosmarium-cms/server dev
@@ -144,33 +145,64 @@ pnpm --filter @rosmarium-cms/server dev
 curl http://localhost:3000/health
 ```
 
-Visit [http://localhost:3000/docs](http://localhost:3000/docs) for the full API reference.
+Visit [http://localhost:3000/docs](http://localhost:3000/docs) for the interactive API reference.
+
+## Authentication
+
+All content API routes require authentication. Two methods are supported:
+
+**Session cookie** (browser / admin UI)
+```bash
+# Login — sets an HttpOnly session cookie
+curl -c cookies.txt -X POST http://localhost:3000/api/auth/login \
+  -H 'Content-Type: application/json' \
+  -d '{"email": "admin@rosmarium.local", "password": "yourpassword"}'
+
+# Use the cookie on subsequent requests
+curl -b cookies.txt http://localhost:3000/api/content-types
+```
+
+**API key** (CI / server-to-server)
+```bash
+# Create an API key (session required)
+curl -b cookies.txt -X POST http://localhost:3000/api/auth/api-keys \
+  -H 'Content-Type: application/json' \
+  -d '{"name": "CI key", "scopes": ["content:read:any", "content:create:any"]}'
+# → { "rawKey": "ctx_live_..." }  ← stored once, never shown again
+
+# Use the key via Bearer header
+curl -H 'Authorization: Bearer ctx_live_...' http://localhost:3000/api/content-types
+```
 
 ## Creating Your First Content Type
 
 ```bash
-# That's it. Your REST and GraphQL APIs are live.
+# All examples below use a Bearer API key — substitute a session cookie if preferred.
+EXPORT KEY="ctx_live_..."
 
 # 1. Register a content type
 curl -X POST http://localhost:3000/api/content-types \
+  -H 'Authorization: Bearer $KEY' \
   -H 'Content-Type: application/json' \
   -d '{
     "name": "article",
     "displayName": "Article",
     "fields": [
-      { "type": "text",     "name": "title",  "label": "Title",  "required": true,  "unique": false, "localised": false },
-      { "type": "slug",     "name": "slug",   "label": "Slug",   "required": false, "unique": true,  "localised": false, "generatedFrom": "title" },
-      { "type": "richText", "name": "body",   "label": "Body",   "required": false, "unique": false, "localised": true }
+      { "type": "text",     "name": "title", "label": "Title", "required": true,  "unique": false, "localised": false },
+      { "type": "slug",     "name": "slug",  "label": "Slug",  "required": false, "unique": true,  "localised": false, "generatedFrom": "title" },
+      { "type": "richText", "name": "body",  "label": "Body",  "required": false, "unique": false, "localised": true }
     ]
   }'
 
-# 2. Create an entry (slug is auto-generated from title)
+# 2. Create an entry
 curl -X POST http://localhost:3000/api/content/article \
+  -H 'Authorization: Bearer $KEY' \
   -H 'Content-Type: application/json' \
-  -d '{ "data": { "title": "Getting Started with Rosmarium", "body": "<p>First entry.</p>" } }'
+  -d '{"data": {"title": "Getting Started with Rosmarium", "body": "<p>First entry.</p>"}}'
 
 # 3. Fetch entries with a filter
-curl 'http://localhost:3000/api/content/article?filters[status][eq]=draft&sort=createdAt:desc'
+curl -H 'Authorization: Bearer $KEY' \
+  'http://localhost:3000/api/content/article?filters[status][eq]=draft&sort=createdAt:desc'
 ```
 
 ## Stack
@@ -191,7 +223,7 @@ curl 'http://localhost:3000/api/content/article?filters[status][eq]=draft&sort=c
 
 | Phase | Theme | Status |
 |---|---|---|
-| 1 | CMS Foundation — content engine, REST API, Drizzle schema, auth | 🟡 In Progress |
+| 1 | CMS Foundation — content engine, REST/GraphQL API, auth & RBAC, webhooks | ✅ Complete |
 | 2 | AI & Semantic Search — embeddings, RAG pipeline, vector indexing | ⚪ Planned |
 | 3 | Knowledge Graph — entity linking, relationship traversal, graph queries | ⚪ Planned |
 | 4 | Scale & Ecosystem — multi-tenant, SDK, plugin API, hosted offering | ⚪ Planned |
