@@ -22,6 +22,13 @@
       "when": 1773338106205,
       "tag": "0002_bizarre_boomer",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1773503898597,
+      "tag": "0003_fancy_mariko_yashida",
+      "breakpoints": true
     }
   ]
 }
