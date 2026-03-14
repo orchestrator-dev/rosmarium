@@ -3,6 +3,9 @@ import fp from "fastify-plugin";
 import { contentCrudService } from "../../modules/content/crud.service.js";
 import { registry } from "../../modules/content/registry.js";
 import type { ParsedFilters, SortInput } from "../../modules/content/query.builder.js";
+import { requireAuth, requirePermission } from "../../modules/rbac/rbac.middleware.js";
+import { rbacService, ForbiddenError } from "../../modules/rbac/rbac.service.js";
+import { PERMISSIONS } from "../../modules/rbac/permissions.js";
 
 interface ListQuery {
     filters?: Record<string, Record<string, string>>;
@@ -30,6 +33,7 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     }>(
         "/api/content/:type",
         {
+            preHandler: requireAuth(),
             schema: {
                 tags: ["Content Entries"],
                 summary: "List content entries for a given type",
@@ -115,6 +119,7 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     }>(
         "/api/content/:type",
         {
+            preHandler: requirePermission(PERMISSIONS.CONTENT_CREATE),
             schema: {
                 tags: ["Content Entries"],
                 summary: "Create a content entry",
@@ -148,7 +153,7 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
                     contentTypeName: request.params.type,
                     data: request.body.data,
                     locale: request.body.locale,
-                    createdBy: request.body.createdBy ?? "anonymous",
+                    createdBy: request.user?.id ?? request.body.createdBy ?? "anonymous",
                 });
                 return reply.status(201).send({ data: entry });
             } catch (err) {
@@ -165,6 +170,7 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     }>(
         "/api/content/:type/:id",
         {
+            preHandler: requireAuth(),
             schema: {
                 tags: ["Content Entries"],
                 summary: "Get a single content entry",
@@ -205,6 +211,7 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     }>(
         "/api/content/:type/:id",
         {
+            preHandler: requireAuth(),
             schema: {
                 tags: ["Content Entries"],
                 summary: "Update a content entry (merges data)",
@@ -228,14 +235,33 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
         },
         async (request, reply) => {
             try {
+                // Fetch entry first to check own vs any scope
+                const existing = await contentCrudService.findOne({
+                    contentTypeName: request.params.type,
+                    id: request.params.id,
+                });
+                if (!existing) {
+                    return reply.status(404).send({
+                        error: { code: "NOT_FOUND", message: `Entry '${request.params.id}' not found` },
+                    });
+                }
+                const user = request.user;
+                if (user && !rbacService.canAccessEntry(user, existing as Parameters<typeof rbacService.canAccessEntry>[1], "update")) {
+                    return reply.status(403).send({
+                        error: { code: "FORBIDDEN", message: "Insufficient permissions to update this entry" },
+                    });
+                }
                 const entry = await contentCrudService.update({
                     id: request.params.id,
                     contentTypeName: request.params.type,
                     data: request.body.data,
-                    updatedBy: request.body.updatedBy ?? "anonymous",
+                    updatedBy: user?.id ?? request.body.updatedBy ?? "anonymous",
                 });
                 return { data: entry };
             } catch (err) {
+                if (err instanceof ForbiddenError) {
+                    return reply.status(403).send({ error: { code: "FORBIDDEN", message: err.message } });
+                }
                 const message = err instanceof Error ? err.message : "Unknown error";
                 const status = message.includes("not found") ? 404 : 422;
                 return reply.status(status).send({
@@ -252,6 +278,7 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     }>(
         "/api/content/:type/:id",
         {
+            preHandler: requireAuth(),
             schema: {
                 tags: ["Content Entries"],
                 summary: "Delete a content entry",
@@ -265,10 +292,25 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
         },
         async (request, reply) => {
             try {
+                const existing = await contentCrudService.findOne({
+                    contentTypeName: request.params.type,
+                    id: request.params.id,
+                });
+                if (!existing) {
+                    return reply.status(404).send({
+                        error: { code: "NOT_FOUND", message: `Entry '${request.params.id}' not found` },
+                    });
+                }
+                const user = request.user;
+                if (user && !rbacService.canAccessEntry(user, existing as Parameters<typeof rbacService.canAccessEntry>[1], "delete")) {
+                    return reply.status(403).send({
+                        error: { code: "FORBIDDEN", message: "Insufficient permissions to delete this entry" },
+                    });
+                }
                 await contentCrudService.delete(
                     request.params.id,
                     request.params.type,
-                    request.body?.deletedBy ?? "anonymous",
+                    user?.id ?? request.body?.deletedBy ?? "anonymous",
                 );
                 return reply.status(204).send();
             } catch (err) {
@@ -288,6 +330,7 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     }>(
         "/api/content/:type/:id/publish",
         {
+            preHandler: requirePermission(PERMISSIONS.CONTENT_PUBLISH),
             schema: {
                 tags: ["Content Entries"],
                 summary: "Publish a content entry",
@@ -323,6 +366,7 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     }>(
         "/api/content/:type/:id/unpublish",
         {
+            preHandler: requireAuth(),
             schema: {
                 tags: ["Content Entries"],
                 summary: "Unpublish a content entry",
@@ -355,6 +399,7 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     app.get<{ Params: { type: string; id: string } }>(
         "/api/content/:type/:id/versions",
         {
+            preHandler: requireAuth(),
             schema: {
                 tags: ["Content Entries"],
                 summary: "List versions of a content entry",
@@ -381,6 +426,7 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     }>(
         "/api/content/:type/:id/versions/:versionId/restore",
         {
+            preHandler: requireAuth(),
             schema: {
                 tags: ["Content Entries"],
                 summary: "Restore a content entry to a previous version",
