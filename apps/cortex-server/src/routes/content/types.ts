@@ -5,12 +5,15 @@ import type {
     CreateContentTypeInput,
     UpdateContentTypeInput,
 } from "../../modules/content/registry.js";
+import { requireAuth, requirePermission } from "../../modules/rbac/rbac.middleware.js";
+import { PERMISSIONS } from "../../modules/rbac/permissions.js";
 
 const contentTypeRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     // GET /api/content-types — list all registered content types
     app.get(
         "/api/content-types",
         {
+            preHandler: requireAuth(),
             schema: {
                 tags: ["Content Types"],
                 summary: "List all registered content types",
@@ -50,6 +53,7 @@ const contentTypeRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     }>(
         "/api/content-types",
         {
+            preHandler: requirePermission(PERMISSIONS.CONTENT_TYPE_CREATE),
             schema: {
                 tags: ["Content Types"],
                 summary: "Register a new content type",
@@ -95,6 +99,7 @@ const contentTypeRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     app.get<{ Params: { name: string } }>(
         "/api/content-types/:name",
         {
+            preHandler: requireAuth(),
             schema: {
                 tags: ["Content Types"],
                 summary: "Get a content type by name",
@@ -132,6 +137,7 @@ const contentTypeRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     }>(
         "/api/content-types/:name",
         {
+            preHandler: requirePermission(PERMISSIONS.CONTENT_TYPE_UPDATE),
             schema: {
                 tags: ["Content Types"],
                 summary: "Update a content type",
@@ -183,6 +189,7 @@ const contentTypeRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     app.delete<{ Params: { name: string } }>(
         "/api/content-types/:name",
         {
+            preHandler: requirePermission(PERMISSIONS.CONTENT_TYPE_DELETE),
             schema: {
                 tags: ["Content Types"],
                 summary: "Archive a content type (soft delete)",

@@ -19,7 +19,8 @@
     "infra:redis": "COMPOSE=$(command -v podman >/dev/null 2>&1 && echo 'podman' || echo 'docker') && $COMPOSE exec -it rosmarium-redis redis-cli",
     "db:generate": "pnpm --filter @rosmarium-cms/server db:generate",
     "db:migrate": "pnpm --filter @rosmarium-cms/server db:migrate",
-    "db:studio": "pnpm --filter @rosmarium-cms/server db:studio"
+    "db:studio": "pnpm --filter @rosmarium-cms/server db:studio",
+    "db:seed": "pnpm --filter @rosmarium-cms/server db:seed"
   },
   "devDependencies": {
     "turbo": "^1.13.0",
