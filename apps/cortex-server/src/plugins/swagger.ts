@@ -1,6 +1,6 @@
 import fp from "fastify-plugin";
 import swagger, { type FastifySwaggerOptions } from "@fastify/swagger";
-import swaggerUi, { type FastifySwaggerUiOptions } from "@fastify/swagger-ui";
+import swaggerUi from "@fastify/swagger-ui";
 import { config } from "../config.js";
 import { readFileSync } from "node:fs";
 import type { FastifyInstance } from "fastify";

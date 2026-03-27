@@ -2,6 +2,7 @@ import { EventEmitter } from "node:events";
 import type { ContentEntry } from "../db/schema/index.js";
 
 // biome-ignore lint/suspicious/noExplicitAny: required for EventEmitter generic typing
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyArgs = any[];
 
 class TypedEventEmitter<T extends Record<string, AnyArgs>> extends EventEmitter {

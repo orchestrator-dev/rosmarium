@@ -27,6 +27,7 @@ const changePasswordBody = z.object({
 // ─── Safe user projection (never expose passwordHash) ─────────────────────────
 
 function safeUser(user: Record<string, unknown>) {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { passwordHash: _, ...safe } = user as { passwordHash?: unknown };
     return safe;
 }
@@ -125,7 +126,7 @@ const sessionRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
                 const message = err instanceof Error ? err.message : "Login failed";
                 const status =
                     code === "ACCOUNT_DISABLED" ? 403 :
-                    code === "INVALID_CREDENTIALS" ? 401 : 422;
+                        code === "INVALID_CREDENTIALS" ? 401 : 422;
                 return reply.status(status).send({ error: { code, message } });
             }
         }

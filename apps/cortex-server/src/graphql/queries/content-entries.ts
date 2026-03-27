@@ -1,7 +1,7 @@
 import { builder } from "../builder.js";
 import { contentCrudService } from "../../modules/content/crud.service.js";
 import { encodeCursor } from "../../modules/content/query.builder.js";
-import type { ParsedFilters, SortInput } from "../../modules/content/query.builder.js";
+import type { ParsedFilters } from "../../modules/content/query.builder.js";
 import { SortInput as SortInputType } from "../types/common.js";
 
 builder.queryField("entries", (t) =>

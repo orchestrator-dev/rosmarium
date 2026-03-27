@@ -38,6 +38,7 @@ vi.mock("../../config.js", () => ({
 }));
 
 vi.mock("@paralleldrive/cuid2", () => ({ createId: () => "delivery-test-123" }));
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 vi.mock("drizzle-orm", () => ({ eq: vi.fn((_col: unknown, _val: unknown) => "mock-eq") }));
 
 // DB mock — returns hook data for select queries

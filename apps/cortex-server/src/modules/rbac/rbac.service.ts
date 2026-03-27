@@ -1,4 +1,4 @@
-import { PERMISSIONS, ROLE_PERMISSIONS } from "./permissions.js";
+import { ROLE_PERMISSIONS } from "./permissions.js";
 import type { Permission } from "./permissions.js";
 import type { AuthenticatedUser } from "../auth/auth.service.js";
 import type { ApiKey } from "../../db/schema/index.js";
