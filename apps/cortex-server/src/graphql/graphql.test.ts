@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeAll } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { createYoga } from "graphql-yoga";
 
 // Mock config BEFORE importing schema (schema imports config.ts at module level)
@@ -113,6 +113,7 @@ function makeContext(user: GraphQLContext["user"] = null): GraphQLContext {
     return {
         user,
         dataloaders: createDataloaders(),
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         pubsub: { subscribe: vi.fn(), publish: vi.fn() } as any,
         requestId: "test-req",
     };
@@ -126,7 +127,7 @@ const yoga = createYoga({
 
 const authYoga = createYoga({
     schema,
-    context: () => makeContext({ id: "user-1", role: "editor" }),
+    context: () => makeContext({ id: "user-1", email: "test@example.com", firstName: "Test", lastName: "User", isActive: true, role: "editor" }),
     maskedErrors: false,
 });
 

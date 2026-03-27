@@ -1,4 +1,4 @@
-import { sql, and, eq, ne, lt, lte, gt, gte, inArray, notInArray, like, ilike, isNull, isNotNull, asc, desc, type SQL } from "drizzle-orm";
+import { sql, isNull, isNotNull, type SQL } from "drizzle-orm";
 import { contentEntries } from "../../db/schema/index.js";
 import type { ParsedContentType } from "./registry.js";
 
@@ -163,6 +163,7 @@ export function buildWhereClause(
 /** Build Drizzle ORDER BY clauses from sort input. */
 export function buildOrderBy(
     sort: SortInput,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     contentType: ParsedContentType,
 ): SQL[] {
     return sort.map(({ field, direction }) => {

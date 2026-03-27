@@ -9,6 +9,7 @@ import { webhookService } from "./modules/webhooks/webhook.service.js";
 import graphqlPlugin from "./graphql/index.js";
 
 export async function buildApp() {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const app = Fastify({ logger: logger as any });
 
     await registerPlugins(app);

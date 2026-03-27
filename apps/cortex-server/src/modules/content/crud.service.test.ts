@@ -18,6 +18,7 @@ const { mockEntry, mockDb } = vi.hoisted(() => {
     };
 
     const returning = vi.fn().mockResolvedValue([entry]);
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const where = vi.fn().mockReturnValue({ returning, limit: vi.fn().mockResolvedValue([entry]) });
     const set = vi.fn().mockReturnValue({
         where: vi.fn().mockReturnValue({

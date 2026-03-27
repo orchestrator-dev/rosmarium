@@ -2,7 +2,7 @@ import { db } from "../../db/index.js";
 import { apiKeys, users, auditLog } from "../../db/schema/index.js";
 import { eq } from "drizzle-orm";
 import { sha256Hex } from "./password.js";
-import type { ApiKey, User } from "../../db/schema/index.js";
+import type { ApiKey } from "../../db/schema/index.js";
 import type { AuthenticatedUser } from "./auth.service.js";
 import { createId } from "@paralleldrive/cuid2";
 
