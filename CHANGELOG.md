@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-03-27
+
+### Added
+- **rosmarium-ai-worker**: Full service bootstrap — FastAPI app factory with lifespan management
+- **rosmarium-ai-worker**: Pydantic Settings configuration with env var loading
+- **rosmarium-ai-worker**: asyncpg connection pool with FastAPI dependency injection
+- **rosmarium-ai-worker**: Embedding providers — Ollama, OpenAI, and Cohere with abstract base class
+- **rosmarium-ai-worker**: pgvector index manager with HNSW indexing (m=16, ef_construction=64)
+- **rosmarium-ai-worker**: BullMQ-compatible Redis queue consumer for async job processing
+- **rosmarium-ai-worker**: Embedding worker with sentence-boundary chunking
+- **rosmarium-ai-worker**: Health (`GET /health`) and readiness (`GET /ready`) endpoints
+- **rosmarium-ai-worker**: Semantic search endpoint (`POST /search`) with ACL filtering
+- **rosmarium-ai-worker**: Multi-stage Dockerfile for production builds
+- **rosmarium-ai-worker**: Docker Compose service configuration
+- **rosmarium-ai-worker**: 23 unit tests covering providers, index manager, consumer, and health
+
 ### Changed
 - Upgraded `@typescript-eslint` from v7 to v8 to support TypeScript 5.9
 - Fixed 26 ESLint errors across `rosmarium-server` (unused imports, unused vars, explicit `any`)

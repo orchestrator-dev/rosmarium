@@ -7,7 +7,7 @@
   <img src="https://img.shields.io/badge/node-22%20LTS-green" alt="Node" />
   <img src="https://img.shields.io/badge/python-3.12-blue" alt="Python" />
   <img src="https://img.shields.io/badge/postgresql-16%20+%20pgvector-336791" alt="PostgreSQL" />
-  <img src="https://img.shields.io/badge/status-Phase%201%20active-orange" alt="Status" />
+  <img src="https://img.shields.io/badge/status-Phase%202%20active-orange" alt="Status" />
 </p>
 
 ---
@@ -224,7 +224,7 @@ curl -H 'Authorization: Bearer $KEY' \
 | Phase | Theme | Status |
 |---|---|---|
 | 1 | CMS Foundation — content engine, REST/GraphQL API, auth & RBAC, webhooks | ✅ Complete |
-| 2 | AI & Semantic Search — embeddings, RAG pipeline, vector indexing | ⚪ Planned |
+| 2 | AI & Semantic Search — embeddings, RAG pipeline, vector indexing | 🟡 In Progress |
 | 3 | Knowledge Graph — entity linking, relationship traversal, graph queries | ⚪ Planned |
 | 4 | Scale & Ecosystem — multi-tenant, SDK, plugin API, hosted offering | ⚪ Planned |
 
