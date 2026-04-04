@@ -7,6 +7,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-04-05
+
+### Added
+
+- **rosmarium-server**: Unified `GET /api/search` endpoint — hybrid BM25 + pgvector search with Reciprocal Rank Fusion (RRF)
+- **rosmarium-server**: `GET /api/search/suggest` — debounced prefix autocomplete for search input
+- **rosmarium-server**: `fulltextSearch` module — PostgreSQL tsvector / `plainto_tsquery` with `ts_rank_cd` scoring and `ts_headline` snippet extraction
+- **rosmarium-server**: `vectorSearch` module — pgvector cosine similarity search (`<=>` operator); gracefully returns `[]` when the `rosmarium_{type}_embeddings` table does not yet exist (`42P01` error)
+- **rosmarium-server**: `reciprocalRankFusion` — pure RRF algorithm with configurable `alpha` (0 = fulltext only, 1 = vector only, 0.5 = balanced) and `k` constant; handles multi-chunk deduplication
+- **rosmarium-server**: `aiWorkerClient` — internal HTTP client to rosmarium-ai-worker with 5 s `AbortController` timeout and `SearchEmbeddingError` for graceful degradation; never logs query text (PII)
+- **rosmarium-server**: Graceful fallback — search works fulltext-only when rosmarium-ai-worker is unreachable
+- **rosmarium-server**: Database migration `0004_hybrid_search_vector` — `search_vector tsvector GENERATED ALWAYS AS` column covering `title`, `body`, `description` JSONB fields, plus GIN index on `content_entries`
+- **rosmarium-server**: RBAC filtering applied to search results before fusion — draft entries invisible to viewers
+- **rosmarium-ai-worker**: `POST /search/embed` — sync query-time embedding endpoint with `X-Worker-Secret` header auth; never logs query text
+- **rosmarium-ai-worker**: `POST /search/embed-batch` — batch embedding endpoint (max 500 texts per call) for backfill operations
+- **rosmarium-ai-worker**: `embed_one_with_input_type()` and `embed_batch_with_input_type()` added to `EmbeddingProvider` base class; Cohere provider overrides to forward `search_query` vs `search_document` input type to the API
+- **rosmarium-admin**: Standalone search demo UI — debounced autocomplete dropdown, result cards with match-type badges (`hybrid` / `fulltext` / `vector`), RRF score bars, `ts_headline` snippet display, alpha slider for keyword↔semantic balance, and AI-worker-offline notice
+
+### Changed
+
+- **rosmarium-ai-worker**: `CohereEmbeddingProvider` now overrides `embed_one_with_input_type()` and `embed_batch_with_input_type()` to pass the Cohere-specific `input_type` parameter through correctly
+
+### Fixed
+
+- **rosmarium-ai-worker**: Ruff S105 false-positive on HTTP header name constant suppressed with `noqa: S105`
+
 ## [0.2.0] - 2026-03-27
 
 ### Added

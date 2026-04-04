@@ -8,7 +8,12 @@
 - ✅ Phase 1 — CMS Foundation (v0.1.0 released)
 
 ## Active Milestone
-Month 6 — Hybrid Search (BM25 + pgvector + RRF) 🚧
+Month 7 — RAG Pipeline (LlamaIndex integration, chunk retrieval, LLM context) 🚧
+
+## Shipped Milestones
+- ✅ Phase 1 — CMS Foundation (v0.1.0)
+- ✅ Month 5 — AI Worker + Embedding Pipeline (v0.2.0)
+- ✅ Month 6 — Hybrid Search: BM25 + pgvector + RRF (v0.3.0)
 
 ## Checklist
 - [x] rosmarium-ai-worker bootstrap (FastAPI, pyproject.toml, uv, Ruff, mypy)

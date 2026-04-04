@@ -26,7 +26,7 @@ index_manager = VectorIndexManager()
 
 # ─── Auth dependency ───────────────────────────────────────────────────────────
 
-_WORKER_SECRET_HEADER = "x-worker-secret"
+_WORKER_SECRET_HEADER = "x-worker-secret"  # noqa: S105 — header name, not a credential
 
 
 async def require_worker_secret(

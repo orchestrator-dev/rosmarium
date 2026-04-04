@@ -7,6 +7,7 @@
   <img src="https://img.shields.io/badge/node-22%20LTS-green" alt="Node" />
   <img src="https://img.shields.io/badge/python-3.12-blue" alt="Python" />
   <img src="https://img.shields.io/badge/postgresql-16%20+%20pgvector-336791" alt="PostgreSQL" />
+  <img src="https://img.shields.io/badge/version-v0.3.0-brightgreen" alt="Version" />
   <img src="https://img.shields.io/badge/status-Phase%202%20active-orange" alt="Status" />
 </p>
 
@@ -95,12 +96,12 @@ flowchart LR
 </td>
 <td>
 
-✦ pgvector semantic search<br/>
+✦ **Hybrid search** — BM25 + pgvector with RRF ✅<br/>
 ✦ Automatic embedding on publish<br/>
+✦ Graceful fulltext fallback (no AI worker needed)<br/>
 ✦ RAG pipeline for LLM context<br/>
 ✦ Semantic chunking for long content<br/>
-✦ Auto-tagging via LLM<br/>
-✦ Hybrid keyword + vector queries
+✦ Auto-tagging via LLM
 
 </td>
 <td>
@@ -205,6 +206,55 @@ curl -H 'Authorization: Bearer $KEY' \
   'http://localhost:3000/api/content/article?filters[status][eq]=draft&sort=createdAt:desc'
 ```
 
+## Hybrid Search
+
+Rosmarium ships a unified search endpoint that blends BM25 full-text and pgvector semantic results using Reciprocal Rank Fusion. It degrades gracefully — if the AI worker is offline, search falls back to pure full-text.
+
+```bash
+# Balanced hybrid search (alpha=0.5 blends both signals equally)
+curl -H 'Authorization: Bearer $KEY' \
+  'http://localhost:3000/api/search?q=getting+started+with+AI&alpha=0.5&limit=10'
+
+# Pure keyword / BM25 only
+curl -H 'Authorization: Bearer $KEY' \
+  'http://localhost:3000/api/search?q=fastify&alpha=0'
+
+# Pure semantic / vector only
+curl -H 'Authorization: Bearer $KEY' \
+  'http://localhost:3000/api/search?q=machine+learning+content&alpha=1'
+
+# Autocomplete suggestions (debounced, title prefix match)
+curl -H 'Authorization: Bearer $KEY' \
+  'http://localhost:3000/api/search/suggest?q=gett&limit=5'
+```
+
+**Response shape:**
+```json
+{
+  "data": [
+    {
+      "id": "entry-cuid",
+      "contentType": "article",
+      "status": "published",
+      "score": 0.01563,
+      "matchType": "hybrid",
+      "snippet": "…getting <mark>started</mark> with…",
+      "chunkText": "matching vector chunk text",
+      "data": { "title": "Getting Started with Rosmarium" }
+    }
+  ],
+  "meta": {
+    "query": "getting started with AI",
+    "total": 1,
+    "alpha": 0.5,
+    "latencyMs": 42,
+    "embeddingProvider": "nomic-embed-text"
+  }
+}
+```
+
+**Alpha parameter:** 0 = pure BM25 keyword, 1 = pure vector semantic, 0.5 = balanced. Documents appearing in both result sets rank highest at any non-extreme alpha.
+
 ## Stack
 
 | Layer | Technology |
@@ -221,12 +271,15 @@ curl -H 'Authorization: Bearer $KEY' \
 
 ## Roadmap
 
-| Phase | Theme | Status |
+| Phase | Milestone | Status |
 |---|---|---|
-| 1 | CMS Foundation — content engine, REST/GraphQL API, auth & RBAC, webhooks | ✅ Complete |
-| 2 | AI & Semantic Search — embeddings, RAG pipeline, vector indexing | 🟡 In Progress |
-| 3 | Knowledge Graph — entity linking, relationship traversal, graph queries | ⚪ Planned |
-| 4 | Scale & Ecosystem — multi-tenant, SDK, plugin API, hosted offering | ⚪ Planned |
+| 1 | CMS Foundation — content engine, REST/GraphQL API, auth & RBAC, webhooks | ✅ v0.1.0 |
+| 2 — Month 5 | AI Worker — embeddings, pgvector indexing, 3 provider adapters | ✅ v0.2.0 |
+| 2 — Month 6 | Hybrid Search — BM25 + pgvector + RRF, `/api/search`, graceful fallback | ✅ v0.3.0 |
+| 2 — Month 7 | RAG Pipeline — LlamaIndex integration, chunk retrieval, LLM context assembly | 🟡 Next |
+| 2 — Month 8 | Knowledge Graph — entity linking, relationship traversal | ⚪ Planned |
+| 3 | Scale & Ecosystem — multi-tenant, SDK, plugin API, hosted offering | ⚪ Planned |
+
 
 ## Contributing
 
