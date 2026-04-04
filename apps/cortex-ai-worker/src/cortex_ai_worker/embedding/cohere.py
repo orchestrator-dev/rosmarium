@@ -63,6 +63,19 @@ class CohereEmbeddingProvider(EmbeddingProvider):
         ]
         return embeddings
 
+    async def embed_one_with_input_type(
+        self, text: str, input_type: str = "search_document"
+    ) -> list[float]:
+        """Embed a single text with Cohere input_type passthrough."""
+        results = await self.embed([text], input_type=input_type)
+        return results[0]
+
+    async def embed_batch_with_input_type(
+        self, texts: list[str], input_type: str = "search_document"
+    ) -> list[list[float]]:
+        """Embed a batch with Cohere input_type passthrough."""
+        return await self.embed(texts, input_type=input_type)
+
     async def health_check(self) -> bool:
         """Verify connectivity by embedding a short test string."""
         try:
