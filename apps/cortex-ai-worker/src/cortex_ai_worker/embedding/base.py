@@ -26,6 +26,42 @@ class EmbeddingProvider(ABC):
         results = await self.embed([text])
         return results[0]
 
+    async def embed_one_with_input_type(
+        self, text: str, input_type: str = "search_document"
+    ) -> list[float]:
+        """Embed a single text with an explicit input_type hint.
+
+        Providers that distinguish query vs document embeddings (e.g. Cohere)
+        should override this method. The default falls back to embed_one().
+
+        Args:
+            text: Text string to embed.
+            input_type: 'search_query' for query-time embeddings,
+                        'search_document' for indexing embeddings.
+
+        Returns:
+            Embedding vector as a list of floats.
+        """
+        return await self.embed_one(text)
+
+    async def embed_batch_with_input_type(
+        self, texts: list[str], input_type: str = "search_document"
+    ) -> list[list[float]]:
+        """Embed a batch of texts with an explicit input_type hint.
+
+        Providers that distinguish query vs document embeddings (e.g. Cohere)
+        should override this method. The default falls back to embed().
+
+        Args:
+            texts: List of text strings to embed.
+            input_type: 'search_query' for query-time embeddings,
+                        'search_document' for indexing embeddings.
+
+        Returns:
+            List of embedding vectors, one per input text.
+        """
+        return await self.embed(texts)
+
     @abstractmethod
     async def health_check(self) -> bool:
         """Check if the provider is reachable and operational.
