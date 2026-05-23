@@ -163,7 +163,7 @@ describe("ragService.retrieve", () => {
         expect(result.format).toBe("context");
         // @ts-expect-error — narrowing to RagContextResponse
         expect(typeof result.context).toBe("string");
-        // @ts-expect-error
+        // @ts-expect-error - narrowing to RagContextResponse
         expect(result.context).toContain("refund policy");
     });
 
@@ -221,7 +221,7 @@ describe("ragService.retrieve", () => {
             user: adminUser,
         });
 
-        // @ts-expect-error
+        // @ts-expect-error - narrowing to RagChunksResponse
         expect(result.chunks.length).toBeLessThanOrEqual(5);
     });
 });
