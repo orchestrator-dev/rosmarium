@@ -167,21 +167,31 @@ class QueueConsumer:
         await self._redis.hset(job_key, "failedReason", error)  # type: ignore[misc]
 
 
-# Singleton consumer instance
+# Singleton consumer instances
 consumer = QueueConsumer(
     queue_name="embedding-jobs",
     concurrency=settings.embedding_queue_concurrency,
 )
 
+intelligence_consumer = QueueConsumer(
+    queue_name="intelligence-jobs",
+    concurrency=2,
+)
+
 
 async def start_consumer() -> None:
-    """Initialise and start the queue consumer with registered handlers."""
+    """Initialise and start both queue consumers with registered handlers."""
     from .embedding_worker import process_embedding_job
+    from .intelligence_worker import process_intelligence_job
 
     consumer.register_handler("embed-content", process_embedding_job)
+    intelligence_consumer.register_handler("analyse-content", process_intelligence_job)
+
     await consumer.start()
+    await intelligence_consumer.start()
 
 
 async def stop_consumer() -> None:
-    """Stop the queue consumer gracefully."""
+    """Stop all queue consumers gracefully."""
     await consumer.stop()
+    await intelligence_consumer.stop()

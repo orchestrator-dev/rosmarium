@@ -47,6 +47,11 @@ class Settings(BaseSettings):
     chunking_chunk_size: int = 512
     chunking_chunk_overlap: int = 50
 
+    # Intelligence
+    tagging_model: str = "cross-encoder/nli-MiniLM2-L6-H768"
+    summarization_model: str = "llama3.2"
+    duplicate_threshold: float = 0.92
+
     @field_validator("database_url")
     @classmethod
     def validate_db_url(cls, v: str) -> str:

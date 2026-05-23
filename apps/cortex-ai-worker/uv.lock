@@ -430,7 +430,11 @@ rag = [
     { name = "llama-index-embeddings-openai" },
     { name = "llama-index-postprocessor-cohere-rerank" },
     { name = "llama-index-vector-stores-postgres" },
+    { name = "numpy" },
+    { name = "scikit-learn" },
     { name = "spacy" },
+    { name = "torch" },
+    { name = "transformers" },
 ]
 
 [package.metadata]
@@ -444,6 +448,7 @@ requires-dist = [
     { name = "llama-index-postprocessor-cohere-rerank", marker = "extra == 'rag'", specifier = ">=0.3" },
     { name = "llama-index-vector-stores-postgres", marker = "extra == 'rag'", specifier = ">=0.3" },
     { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.13" },
+    { name = "numpy", marker = "extra == 'rag'", specifier = ">=2.1" },
     { name = "openai", marker = "extra == 'embeddings'", specifier = ">=1.57" },
     { name = "pydantic", specifier = ">=2.6.3" },
     { name = "pydantic-settings", specifier = ">=2.6" },
@@ -452,10 +457,13 @@ requires-dist = [
     { name = "pytest-cov", marker = "extra == 'dev'", specifier = ">=6.0" },
     { name = "redis", specifier = ">=5.2" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.8" },
+    { name = "scikit-learn", marker = "extra == 'rag'", specifier = ">=1.6" },
     { name = "sentence-transformers", marker = "extra == 'embeddings'", specifier = ">=3.3" },
     { name = "spacy", marker = "extra == 'rag'", specifier = ">=3.8" },
     { name = "structlog", specifier = ">=24.4" },
     { name = "testcontainers", extras = ["postgres", "redis"], marker = "extra == 'dev'", specifier = ">=4.8" },
+    { name = "torch", marker = "extra == 'rag'", specifier = ">=2.5" },
+    { name = "transformers", marker = "extra == 'rag'", specifier = ">=4.47" },
     { name = "uvicorn", specifier = ">=0.27.1" },
 ]
 provides-extras = ["embeddings", "rag", "dev"]

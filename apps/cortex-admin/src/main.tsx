@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from 'react'
+import React from 'react'
 import ReactDOM from 'react-dom/client'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -32,8 +32,8 @@ interface SearchResponse {
 // ─── Debounce hook ────────────────────────────────────────────────────────────
 
 function useDebounce<T extends (...args: Parameters<T>) => void>(fn: T, delay: number): T {
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null)
-  return useCallback((...args: Parameters<T>) => {
+  const timer = React.useRef<ReturnType<typeof setTimeout> | null>(null)
+  return React.useCallback((...args: Parameters<T>) => {
     if (timer.current) clearTimeout(timer.current)
     timer.current = setTimeout(() => fn(...args), delay)
   }, [fn, delay]) as T
@@ -306,28 +306,364 @@ function SearchResults({
   )
 }
 
+// ─── AI Dashboard ────────────────────────────────────────────────────────────
+
+interface QueueStat {
+  queueName: string
+  waiting: number
+  active: number
+  completed: number
+  failed: number
+  delayed: number
+}
+
+interface DuplicatePair {
+  entryIdA: string
+  entryIdB: string
+  score: number
+}
+
+function Panel({ title, icon, children }: { title: string; icon: string; children: React.ReactNode }) {
+  return (
+    <div style={{
+      background: '#1e293b',
+      border: '1px solid #334155',
+      borderRadius: 12,
+      padding: '20px 24px',
+      marginBottom: 20,
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+        <span style={{ fontSize: 20 }}>{icon}</span>
+        <h2 style={{ fontSize: 16, fontWeight: 700, color: '#f1f5f9', margin: 0 }}>{title}</h2>
+      </div>
+      {children}
+    </div>
+  )
+}
+
+function QueueStatCard({ stat }: { stat: QueueStat }) {
+  return (
+    <div style={{
+      background: '#0f172a',
+      border: '1px solid #334155',
+      borderRadius: 8,
+      padding: '12px 16px',
+      flex: '1 1 200px',
+    }}>
+      <div style={{ fontSize: 12, color: '#64748b', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+        {stat.queueName}
+      </div>
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+        {[
+          { label: 'waiting', value: stat.waiting, color: '#f59e0b' },
+          { label: 'active', value: stat.active, color: '#22d3ee' },
+          { label: 'done', value: stat.completed, color: '#4ade80' },
+          { label: 'failed', value: stat.failed, color: '#f87171' },
+        ].map(({ label, value, color }) => (
+          <div key={label} style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: 20, fontWeight: 700, color }}>{value}</div>
+            <div style={{ fontSize: 10, color: '#64748b' }}>{label}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function AIDashboard() {
+  const [queueStats, setQueueStats] = React.useState<QueueStat[]>([])
+  const [queueLoading, setQueueLoading] = React.useState(false)
+  const [dupContentType, setDupContentType] = React.useState('')
+  const [dupResults, setDupResults] = React.useState<DuplicatePair[]>([])
+  const [dupLoading, setDupLoading] = React.useState(false)
+  const [dupError, setDupError] = React.useState<string | null>(null)
+  const [tagContentType, setTagContentType] = React.useState('')
+  const [tagLabel, setTagLabel] = React.useState('')
+  const [taxonomy, setTaxonomy] = React.useState<string[]>(['technology', 'business', 'science', 'health', 'politics'])
+
+  // Poll queue stats every 5 seconds
+  React.useEffect(() => {
+    const fetchStats = async () => {
+      setQueueLoading(true)
+      try {
+        const res = await fetch('/api/admin/queue-stats')
+        if (res.ok) {
+          const json = await res.json() as { data: QueueStat[] }
+          setQueueStats(json.data)
+        }
+      } catch { /* ignore */ }
+      finally { setQueueLoading(false) }
+    }
+    void fetchStats()
+    const interval = setInterval(() => void fetchStats(), 5000)
+    return () => clearInterval(interval)
+  }, [])
+
+  const scanDuplicates = async () => {
+    if (!dupContentType.trim()) return
+    setDupLoading(true)
+    setDupError(null)
+    try {
+      const res = await fetch(`/api/content/${dupContentType}/duplicates`)
+      if (res.ok) {
+        const json = await res.json() as { pairs: DuplicatePair[] }
+        setDupResults(json.pairs)
+      } else {
+        setDupError(`Error: ${res.status}`)
+      }
+    } catch (e) {
+      setDupError(String(e))
+    } finally {
+      setDupLoading(false)
+    }
+  }
+
+  const addLabel = () => {
+    const label = tagLabel.trim().toLowerCase()
+    if (label && !taxonomy.includes(label)) {
+      setTaxonomy(prev => [...prev, label])
+      setTagLabel('')
+    }
+  }
+
+  const removeLabel = (label: string) => setTaxonomy(prev => prev.filter(l => l !== label))
+
+  return (
+    <div style={{ maxWidth: 900, margin: '32px auto', padding: '0 24px' }}>
+      <div style={{ marginBottom: 24 }}>
+        <h1 style={{ fontSize: 24, fontWeight: 800, color: '#f1f5f9', margin: '0 0 4px' }}>
+          🧠 AI Intelligence Dashboard
+        </h1>
+        <p style={{ color: '#64748b', fontSize: 14, margin: 0 }}>
+          Monitor embedding coverage, manage auto-tagging, detect duplicates, and track AI queue health.
+        </p>
+      </div>
+
+      {/* Panel 1 — Embedding Coverage */}
+      <Panel title="Embedding Coverage" icon="📊">
+        <p style={{ color: '#94a3b8', fontSize: 13 }}>
+          Embedding coverage is tracked via the <code style={{ color: '#818cf8' }}>metadata.embeddedAt</code> field
+          on each content entry. Use the search or RAG endpoints to verify embeddings are live.
+        </p>
+        <div style={{
+          background: '#0f172a',
+          border: '1px solid #334155',
+          borderRadius: 8,
+          padding: '12px 16px',
+          marginTop: 8,
+        }}>
+          <div style={{ fontSize: 12, color: '#4ade80', marginBottom: 4 }}>✅ pgvector active</div>
+          <div style={{ fontSize: 12, color: '#64748b' }}>
+            Embedding tables follow the pattern <code style={{ color: '#818cf8' }}>cortex_{'{type}'}_embeddings</code>
+          </div>
+        </div>
+      </Panel>
+
+      {/* Panel 2 — Auto-tagging taxonomy */}
+      <Panel title="Auto-tagging Taxonomy" icon="🏷️">
+        <div style={{ marginBottom: 12 }}>
+          <label style={{ fontSize: 13, color: '#94a3b8', display: 'block', marginBottom: 6 }}>
+            Content Type
+          </label>
+          <input
+            id="tag-content-type"
+            type="text"
+            value={tagContentType}
+            onChange={e => setTagContentType(e.target.value)}
+            placeholder="e.g. article"
+            style={dashInputStyle}
+          />
+        </div>
+        <div style={{ marginBottom: 12 }}>
+          <label style={{ fontSize: 13, color: '#94a3b8', display: 'block', marginBottom: 6 }}>
+            Tag Taxonomy
+          </label>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
+            {taxonomy.map(label => (
+              <span
+                key={label}
+                id={`tag-label-${label}`}
+                style={{
+                  background: '#312e81',
+                  color: '#a5b4fc',
+                  borderRadius: 99,
+                  padding: '4px 10px',
+                  fontSize: 12,
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 6,
+                }}
+              >
+                {label}
+                <button
+                  onClick={() => removeLabel(label)}
+                  style={{ background: 'none', border: 'none', color: '#818cf8', cursor: 'pointer', padding: 0, fontSize: 14, lineHeight: 1 }}
+                >×</button>
+              </span>
+            ))}
+          </div>
+          <div style={{ display: 'flex', gap: 8 }}>
+            <input
+              id="add-tag-input"
+              type="text"
+              value={tagLabel}
+              onChange={e => setTagLabel(e.target.value)}
+              onKeyDown={e => { if (e.key === 'Enter') addLabel() }}
+              placeholder="Add a label…"
+              style={{ ...dashInputStyle, flex: 1 }}
+            />
+            <button id="add-tag-btn" onClick={addLabel} style={dashBtnStyle}>Add</button>
+          </div>
+        </div>
+        <div style={{ fontSize: 12, color: '#475569', marginTop: 8 }}>
+          Configure <code style={{ color: '#818cf8' }}>aiIntelligence.tagTaxonomy</code> in your content type settings to use this taxonomy.
+        </div>
+      </Panel>
+
+      {/* Panel 3 — Duplicate Detection */}
+      <Panel title="Duplicate Detection" icon="🔎">
+        <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+          <input
+            id="dup-content-type"
+            type="text"
+            value={dupContentType}
+            onChange={e => setDupContentType(e.target.value)}
+            placeholder="Content type (e.g. article)"
+            style={{ ...dashInputStyle, flex: 1 }}
+          />
+          <button
+            id="scan-duplicates-btn"
+            onClick={() => void scanDuplicates()}
+            disabled={dupLoading}
+            style={{ ...dashBtnStyle, opacity: dupLoading ? 0.6 : 1 }}
+          >
+            {dupLoading ? '⏳ Scanning…' : '🔍 Scan'}
+          </button>
+        </div>
+
+        {dupError && (
+          <div style={{ color: '#f87171', fontSize: 13, marginBottom: 12 }}>{dupError}</div>
+        )}
+
+        {dupResults.length > 0 ? (
+          <div>
+            <div style={{ fontSize: 13, color: '#64748b', marginBottom: 8 }}>
+              Found {dupResults.length} duplicate pair{dupResults.length !== 1 ? 's' : ''}
+            </div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {dupResults.map((pair, i) => (
+                <div key={i} style={{
+                  background: '#0f172a',
+                  border: '1px solid #7f1d1d',
+                  borderRadius: 8,
+                  padding: '10px 14px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 12,
+                }}>
+                  <span style={{ fontSize: 12, color: '#94a3b8', flex: 1, fontFamily: 'monospace' }}>
+                    {pair.entryIdA.slice(0, 8)}…
+                  </span>
+                  <span style={{ fontSize: 11, color: '#475569' }}>↔</span>
+                  <span style={{ fontSize: 12, color: '#94a3b8', flex: 1, fontFamily: 'monospace' }}>
+                    {pair.entryIdB.slice(0, 8)}…
+                  </span>
+                  <span style={{
+                    background: pair.score >= 0.95 ? '#7f1d1d' : '#78350f',
+                    color: pair.score >= 0.95 ? '#fca5a5' : '#fcd34d',
+                    borderRadius: 99,
+                    padding: '2px 8px',
+                    fontSize: 11,
+                    fontWeight: 700,
+                  }}>
+                    {(pair.score * 100).toFixed(1)}%
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : dupResults.length === 0 && !dupLoading && dupContentType && !dupError ? (
+          <div style={{ color: '#4ade80', fontSize: 13 }}>✅ No duplicates found</div>
+        ) : null}
+      </Panel>
+
+      {/* Panel 4 — Intelligence Queue */}
+      <Panel title="Intelligence Queue" icon="⚡">
+        <div style={{ marginBottom: 12 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+            <span style={{ fontSize: 13, color: '#64748b' }}>Live stats · refreshes every 5s</span>
+            {queueLoading && <span style={{ fontSize: 12, color: '#818cf8' }}>↻ Refreshing…</span>}
+          </div>
+          {queueStats.length > 0 ? (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+              {queueStats.map(stat => <QueueStatCard key={stat.queueName} stat={stat} />)}
+            </div>
+          ) : (
+            <div style={{ color: '#475569', fontSize: 13 }}>
+              {queueLoading ? 'Loading queue stats…' : 'Queue stats unavailable (requires admin auth)'}
+            </div>
+          )}
+        </div>
+        <div style={{ fontSize: 12, color: '#475569', marginTop: 4 }}>
+          Queues: <code style={{ color: '#818cf8' }}>embedding-jobs</code>,{' '}
+          <code style={{ color: '#818cf8' }}>intelligence-jobs</code>,{' '}
+          <code style={{ color: '#818cf8' }}>webhook-deliveries</code>
+        </div>
+      </Panel>
+    </div>
+  )
+}
+
 // ─── App ──────────────────────────────────────────────────────────────────────
 
 function App() {
-  const [results, setResults] = useState<SearchResponse | null>(null)
-  const [searchedQuery, setSearchedQuery] = useState('')
-  const [loading, setLoading] = useState(false)
+  const [results, setResults] = React.useState<SearchResponse | null>(null)
+  const [searchedQuery, setSearchedQuery] = React.useState('')
+  const [loading, setLoading] = React.useState(false)
+  const [view, setView] = React.useState<'search' | 'ai'>('search')
 
   return (
     <div style={appStyle}>
       <header style={headerStyle}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
           <span style={{ fontSize: 22, fontWeight: 800, color: '#f1f5f9', letterSpacing: '-0.5px' }}>
-            ⬡ Cortex <span style={{ color: '#818cf8' }}>Search</span>
+            ⬡ Cortex
           </span>
+          <nav style={{ display: 'flex', gap: 4 }}>
+            <button
+              id="nav-search"
+              onClick={() => setView('search')}
+              style={{
+                ...navBtnStyle,
+                background: view === 'search' ? '#6366f1' : 'transparent',
+                color: view === 'search' ? '#fff' : '#94a3b8',
+              }}
+            >
+              🔍 Search
+            </button>
+            <button
+              id="nav-ai"
+              onClick={() => setView('ai')}
+              style={{
+                ...navBtnStyle,
+                background: view === 'ai' ? '#6366f1' : 'transparent',
+                color: view === 'ai' ? '#fff' : '#94a3b8',
+              }}
+            >
+              🧠 AI
+            </button>
+          </nav>
         </div>
-        <SearchBar
-          onResults={(resp, q) => { setResults(resp); setSearchedQuery(q) }}
-          onLoading={setLoading}
-        />
+        {view === 'search' && (
+          <SearchBar
+            onResults={(resp, q) => { setResults(resp); setSearchedQuery(q) }}
+            onLoading={setLoading}
+          />
+        )}
       </header>
       <main style={mainStyle}>
-        <SearchResults response={results} query={searchedQuery} loading={loading} />
+        {view === 'search' && <SearchResults response={results} query={searchedQuery} loading={loading} />}
+        {view === 'ai' && <AIDashboard />}
       </main>
     </div>
   )
@@ -353,7 +689,7 @@ const headerStyle: React.CSSProperties = {
 }
 
 const mainStyle: React.CSSProperties = {
-  maxWidth: 800,
+  maxWidth: 900,
   margin: '32px auto',
   padding: '0 24px',
 }
@@ -418,6 +754,40 @@ const resultCardStyle: React.CSSProperties = {
   borderRadius: 10,
   padding: '14px 18px',
   transition: 'border-color 0.2s',
+}
+
+const navBtnStyle: React.CSSProperties = {
+  padding: '6px 14px',
+  border: 'none',
+  borderRadius: 8,
+  cursor: 'pointer',
+  fontWeight: 600,
+  fontSize: 13,
+  transition: 'background 0.15s, color 0.15s',
+}
+
+const dashInputStyle: React.CSSProperties = {
+  padding: '9px 13px',
+  background: '#0f172a',
+  border: '1px solid #334155',
+  borderRadius: 8,
+  color: '#f1f5f9',
+  fontSize: 13,
+  outline: 'none',
+  width: '100%',
+  boxSizing: 'border-box',
+}
+
+const dashBtnStyle: React.CSSProperties = {
+  padding: '9px 18px',
+  background: '#6366f1',
+  color: '#fff',
+  border: 'none',
+  borderRadius: 8,
+  cursor: 'pointer',
+  fontWeight: 600,
+  fontSize: 13,
+  whiteSpace: 'nowrap',
 }
 
 // ─── Mount ────────────────────────────────────────────────────────────────────

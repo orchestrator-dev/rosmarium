@@ -5,6 +5,8 @@ import contentRoutes from "./content/index.js";
 import webhookRoutes from "./webhooks.js";
 import searchRoutes from "./search.js";
 import ragRoutes from "./rag.js";
+import intelligenceRoutes from "./intelligence.js";
+import adminRoutes from "./admin.js";
 
 export const registerRoutes = async (app: FastifyInstance) => {
     await app.register(healthRoutes);
@@ -13,4 +15,6 @@ export const registerRoutes = async (app: FastifyInstance) => {
     await app.register(webhookRoutes);
     await app.register(searchRoutes);
     await app.register(ragRoutes);
+    await app.register(intelligenceRoutes);
+    await app.register(adminRoutes);
 };
