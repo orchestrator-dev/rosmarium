@@ -21,6 +21,13 @@ embeddings = [
     "openai>=1.57",
     "cohere>=5.11",
 ]
+rag = [
+    "spacy>=3.8",
+    "llama-index-core>=0.12",
+    "llama-index-vector-stores-postgres>=0.3",
+    "llama-index-embeddings-openai>=0.3",
+    "llama-index-postprocessor-cohere-rerank>=0.3",
+]
 dev = [
     "pytest>=8.3",
     "pytest-asyncio>=0.24",
@@ -44,6 +51,8 @@ ignore = ["ANN401"]
 "src/rosmarium_ai_worker/workers/embedding_worker.py" = ["N815"]
 "src/rosmarium_ai_worker/config.py" = ["S105"]
 "src/rosmarium_ai_worker/api/routes/search.py" = ["B008"]
+"src/rosmarium_ai_worker/chunking/**/*.py" = ["ANN"]
+"src/rosmarium_ai_worker/rag/**/*.py" = ["ANN"]
 
 [tool.mypy]
 python_version = "3.12"

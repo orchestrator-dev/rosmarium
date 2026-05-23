@@ -1,12 +1,12 @@
 """Embedding job processor — processes jobs from the embedding-jobs queue."""
 
-import re
 import time
 from typing import Any, Literal
 
 import structlog
 from pydantic import BaseModel
 
+from ..chunking.registry import get_chunker
 from ..config import settings
 from ..database import get_pool
 from ..embedding.registry import get_provider
@@ -59,16 +59,19 @@ async def process_embedding_job(raw_payload: dict[str, Any]) -> None:
         )
         return
 
-    # 2. Chunk the text
-    chunks = _simple_chunk(
+    # 2. Chunk the text using the configured strategy
+    chunker = get_chunker(settings.chunking_default_strategy)
+    raw_chunks = chunker.chunk(
         text,
-        chunk_size=settings.chunking_chunk_size,
-        overlap=settings.chunking_chunk_overlap,
+        metadata={
+            "field_names": [f.fieldName for f in payload.fields],
+            "locale": payload.locale,
+        },
     )
 
     # 3. Embed all chunks in one batch call
     provider = get_provider()
-    chunk_texts: list[str] = [str(c["text"]) for c in chunks]
+    chunk_texts: list[str] = [c.text for c in raw_chunks]
     start = time.monotonic()
     embeddings = await provider.embed(chunk_texts)
     latency_ms = int((time.monotonic() - start) * 1000)
@@ -77,7 +80,7 @@ async def process_embedding_job(raw_payload: dict[str, Any]) -> None:
         "embedding_complete",
         entry_id=payload.contentEntryId,
         content_type=payload.contentType,
-        chunk_count=len(chunks),
+        chunk_count=len(raw_chunks),
         latency_ms=latency_ms,
         provider=settings.embedding_provider,
         model=provider.model_name,
@@ -91,16 +94,17 @@ async def process_embedding_job(raw_payload: dict[str, Any]) -> None:
         # 5. Upsert embeddings
         chunk_records: list[dict[str, object]] = [
             {
-                "chunk_index": i,
-                "chunk_text": str(chunks[i]["text"]),
+                "chunk_index": c.chunk_index,
+                "chunk_text": c.text,
                 "embedding": embeddings[i],
                 "metadata": {
-                    "field_names": [f.fieldName for f in payload.fields],
-                    "locale": payload.locale,
+                    **c.metadata,
                     "triggered_by": payload.triggeredBy,
+                    "char_start": c.char_start,
+                    "char_end": c.char_end,
                 },
             }
-            for i in range(len(chunks))
+            for i, c in enumerate(raw_chunks)
         ]
         await index_manager.upsert_embeddings(
             payload.contentType,
@@ -127,64 +131,5 @@ async def process_embedding_job(raw_payload: dict[str, Any]) -> None:
         "embedding_job_complete",
         entry_id=payload.contentEntryId,
         content_type=payload.contentType,
-        chunk_count=len(chunks),
+        chunk_count=len(raw_chunks),
     )
-
-
-# Sentence boundary pattern for chunking
-_SENTENCE_BOUNDARY = re.compile(r"(?<=[.!?])\s+")
-
-
-def _simple_chunk(
-    text: str,
-    chunk_size: int,
-    overlap: int,
-) -> list[dict[str, str | int]]:
-    """Split text into chunks of approximately chunk_size characters.
-
-    Uses sentence boundaries ('. ', '! ', '? ') for splitting.
-    Adds overlap from the end of the previous chunk.
-
-    Returns:
-        List of dicts with keys: text, char_start, char_end.
-    """
-    sentences = _SENTENCE_BOUNDARY.split(text)
-    chunks: list[dict[str, str | int]] = []
-
-    current_text = ""
-    current_start = 0
-    char_pos = 0
-
-    for sentence in sentences:
-        sentence_with_space = sentence if not current_text else " " + sentence
-
-        if len(current_text) + len(sentence_with_space) > chunk_size and current_text:
-            # Emit current chunk
-            chunks.append({
-                "text": current_text.strip(),
-                "char_start": current_start,
-                "char_end": char_pos,
-            })
-
-            # Start new chunk with overlap from the end of previous
-            if overlap > 0 and len(current_text) > overlap:
-                overlap_text = current_text[-overlap:]
-                current_text = overlap_text + " " + sentence
-                current_start = char_pos - overlap
-            else:
-                current_text = sentence
-                current_start = char_pos
-        else:
-            current_text += sentence_with_space
-
-        char_pos += len(sentence_with_space)
-
-    # Don't forget the last chunk
-    if current_text.strip():
-        chunks.append({
-            "text": current_text.strip(),
-            "char_start": current_start,
-            "char_end": char_pos,
-        })
-
-    return chunks if chunks else [{"text": text.strip(), "char_start": 0, "char_end": len(text)}]
