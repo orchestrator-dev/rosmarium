@@ -36,7 +36,7 @@ class RosmariumRetriever:
         vector_store = PGVectorStore.from_params(
             database=settings.db_name if hasattr(settings, "db_name") else _parse_db_name(settings.database_url),
             host=settings.db_host if hasattr(settings, "db_host") else _parse_db_host(settings.database_url),
-            port=int(settings.db_port if hasattr(settings, "db_port") else _parse_db_port(settings.database_url)),
+            port=str(settings.db_port) if hasattr(settings, "db_port") else _parse_db_port(settings.database_url),
             user=settings.db_user if hasattr(settings, "db_user") else _parse_db_user(settings.database_url),
             password=settings.db_password if hasattr(settings, "db_password") else _parse_db_password(settings.database_url),
             table_name=f"rosmarium_{self._content_type}_embeddings",
