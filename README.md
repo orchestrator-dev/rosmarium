@@ -11,6 +11,8 @@
   <img src="https://img.shields.io/badge/status-Phase%202%20active-orange" alt="Status" />
 </p>
 
+[![CI](https://github.com/orchestrator-dev/rosmarium/actions/workflows/ci.yml/badge.svg)](https://github.com/orchestrator-dev/rosmarium/actions/workflows/ci.yml)
+
 ---
 
 ## What is Rosmarium?
