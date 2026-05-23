@@ -70,7 +70,7 @@ class SentenceChunker(ChunkingStrategy):
         current_start = 0
         overlap_prefix = ""
 
-        for sent_text, sent_char_start, sent_char_end in sentences:
+        for sent_text, sent_char_start, _ in sentences:
             candidate = (overlap_prefix + sent_text) if not current_text else (current_text + " " + sent_text)
 
             if len(candidate) > self._chunk_size and current_text:
