@@ -7,7 +7,41 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.3.0] - 2026-04-05
+## [0.5.0] - 2026-05-23
+
+### Added
+
+- **cortex-ai-worker**: `AutoTagger` — HuggingFace zero-shot text classification using cross-encoder NLI models; label taxonomy configurable per content type; CPU-only inference with lazy model loading
+- **cortex-ai-worker**: `NERExtractor` — spaCy `en_core_web_sm` named entity extraction (PERSON, ORG, GPE, DATE, PRODUCT, EVENT, WORK_OF_ART, LAW); lazy model load on first use; per-entity deduplication
+- **cortex-ai-worker**: `ContentSummarizer` — Ollama LLM summarization with `brief`, `detailed`, and `bullet` styles; extractive sentence-scoring fallback when Ollama is unavailable
+- **cortex-ai-worker**: `DuplicateDetector` — pgvector cosine similarity for per-entry and full-collection duplicate scanning; configurable threshold; batch processing to avoid memory pressure
+- **cortex-ai-worker**: `intelligence_worker` — BullMQ `analyse-content` job processor; runs all four operations independently with fault isolation; persists results to `content_entries.metadata->'ai'` via JSONB merge
+- **cortex-ai-worker**: Second `QueueConsumer` for the `intelligence-jobs` BullMQ queue
+- **cortex-ai-worker**: FastAPI routes: `POST /intelligence/tag`, `POST /intelligence/ner`, `POST /intelligence/summarize`, `POST /intelligence/find-duplicates`, `GET /intelligence/scan-duplicates/{type}`
+- **cortex-ai-worker**: New config vars: `TAGGING_MODEL`, `SUMMARIZATION_MODEL`, `DUPLICATE_THRESHOLD`
+- **cortex-server**: `intelligence.client.ts` — HTTP client for cortex-ai-worker intelligence endpoints with `X-Worker-Secret` auth
+- **cortex-server**: `intelligence.service.ts` — on-demand intelligence orchestration with JSONB metadata persistence via raw SQL merge
+- **cortex-server**: `intelligence.jobs.ts` — BullMQ `analyse-content` job dispatch and queue statistics for all queues
+- **cortex-server**: REST routes: `POST /api/content/:type/:id/tag`, `POST /api/content/:type/:id/summarize`, `GET /api/content/:type/:id/entities`, `GET /api/content/:type/duplicates`
+- **cortex-server**: `GET /api/admin/queue-stats` — live BullMQ statistics for embedding-jobs, intelligence-jobs, webhook-deliveries (admin role only)
+- **cortex-server**: Automatic intelligence job dispatch on `content.published` event when `contentType.settings.aiIntelligence.enabled = true`
+- **cortex-admin**: AI Dashboard with 4 panels — Embedding Coverage, Auto-tagging Taxonomy, Duplicate Detection scanner, Intelligence Queue live stats (auto-refreshes every 5s)
+- **cortex-admin**: Tab navigation between Search and AI views
+- **DB**: Migration `0006_ai_metadata_gin_index` — GIN index on `content_entries.metadata->'ai'` for fast AI result queries
+
+### Changed
+
+- **cortex-ai-worker**: `NERExtractor` now loads `en_core_web_sm` lazily on first call (was at instantiation time)
+- **cortex-server**: `.env.example` updated with `TAGGING_MODEL`, `SUMMARIZATION_MODEL`, `DUPLICATE_THRESHOLD`
+
+### Tests
+
+- 23 new Python tests: `test_tagger.py`, `test_summarizer.py` (updated), `test_duplicate_detector.py`, `test_intelligence_worker.py`
+- 5 new TypeScript tests in `intelligence.service.test.ts`
+- NER tests auto-skip when `en_core_web_sm` not installed locally
+- All 79 Python tests passing (7 skipped); all 143 TypeScript tests passing
+- `mypy src/ --ignore-missing-imports` clean; `tsc --noEmit` clean
+
 
 ### Added
 
