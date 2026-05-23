@@ -4,12 +4,8 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
 
-import pytest
-
-from rosmarium_ai_worker.chunking.base import Chunk
 from rosmarium_ai_worker.chunking.fixed import FixedSizeChunker
 from rosmarium_ai_worker.chunking.section import SectionChunker
-
 
 # ─── SentenceChunker (via FixedSizeChunker for unit tests, mocked spaCy below) ─
 
@@ -98,7 +94,7 @@ def _make_mock_nlp(sentences: list[str], full_text: str) -> MagicMock:
 class TestSentenceChunker:
     """Unit tests for SentenceChunker (spaCy mocked)."""
 
-    def _make_chunker(self, chunk_size: int = 512, overlap: int = 50) -> "object":
+    def _make_chunker(self, chunk_size: int = 512, overlap: int = 50) -> object:
         from rosmarium_ai_worker.chunking.sentence import SentenceChunker
         return SentenceChunker.__new__(SentenceChunker)
 
