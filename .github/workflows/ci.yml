@@ -48,7 +48,7 @@ jobs:
       - name: Lint
         run: pnpm --filter @rosmarium-cms/server lint
       - name: Test
-        run: pnpm --filter @rosmarium-cms/server test --coverage
+        run: pnpm --filter @rosmarium-cms/server test
         env:
           DATABASE_URL: postgresql://rosmarium:rosmarium@localhost:5432/rosmarium_test
           REDIS_URL: redis://localhost:6379
