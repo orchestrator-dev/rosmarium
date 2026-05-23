@@ -25,7 +25,11 @@ async function persistAiMetadata(
 ): Promise<void> {
     await db.execute(
         sql`UPDATE content_entries
-            SET metadata = COALESCE(metadata, '{}') || ${JSON.stringify({ ai: patch })}::jsonb,
+            SET metadata = jsonb_set(
+                COALESCE(metadata, '{}'),
+                '{ai}',
+                COALESCE(metadata->'ai', '{}') || ${JSON.stringify(patch)}::jsonb
+            ),
                 updated_at = now()
             WHERE id = ${entryId}`
     );

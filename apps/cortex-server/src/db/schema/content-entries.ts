@@ -17,6 +17,7 @@ export const contentEntries = pgTable(
             .notNull()
             .default("draft"),
         data: jsonb("data").notNull().default({}),
+        metadata: jsonb("metadata").notNull().default({}),
         publishedAt: timestamp("published_at", { withTimezone: true }),
         createdBy: text("created_by").references(() => users.id, {
             onDelete: "set null",

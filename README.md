@@ -7,11 +7,10 @@
   <img src="https://img.shields.io/badge/node-22%20LTS-green" alt="Node" />
   <img src="https://img.shields.io/badge/python-3.12-blue" alt="Python" />
   <img src="https://img.shields.io/badge/postgresql-16%20+%20pgvector-336791" alt="PostgreSQL" />
-  <img src="https://img.shields.io/badge/version-v0.3.0-brightgreen" alt="Version" />
-  <img src="https://img.shields.io/badge/status-Phase%202%20active-orange" alt="Status" />
+  <img src="https://img.shields.io/badge/version-v0.5.0-brightgreen" alt="Version" />
+  <img src="https://img.shields.io/badge/status-Phase%202%20complete-brightgreen" alt="Status" />
+  [![CI](https://github.com/orchestrator-dev/rosmarium/actions/workflows/ci.yml/badge.svg)](https://github.com/orchestrator-dev/rosmarium/actions/workflows/ci.yml)
 </p>
-
-[![CI](https://github.com/orchestrator-dev/rosmarium/actions/workflows/ci.yml/badge.svg)](https://github.com/orchestrator-dev/rosmarium/actions/workflows/ci.yml)
 
 ---
 
@@ -99,11 +98,11 @@ flowchart LR
 <td>
 
 ✦ **Hybrid search** — BM25 + pgvector with RRF ✅<br/>
-✦ Automatic embedding on publish<br/>
-✦ Graceful fulltext fallback (no AI worker needed)<br/>
-✦ RAG pipeline for LLM context<br/>
-✦ Semantic chunking for long content<br/>
-✦ Auto-tagging via LLM
+✦ Automatic embedding on publish ✅<br/>
+✦ Graceful fulltext fallback (no AI worker needed) ✅<br/>
+✦ RAG pipeline & Semantic chunking ✅<br/>
+✦ Auto-tagging, NER, & Summarization ✅<br/>
+✦ Semantic Duplicate Detection ✅
 
 </td>
 <td>
@@ -278,9 +277,11 @@ curl -H 'Authorization: Bearer $KEY' \
 | 1 | CMS Foundation — content engine, REST/GraphQL API, auth & RBAC, webhooks | ✅ v0.1.0 |
 | 2 — Month 5 | AI Worker — embeddings, pgvector indexing, 3 provider adapters | ✅ v0.2.0 |
 | 2 — Month 6 | Hybrid Search — BM25 + pgvector + RRF, `/api/search`, graceful fallback | ✅ v0.3.0 |
-| 2 — Month 7 | RAG Pipeline — LlamaIndex integration, chunk retrieval, LLM context assembly | 🟡 Next |
-| 2 — Month 8 | Knowledge Graph — entity linking, relationship traversal | ⚪ Planned |
-| 3 | Scale & Ecosystem — multi-tenant, SDK, plugin API, hosted offering | ⚪ Planned |
+| 2 — Month 7 | RAG Pipeline — LlamaIndex, spaCy chunking, SSE streaming, RBAC retrieval | ✅ v0.4.0 |
+| 2 — Month 8 | AI Metadata — auto-tagging, NER, summarization, duplicate detection | ✅ v0.5.0 |
+| 3 — Month 9 | Knowledge Graph — typed edges, traversal API, graph relations | 🟡 Next |
+| 3 — Month 10 | Graph Analytics — PageRank, community detection, auto-inference | ⚪ Planned |
+| 4 | Scale & Ecosystem — multi-tenant, SDK, plugin API, hosted offering | ⚪ Planned |
 
 
 ## Contributing
