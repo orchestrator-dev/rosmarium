@@ -1,22 +1,21 @@
 # Rosmarium CMS — Current Development Phase
 
-## Active Phase: Phase 2 — AI Layer
-**Target release:** v0.2.0
-**Duration:** Months 5–8
+## Active Phase: Phase 3 — Developer Experience & Ecosystem
+**Target release:** v0.6.0+
+**Duration:** Months 9–12
 
 ## Completed Phases
 - ✅ Phase 1 — CMS Foundation (v0.1.0 released)
-
-## Active Milestone
-Month 8 — LLM Integration & Completions 🚧
+- ✅ Phase 2 — AI Layer (v0.5.0 released)
 
 ## Shipped Milestones
 - ✅ Phase 1 — CMS Foundation (v0.1.0)
 - ✅ Month 5 — AI Worker + Embedding Pipeline (v0.2.0)
 - ✅ Month 6 — Hybrid Search: BM25 + pgvector + RRF (v0.3.0)
 - ✅ Month 7 — RAG Pipeline: LlamaIndex retrieval, spaCy chunking, streaming (v0.4.0)
+- ✅ Month 8 — AI Metadata Intelligence: auto-tagging, NER, summarization, duplicate detection (v0.5.0)
 
-## Checklist
+## Phase 2 Checklist (Complete)
 - [x] rosmarium-ai-worker bootstrap (FastAPI, pyproject.toml, uv, Ruff, mypy)
 - [x] Pydantic Settings config with all env vars
 - [x] asyncpg connection pool (shared PostgreSQL)
@@ -54,6 +53,23 @@ Month 8 — LLM Integration & Completions 🚧
 - [x] DB migration 0005 — content_entries_created_by_idx
 - [x] All unit tests passing (45 new tests, 33 Python + 12 TypeScript)
 - [x] pnpm typecheck clean, mypy clean
+- [x] AutoTagger — zero-shot classification (transformers + cross-encoder NLI model)
+- [x] NERExtractor — spaCy en_core_web_sm (PERSON, ORG, GPE, DATE, PRODUCT, etc.)
+- [x] ContentSummarizer — Ollama LLM with extractive fallback
+- [x] DuplicateDetector — pgvector cosine similarity; full-collection scan
+- [x] intelligence_worker — BullMQ 'analyse-content' job processor
+- [x] Second queue consumer for intelligence-jobs
+- [x] REST API: /intelligence/{tag,ner,summarize,duplicates,scan-duplicates}
+- [x] intelligence.client.ts — rosmarium-server HTTP client
+- [x] intelligence.service.ts — metadata persistence via JSONB merge
+- [x] intelligence.jobs.ts — BullMQ job dispatch + queue stats
+- [x] content.published → auto-dispatch intelligence jobs (opt-in via aiIntelligence setting)
+- [x] Routes: POST /api/content/:type/:id/tag|summarize, GET /api/content/:type/:id/entities|duplicates
+- [x] GET /api/admin/queue-stats — live BullMQ stats for all queues
+- [x] AI Dashboard in rosmarium-admin — 4 panels: embedding coverage, tagging, duplicates, queue
+- [x] DB migration 0006 — GIN index on content_entries.metadata->'ai'
+- [x] 23 new Python tests + 5 new TypeScript tests, all passing
+- [x] mypy clean (37 source files), tsc --noEmit clean
 
 ## Notes
 Phase 1 shipped as v0.1.0. Full REST + GraphQL API, Auth + RBAC,
@@ -63,3 +79,6 @@ Month 5 shipped — rosmarium-ai-worker bootstrapped with full embedding pipelin
 Month 6 shipped — hybrid search delivered (BM25 + pgvector + RRF).
 Month 7 shipped — RAG pipeline with spaCy chunking, LlamaIndex retrieval,
 freshness scoring, Cohere rerank, and SSE streaming (v0.4.0).
+Month 8 shipped — AI Metadata Intelligence complete: auto-tagging pipeline,
+NER extraction, content summarization, semantic duplicate detection,
+intelligence queue consumer, REST endpoints, admin AI Dashboard (v0.5.0).

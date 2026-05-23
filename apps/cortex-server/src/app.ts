@@ -7,6 +7,7 @@ import { rosmariumEvents } from "./lib/events.js";
 import { pubsub } from "./graphql/context.js";
 import { webhookService } from "./modules/webhooks/webhook.service.js";
 import graphqlPlugin from "./graphql/index.js";
+import { dispatchIntelligenceJob } from "./modules/jobs/intelligence.jobs.js";
 
 export async function buildApp() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -50,6 +51,43 @@ export async function buildApp() {
     rosmariumEvents.on("content.published", (entry) => {
         const ct = registry.getAll().find((t) => t.id === entry.contentTypeId);
         if (ct) webhookService.trigger("entry.published", ct.name, entry).catch(console.error);
+    });
+
+    // ─── Bridge rosmariumEvents → Intelligence jobs ───────────────────────────
+    rosmariumEvents.on("content.published", (entry) => {
+        const ct = registry.getAll().find((t) => t.id === entry.contentTypeId);
+        if (!ct) return;
+
+        const aiSettings = ct.settings["aiIntelligence"] as
+            | {
+                  enabled?: boolean;
+                  operations?: ("tag" | "ner" | "summarize" | "deduplicate")[];
+                  tagTaxonomy?: string[];
+              }
+            | undefined;
+
+        if (!aiSettings?.enabled) return;
+
+        // Extract text fields from the entry data
+        const fields: { fieldName: string; text: string }[] = [];
+        const data = entry.data as Record<string, unknown>;
+        for (const field of ct.fields) {
+            const val = data[field.name];
+            if (typeof val === "string" && val.trim()) {
+                fields.push({ fieldName: field.name, text: val });
+            }
+        }
+
+        if (fields.length === 0) return;
+
+        dispatchIntelligenceJob({
+            contentEntryId: entry.id,
+            contentType: ct.name,
+            fields,
+            locale: entry.locale,
+            candidateLabels: aiSettings.tagTaxonomy ?? [],
+            operations: aiSettings.operations ?? ["tag", "ner", "deduplicate"],
+        }).catch(console.error);
     });
 
     return app;
