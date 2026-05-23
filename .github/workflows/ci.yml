@@ -48,7 +48,7 @@ jobs:
       - name: Lint
         run: pnpm --filter @cortex-cms/server lint
       - name: Test
-        run: pnpm --filter @cortex-cms/server test --coverage
+        run: pnpm --filter @cortex-cms/server test
         env:
           DATABASE_URL: postgresql://cortex:cortex@localhost:5432/cortex_test
           REDIS_URL: redis://localhost:6379

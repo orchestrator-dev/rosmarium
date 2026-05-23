@@ -58,8 +58,12 @@ class CohereEmbeddingProvider(EmbeddingProvider):
             latency_ms=latency_ms,
         )
 
+        float_embs = response.embeddings.float_
+        if float_embs is None:
+            raise ValueError("Cohere returned no float embeddings")
+
         embeddings: list[list[float]] = [
-            list(e) for e in response.embeddings.float_
+            list(e) for e in float_embs
         ]
         return embeddings
 
