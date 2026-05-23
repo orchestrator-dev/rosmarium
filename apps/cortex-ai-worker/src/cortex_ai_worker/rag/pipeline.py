@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import asyncio
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 import structlog
@@ -82,7 +82,7 @@ class RAGPipeline:
             return_exceptions=True,
         )
 
-        for ct, result in zip(request.content_types, results):
+        for ct, result in zip(request.content_types, results, strict=True):
             if isinstance(result, Exception):
                 logger.warning(
                     "retrieval_error",
@@ -103,13 +103,13 @@ class RAGPipeline:
         reranked = False
         if request.rerank:
             try:
-                from ..config import settings  # noqa: PLC0415
+                from ..config import settings
                 if settings.cohere_api_key:
                     all_chunks = await self._rerank(request.query, all_chunks)
                     reranked = True
                 else:
                     all_chunks = self._apply_freshness_scoring(all_chunks)
-            except Exception as exc:  # noqa: BLE001
+            except Exception as exc:
                 logger.warning("rerank_failed_using_freshness", error=str(exc))
                 all_chunks = self._apply_freshness_scoring(all_chunks)
         else:
@@ -185,14 +185,14 @@ class RAGPipeline:
         recency_score = 1 / (1 + days_since_published)
         Falls back to recency_score=0.5 when published_at is absent.
         """
-        now = datetime.now(tz=timezone.utc)
+        now = datetime.now(tz=UTC)
         for chunk in chunks:
             recency = 0.5
             if chunk.published_at:
                 try:
                     pub = datetime.fromisoformat(chunk.published_at)
                     if pub.tzinfo is None:
-                        pub = pub.replace(tzinfo=timezone.utc)
+                        pub = pub.replace(tzinfo=UTC)
                     days_old = max(0, (now - pub).days)
                     recency = 1.0 / (1.0 + days_old)
                 except (ValueError, TypeError):
@@ -216,8 +216,9 @@ class RAGPipeline:
             return chunks
 
         try:
-            import cohere  # noqa: PLC0415
-            from ..config import settings  # noqa: PLC0415
+            import cohere
+
+            from ..config import settings
 
             co = cohere.AsyncClient(api_key=settings.cohere_api_key)
             documents = [c.chunk_text for c in chunks]
@@ -236,7 +237,7 @@ class RAGPipeline:
                 reordered.append(chunk)
             return reordered
 
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             logger.warning("cohere_rerank_failed_fallback", error=str(exc))
             return chunks
 
