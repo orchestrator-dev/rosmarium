@@ -7,7 +7,7 @@ Otherwise skips tests that require a database connection.
 from __future__ import annotations
 
 import os
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 

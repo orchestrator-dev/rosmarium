@@ -23,7 +23,7 @@ class DuplicateCandidate(BaseModel):
 
     entry_id: str
     content_type: str
-    similarity_score: float  # 0.0–1.0 cosine similarity
+    similarity_score: float  # 0.0-1.0 cosine similarity
     is_duplicate: bool  # score >= threshold
 
 

@@ -8,8 +8,9 @@ Deduplicates entities with the same text, keeping highest-confidence occurrence.
 from __future__ import annotations
 
 import asyncio
-from typing import Any, Callable
+from collections.abc import Callable
 from dataclasses import dataclass, field
+from typing import Any
 
 import structlog
 

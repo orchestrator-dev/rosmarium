@@ -57,6 +57,12 @@ ignore = ["ANN401", "E501"]
 "src/cortex_ai_worker/api/routes/search.py" = ["B008"]
 "src/cortex_ai_worker/chunking/**/*.py" = ["ANN"]
 "src/cortex_ai_worker/rag/**/*.py" = ["ANN"]
+# Intelligence modules — camelCase fields for JSON wire compat, assert guards, parameterized table SQL
+"src/cortex_ai_worker/intelligence/**/*.py" = ["N815", "S608", "S101"]
+"src/cortex_ai_worker/api/routes/intelligence.py" = ["N815", "S608"]
+"src/cortex_ai_worker/workers/intelligence_worker.py" = ["N815", "S608", "S101"]
+"tests/test_ner.py" = ["E402", "S101"]
+"tests/test_summarizer.py" = ["F841"]
 
 [tool.mypy]
 python_version = "3.12"

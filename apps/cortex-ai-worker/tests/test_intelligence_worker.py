@@ -6,10 +6,8 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from cortex_ai_worker.intelligence.duplicate_detector import DuplicateCandidate
 from cortex_ai_worker.intelligence.tagger import TagResult
 from cortex_ai_worker.workers.intelligence_worker import (
-    AnalyseJobPayload,
     process_intelligence_job,
 )
 

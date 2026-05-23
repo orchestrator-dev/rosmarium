@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import MagicMock
 
 import pytest
 
-from cortex_ai_worker.intelligence.tagger import AutoTagger, TagResult
+from cortex_ai_worker.intelligence.tagger import AutoTagger
 
 
 def _make_pipeline_result(labels: list[str], scores: list[float]) -> dict:
