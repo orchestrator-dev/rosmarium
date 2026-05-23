@@ -1,12 +1,12 @@
 """Cortex AI Worker — RAG pipeline package."""
 
-from .pipeline import RAGPipeline, RetrieveRequest, RetrievedChunk, RetrieveResponse
 from .formatter import ContextFormatter
+from .pipeline import RAGPipeline, RetrievedChunk, RetrieveRequest, RetrieveResponse
 
 __all__ = [
+    "ContextFormatter",
     "RAGPipeline",
     "RetrieveRequest",
-    "RetrievedChunk",
     "RetrieveResponse",
-    "ContextFormatter",
+    "RetrievedChunk",
 ]

@@ -120,7 +120,7 @@ async def rag_retrieve_stream(request: RetrieveRequest) -> StreamingResponse:
             }
             yield f"event: done\ndata: {json.dumps(done_payload)}\n\n"
 
-        except Exception as exc:  # noqa: BLE001
+        except Exception as exc:
             error_payload: dict[str, Any] = {"error": str(exc), "type": type(exc).__name__}
             yield f"event: error\ndata: {json.dumps(error_payload)}\n\n"
             logger.error("rag_stream_error", error=str(exc), error_type=type(exc).__name__)
