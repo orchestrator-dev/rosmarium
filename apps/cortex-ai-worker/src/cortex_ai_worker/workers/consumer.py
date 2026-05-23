@@ -84,7 +84,7 @@ class QueueConsumer:
         if self._redis is None:
             return None
 
-        waiting_key = f"bull:{self._queue_name}:waiting"
+        waiting_key = f"bull:{self._queue_name}:wait"
         active_key = f"bull:{self._queue_name}:active"
 
         # BRPOPLPUSH: blocking pop from waiting, push to active

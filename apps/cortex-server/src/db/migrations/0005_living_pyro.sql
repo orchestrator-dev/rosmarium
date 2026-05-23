@@ -1,0 +1,1 @@
+ALTER TABLE "content_entries" ADD COLUMN "metadata" jsonb DEFAULT '{}'::jsonb NOT NULL;

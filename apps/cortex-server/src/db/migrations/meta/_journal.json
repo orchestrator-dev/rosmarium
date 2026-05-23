@@ -36,6 +36,13 @@
       "when": 1743811200000,
       "tag": "0004_hybrid_search_vector",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1779558867742,
+      "tag": "0005_living_pyro",
+      "breakpoints": true
     }
   ]
 }

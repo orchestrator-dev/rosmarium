@@ -15,6 +15,7 @@ import { registry } from "../modules/content/registry.js";
 import { intelligenceService } from "../modules/intelligence/intelligence.service.js";
 import { PERMISSIONS } from "../modules/rbac/permissions.js";
 import { rbacService } from "../modules/rbac/rbac.service.js";
+import { requireAuth } from "../modules/rbac/rbac.middleware.js";
 import { db } from "../db/index.js";
 import type { AuthenticatedUser } from "../modules/auth/auth.service.js";
 
@@ -49,6 +50,7 @@ export default async function intelligenceRoutes(app: FastifyInstance) {
     // ── POST /api/content/:type/:id/tag ───────────────────────────────────────
     app.post<{ Params: { type: string; id: string } }>(
         "/api/content/:type/:id/tag",
+        { preHandler: requireAuth() },
         async (request, reply) => {
             const user = request.user as AuthenticatedUser | undefined;
             if (!user || !rbacService.can(user, PERMISSIONS.CONTENT_UPDATE_ANY)) {
@@ -96,6 +98,7 @@ export default async function intelligenceRoutes(app: FastifyInstance) {
     // ── POST /api/content/:type/:id/summarize ─────────────────────────────────
     app.post<{ Params: { type: string; id: string }; Querystring: { save?: string } }>(
         "/api/content/:type/:id/summarize",
+        { preHandler: requireAuth() },
         async (request, reply) => {
             const user = request.user as AuthenticatedUser | undefined;
             if (!user || !rbacService.can(user, PERMISSIONS.CONTENT_READ_ANY)) {
@@ -134,6 +137,7 @@ export default async function intelligenceRoutes(app: FastifyInstance) {
     // ── GET /api/content/:type/:id/entities ───────────────────────────────────
     app.get<{ Params: { type: string; id: string } }>(
         "/api/content/:type/:id/entities",
+        { preHandler: requireAuth() },
         async (request, reply) => {
             const user = request.user as AuthenticatedUser | undefined;
             if (!user || !rbacService.can(user, PERMISSIONS.CONTENT_READ_ANY)) {
@@ -177,6 +181,7 @@ export default async function intelligenceRoutes(app: FastifyInstance) {
     // ── GET /api/content/:type/duplicates ─────────────────────────────────────
     app.get<{ Params: { type: string } }>(
         "/api/content/:type/duplicates",
+        { preHandler: requireAuth() },
         async (request, reply) => {
             const user = request.user as AuthenticatedUser | undefined;
             if (!user || !rbacService.can(user, PERMISSIONS.CONTENT_READ_ANY)) {
