@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import structlog
 from llama_index.core import VectorStoreIndex
-from llama_index.vector_stores.postgres import PGVectorStore  # noqa: PLC0415
+from llama_index.vector_stores.postgres import PGVectorStore
 
 from ..config import settings
 from ..embedding.registry import get_provider
