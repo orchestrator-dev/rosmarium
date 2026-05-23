@@ -33,25 +33,6 @@ import { intelligenceService } from "./intelligence.service.js";
 import { intelligenceClient } from "./intelligence.client.js";
 import { dispatchIntelligenceJob } from "../jobs/intelligence.jobs.js";
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-
-const mockEntry = {
-    id: "entry-123",
-    contentTypeId: "ct-1",
-    contentTypeName: "article",
-    status: "published" as const,
-    data: { title: "Test Article", body: "This is a long body text." },
-    locale: "en",
-    metadata: {},
-    createdAt: new Date(),
-    updatedAt: new Date(),
-    publishedAt: new Date(),
-    createdBy: "user-1",
-    updatedBy: "user-1",
-    slug: null,
-    archivedAt: null,
-};
-
 // ─── Tests ────────────────────────────────────────────────────────────────────
 
 describe("intelligenceService.tagEntry", () => {

@@ -3,9 +3,8 @@
  * optional persistence to content_entries.metadata JSONB.
  */
 
-import { eq, sql } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 import { db } from "../../db/index.js";
-import { contentEntries } from "../../db/schema/index.js";
 import {
     intelligenceClient,
     type DuplicateCandidate,

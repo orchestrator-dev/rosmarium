@@ -8,6 +8,7 @@ Deduplicates entities with the same text, keeping highest-confidence occurrence.
 from __future__ import annotations
 
 import asyncio
+from typing import Any, Callable
 from dataclasses import dataclass, field
 
 import structlog
@@ -39,17 +40,20 @@ class NERExtractor:
     """
 
     def __init__(self) -> None:
-        self._nlp: object | None = None
+        # Callable[str] -> spacy.tokens.Doc
+        self._nlp: Callable[[str], Any] | None = None
 
     def _ensure_loaded(self) -> None:
         """Load the spaCy model on first use."""
         if self._nlp is None:
             import spacy
 
-            self._nlp = spacy.load(
+            # Load model; assign via Any to bridge spaCy stubs vs no-stubs environments
+            _loaded: Any = spacy.load(
                 "en_core_web_sm",
                 disable=["tagger", "parser", "lemmatizer", "attribute_ruler"],
             )
+            self._nlp = _loaded
             logger.info("ner_model_loaded", model="en_core_web_sm")
 
     def extract(self, text: str) -> list[Entity]:
@@ -62,7 +66,7 @@ class NERExtractor:
 
         self._ensure_loaded()
         assert self._nlp is not None
-        doc = self._nlp(text)  # type: ignore[call-arg]
+        doc = self._nlp(text)
 
         # Collect entities, keeping highest-confidence per unique text+label pair
         seen: dict[tuple[str, str], Entity] = {}

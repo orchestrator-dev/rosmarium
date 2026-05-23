@@ -48,11 +48,11 @@ function SearchBar({
   onResults: (resp: SearchResponse | null, query: string) => void
   onLoading: (loading: boolean) => void
 }) {
-  const [query, setQuery] = useState('')
-  const [suggestions, setSuggestions] = useState<string[]>([])
-  const [showSuggestions, setShowSuggestions] = useState(false)
-  const [alpha, setAlpha] = useState(0.5)
-  const [showAlpha, setShowAlpha] = useState(false)
+  const [query, setQuery] = React.useState('')
+  const [suggestions, setSuggestions] = React.useState<string[]>([])
+  const [showSuggestions, setShowSuggestions] = React.useState(false)
+  const [alpha, setAlpha] = React.useState(0.5)
+  const [showAlpha, setShowAlpha] = React.useState(false)
 
   const fetchSuggestions = useDebounce(async (q: string) => {
     if (!q.trim()) { setSuggestions([]); return }
@@ -116,7 +116,7 @@ function SearchBar({
         </button>
         <button
           id="alpha-toggle"
-          onClick={() => setShowAlpha((v) => !v)}
+          onClick={() => setShowAlpha((v: boolean) => !v)}
           style={{ ...btnStyle, background: '#334155', fontSize: 12 }}
           title="Advanced: adjust keyword vs semantic balance"
         >
@@ -127,7 +127,7 @@ function SearchBar({
       {/* Suggestions dropdown */}
       {showSuggestions && suggestions.length > 0 && (
         <ul style={suggestionsStyle} id="search-suggestions">
-          {suggestions.map((s, i) => (
+          {suggestions.map((s: string, i: number) => (
             <li
               key={i}
               style={suggestionItemStyle}
