@@ -1,6 +1,6 @@
 """Section-aware chunker.
 
-Detects markdown headings (# / ## / ###) and HTML headings (<h1>–<h4>),
+Detects markdown headings (# / ## / ###) and HTML headings (<h1>-<h4>),
 splits text at heading boundaries, then applies SentenceChunker within each
 section.  Section title and parent heading are injected into chunk metadata.
 """

@@ -2,8 +2,8 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
-from unittest.mock import AsyncMock, MagicMock, patch
+from datetime import UTC, datetime, timedelta
+from unittest.mock import AsyncMock, patch
 
 import pytest
 
@@ -51,7 +51,7 @@ class TestFreshnessScoring:
     def test_recent_content_scores_higher(self) -> None:
         """A recently published chunk should beat an older one at the same vector score."""
         pipeline = RAGPipeline()
-        now = datetime.now(tz=timezone.utc)
+        now = datetime.now(tz=UTC)
         recent = _make_chunk(entry_id="new", score=0.8, published_at=(now - timedelta(days=1)).isoformat())
         old = _make_chunk(entry_id="old", score=0.8, published_at=(now - timedelta(days=365)).isoformat())
 
@@ -69,7 +69,7 @@ class TestFreshnessScoring:
     def test_sorted_descending_by_freshness_score(self) -> None:
         """Output is sorted highest freshness_score first."""
         pipeline = RAGPipeline()
-        now = datetime.now(tz=timezone.utc)
+        now = datetime.now(tz=UTC)
         chunks = [
             _make_chunk("a", score=0.5, published_at=(now - timedelta(days=10)).isoformat()),
             _make_chunk("b", score=0.9, published_at=(now - timedelta(days=365)).isoformat()),
@@ -152,7 +152,7 @@ class TestRBACFiltering:
         """Empty allowed_entry_ids list = CONTENT_READ_ANY — no ACL restriction."""
         pipeline = RAGPipeline()
 
-        mock_results = [
+        _ = [
             {
                 "content_entry_id": "entry-1",
                 "chunk_index": 0,
