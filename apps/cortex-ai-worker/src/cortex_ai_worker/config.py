@@ -52,6 +52,12 @@ class Settings(BaseSettings):
     summarization_model: str = "llama3.2"
     duplicate_threshold: float = 0.92
 
+    # Graph inference
+    graph_inference_enabled: bool = True
+    graph_similarity_threshold: float = 0.85
+    graph_max_similarity_edges: int = 5
+
+
     @field_validator("database_url")
     @classmethod
     def validate_db_url(cls, v: str) -> str:

@@ -8,6 +8,15 @@
 - ✅ Phase 1 — CMS Foundation (v0.1.0 released)
 - ✅ Phase 2 — AI Layer (v0.5.0 released)
 
+## Phase 3: Headless & API Layer
+
+-   [x] **Month 7:** API Foundation & Caching (REST, Fastify)
+-   [x] **Month 8:** GraphQL & Webhook Engine (Mercurius, background jobs)
+-   [x] **Month 9:** Graph Data Model (Relations, Edge inference, Graph service)
+-   [ ] **Month 10:** Multi-Tenant Architecture & Sub-organizations (Row-level security, isolated content spaces)
+-   [ ] **Month 11:** Edge CDN Integration & Static Export (Vercel/Cloudflare targets, asset optimization)
+-   [ ] **Month 12:** Phase 3 Hardening (Rate limiting, abuse prevention, final scale tests)
+
 ## Shipped Milestones
 - ✅ Phase 1 — CMS Foundation (v0.1.0)
 - ✅ Month 5 — AI Worker + Embedding Pipeline (v0.2.0)
@@ -82,3 +91,5 @@ freshness scoring, Cohere rerank, and SSE streaming (v0.4.0).
 Month 8 shipped — AI Metadata Intelligence complete: auto-tagging pipeline,
 NER extraction, content summarization, semantic duplicate detection,
 intelligence queue consumer, REST endpoints, admin AI Dashboard (v0.5.0).
+Month 9 shipped — Graph Data Model complete: edges, inference (NER, similarity, refs),
+REST API, graph service, Admin UI GraphPanel (v0.6.0).
