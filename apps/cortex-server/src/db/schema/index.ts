@@ -6,3 +6,4 @@ export * from "./content-types";
 export * from "./content-entries";
 export * from "./audit-log";
 export * from "./webhooks";
+export * from "./graph";

@@ -614,13 +614,459 @@ function AIDashboard() {
   )
 }
 
+// ─── Graph Panel ──────────────────────────────────────────────────────────────
+
+interface GraphEdge {
+  id: string
+  fromEntryId: string
+  fromContentType: string
+  toEntryId: string
+  toContentType: string
+  edgeType: string
+  weight: number
+  source: string
+  isAccepted: 'pending' | 'accepted' | 'rejected'
+  createdAt: string
+}
+
+interface EntityMention {
+  id: string
+  entryId: string
+  entityId: string
+  confidence: number
+  entity: {
+    id: string
+    entityText: string
+    entityType: string
+    mentionCount: number
+  }
+}
+
+const EDGE_TYPE_COLORS: Record<string, string> = {
+  relatedTo: '#6366f1',
+  mentions: '#0891b2',
+  references: '#16a34a',
+  partOf: '#d97706',
+  deprecates: '#dc2626',
+}
+
+const SOURCE_LABELS: Record<string, string> = {
+  manual: '✍️ Manual',
+  auto_ner: '🤖 NER',
+  auto_similarity: '🔗 Similarity',
+  auto_reference: '📎 Reference',
+  api: '🌐 API',
+}
+
+function EdgeTypeBadge({ type }: { type: string }) {
+  const color = EDGE_TYPE_COLORS[type] ?? '#475569'
+  return (
+    <span style={{
+      background: color,
+      color: '#fff',
+      fontSize: 10,
+      padding: '2px 7px',
+      borderRadius: 4,
+      fontWeight: 700,
+      letterSpacing: '0.04em',
+    }}>
+      {type}
+    </span>
+  )
+}
+
+function AcceptanceBadge({ status }: { status: GraphEdge['isAccepted'] }) {
+  const conf: Record<typeof status, { bg: string; color: string; label: string }> = {
+    pending: { bg: '#78350f', color: '#fcd34d', label: '⏳ Pending' },
+    accepted: { bg: '#14532d', color: '#4ade80', label: '✅ Accepted' },
+    rejected: { bg: '#7f1d1d', color: '#fca5a5', label: '❌ Rejected' },
+  }
+  const c = conf[status]
+  return (
+    <span style={{
+      background: c.bg, color: c.color,
+      fontSize: 10, padding: '2px 7px', borderRadius: 4, fontWeight: 700,
+    }}>
+      {c.label}
+    </span>
+  )
+}
+
+function GraphPanel() {
+  const [entryId, setEntryId] = React.useState('')
+  const [edges, setEdges] = React.useState<GraphEdge[]>([])
+  const [pending, setPending] = React.useState<GraphEdge[]>([])
+  const [mentions, setMentions] = React.useState<EntityMention[]>([])
+  const [loading, setLoading] = React.useState(false)
+  const [error, setError] = React.useState<string | null>(null)
+  const [tab, setTab] = React.useState<'edges' | 'pending' | 'entities'>('edges')
+  const [showAddEdge, setShowAddEdge] = React.useState(false)
+  const [addToEntryId, setAddToEntryId] = React.useState('')
+  const [addEdgeType, setAddEdgeType] = React.useState('relatedTo')
+  const [addFromCt, setAddFromCt] = React.useState('')
+  const [addToCt, setAddToCt] = React.useState('')
+  const [addLoading, setAddLoading] = React.useState(false)
+
+  const loadEntry = async (id: string) => {
+    if (!id.trim()) return
+    setLoading(true)
+    setError(null)
+    try {
+      const [edgeRes, mentionRes] = await Promise.all([
+        fetch(`/api/graph/edges/${id}`),
+        fetch(`/api/graph/entities/${id}/mentions`),
+      ])
+      if (edgeRes.ok) {
+        const j = await edgeRes.json() as { data: GraphEdge[] }
+        setEdges(j.data)
+      }
+      if (mentionRes.ok) {
+        const j = await mentionRes.json() as { data: EntityMention[] }
+        setMentions(j.data)
+      }
+    } catch (e) {
+      setError(String(e))
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const loadPending = async () => {
+    const res = await fetch('/api/graph/pending')
+    if (res.ok) {
+      const j = await res.json() as { data: GraphEdge[] }
+      setPending(j.data)
+    }
+  }
+
+  React.useEffect(() => { void loadPending() }, [])
+
+  const handleAccept = async (id: string) => {
+    await fetch(`/api/graph/edges/${id}/accept`, { method: 'POST' })
+    void loadPending()
+    if (entryId) void loadEntry(entryId)
+  }
+
+  const handleReject = async (id: string) => {
+    await fetch(`/api/graph/edges/${id}/reject`, { method: 'POST' })
+    void loadPending()
+    if (entryId) void loadEntry(entryId)
+  }
+
+  const handleDelete = async (id: string) => {
+    await fetch(`/api/graph/edges/${id}`, { method: 'DELETE' })
+    if (entryId) void loadEntry(entryId)
+  }
+
+  const handleAddEdge = async () => {
+    if (!entryId || !addToEntryId || !addEdgeType) return
+    setAddLoading(true)
+    try {
+      await fetch('/api/graph/edges', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fromEntryId: entryId,
+          fromContentType: addFromCt || 'article',
+          toEntryId: addToEntryId,
+          toContentType: addToCt || 'article',
+          edgeType: addEdgeType,
+        }),
+      })
+      setShowAddEdge(false)
+      setAddToEntryId('')
+      void loadEntry(entryId)
+    } finally {
+      setAddLoading(false)
+    }
+  }
+
+  return (
+    <div style={{ maxWidth: 900, margin: '32px auto', padding: '0 24px' }}>
+      <div style={{ marginBottom: 24 }}>
+        <h1 style={{ fontSize: 24, fontWeight: 800, color: '#f1f5f9', margin: '0 0 4px' }}>
+          🕸️ Knowledge Graph
+        </h1>
+        <p style={{ color: '#64748b', fontSize: 14, margin: 0 }}>
+          View and manage typed relations between content entries and entity nodes.
+        </p>
+      </div>
+
+      {/* Entry lookup */}
+      <div style={{
+        background: '#1e293b', border: '1px solid #334155', borderRadius: 12,
+        padding: '20px 24px', marginBottom: 20,
+      }}>
+        <label style={{ fontSize: 13, color: '#94a3b8', display: 'block', marginBottom: 6 }}>
+          Entry ID
+        </label>
+        <div style={{ display: 'flex', gap: 8 }}>
+          <input
+            id="graph-entry-id"
+            type="text"
+            value={entryId}
+            onChange={e => setEntryId(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter') void loadEntry(entryId) }}
+            placeholder="Paste content entry ID…"
+            style={{ ...dashInputStyle, flex: 1 }}
+          />
+          <button
+            id="graph-load-btn"
+            onClick={() => void loadEntry(entryId)}
+            disabled={loading}
+            style={{ ...dashBtnStyle, opacity: loading ? 0.6 : 1 }}
+          >
+            {loading ? '⏳' : '🔍 Load'}
+          </button>
+          <button
+            id="graph-add-edge-btn"
+            onClick={() => setShowAddEdge(v => !v)}
+            style={{ ...dashBtnStyle, background: '#1d4ed8' }}
+          >
+            + Add Edge
+          </button>
+        </div>
+
+        {/* Add edge inline form */}
+        {showAddEdge && (
+          <div style={{
+            marginTop: 16, padding: '16px', background: '#0f172a',
+            borderRadius: 8, border: '1px solid #334155',
+          }}>
+            <div style={{ fontSize: 13, fontWeight: 700, color: '#f1f5f9', marginBottom: 12 }}>
+              Create Manual Edge
+            </div>
+            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+              <input
+                id="add-edge-to-entry"
+                type="text"
+                value={addToEntryId}
+                onChange={e => setAddToEntryId(e.target.value)}
+                placeholder="Target entry ID"
+                style={{ ...dashInputStyle, flex: 2 }}
+              />
+              <select
+                id="add-edge-type"
+                value={addEdgeType}
+                onChange={e => setAddEdgeType(e.target.value)}
+                style={{ ...dashInputStyle, flex: 1 }}
+              >
+                {['relatedTo', 'mentions', 'references', 'partOf', 'deprecates'].map(t => (
+                  <option key={t} value={t}>{t}</option>
+                ))}
+              </select>
+              <input
+                id="add-edge-from-ct"
+                type="text"
+                value={addFromCt}
+                onChange={e => setAddFromCt(e.target.value)}
+                placeholder="From content type"
+                style={{ ...dashInputStyle, flex: 1 }}
+              />
+              <input
+                id="add-edge-to-ct"
+                type="text"
+                value={addToCt}
+                onChange={e => setAddToCt(e.target.value)}
+                placeholder="To content type"
+                style={{ ...dashInputStyle, flex: 1 }}
+              />
+              <button
+                id="add-edge-submit"
+                onClick={() => void handleAddEdge()}
+                disabled={addLoading}
+                style={{ ...dashBtnStyle, opacity: addLoading ? 0.6 : 1 }}
+              >
+                {addLoading ? '⏳' : '✓ Create'}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {error && (
+        <div style={{ color: '#f87171', fontSize: 13, marginBottom: 12 }}>{error}</div>
+      )}
+
+      {/* Tabs */}
+      <div style={{ display: 'flex', gap: 4, marginBottom: 16 }}>
+        {(['edges', 'pending', 'entities'] as const).map(t => (
+          <button
+            key={t}
+            id={`graph-tab-${t}`}
+            onClick={() => setTab(t)}
+            style={{
+              ...navBtnStyle,
+              background: tab === t ? '#6366f1' : '#1e293b',
+              color: tab === t ? '#fff' : '#94a3b8',
+              border: '1px solid #334155',
+            }}
+          >
+            {t === 'edges' && `🔗 Relations (${edges.length})`}
+            {t === 'pending' && `⏳ Pending (${pending.length})`}
+            {t === 'entities' && `🏷️ Entities (${mentions.length})`}
+          </button>
+        ))}
+      </div>
+
+      {/* Relations tab */}
+      {tab === 'edges' && (
+        <div id="graph-edges-list">
+          {edges.length === 0 ? (
+            <div style={{ color: '#475569', fontSize: 13, padding: '24px 0' }}>
+              {entryId ? 'No edges found for this entry.' : 'Enter an entry ID above to load its relations.'}
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {edges.map(edge => (
+                <div key={edge.id} style={{
+                  background: '#1e293b', border: '1px solid #334155',
+                  borderRadius: 10, padding: '14px 18px',
+                  display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap',
+                }}>
+                  <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: 11, fontFamily: 'monospace', color: '#64748b' }}>
+                      {edge.fromEntryId.slice(0, 8)}…
+                    </span>
+                    <EdgeTypeBadge type={edge.edgeType} />
+                    <span style={{ fontSize: 11, fontFamily: 'monospace', color: '#64748b' }}>
+                      {edge.toEntryId.slice(0, 8)}…
+                    </span>
+                    <span style={{ fontSize: 11, color: '#475569' }}>
+                      w={edge.weight.toFixed(2)}
+                    </span>
+                    <span style={{ fontSize: 11, color: '#475569' }}>
+                      {SOURCE_LABELS[edge.source] ?? edge.source}
+                    </span>
+                  </div>
+                  <AcceptanceBadge status={edge.isAccepted} />
+                  {edge.source === 'manual' && (
+                    <button
+                      onClick={() => void handleDelete(edge.id)}
+                      style={{
+                        background: '#7f1d1d', color: '#fca5a5', border: 'none',
+                        borderRadius: 6, padding: '4px 10px', fontSize: 11,
+                        cursor: 'pointer', fontWeight: 600,
+                      }}
+                    >
+                      Delete
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Pending tab */}
+      {tab === 'pending' && (
+        <div id="graph-pending-list">
+          {pending.length === 0 ? (
+            <div style={{ color: '#475569', fontSize: 13, padding: '24px 0' }}>
+              No pending edges — the queue is clear.
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+              {pending.map(edge => (
+                <div key={edge.id} style={{
+                  background: '#1e293b', border: '1px solid #78350f',
+                  borderRadius: 10, padding: '14px 18px',
+                  display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap',
+                }}>
+                  <div style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                    <span style={{ fontSize: 11, fontFamily: 'monospace', color: '#64748b' }}>
+                      {edge.fromEntryId.slice(0, 8)}…
+                    </span>
+                    <EdgeTypeBadge type={edge.edgeType} />
+                    <span style={{ fontSize: 11, fontFamily: 'monospace', color: '#64748b' }}>
+                      {edge.toEntryId.slice(0, 8)}…
+                    </span>
+                    <span style={{ fontSize: 11, color: '#475569' }}>
+                      {SOURCE_LABELS[edge.source] ?? edge.source}
+                    </span>
+                    <span style={{ fontSize: 11, color: '#475569' }}>
+                      w={edge.weight.toFixed(2)}
+                    </span>
+                  </div>
+                  <div style={{ display: 'flex', gap: 6 }}>
+                    <button
+                      id={`accept-${edge.id}`}
+                      onClick={() => void handleAccept(edge.id)}
+                      style={{
+                        background: '#14532d', color: '#4ade80', border: 'none',
+                        borderRadius: 6, padding: '4px 12px', fontSize: 11,
+                        cursor: 'pointer', fontWeight: 600,
+                      }}
+                    >
+                      ✓ Accept
+                    </button>
+                    <button
+                      id={`reject-${edge.id}`}
+                      onClick={() => void handleReject(edge.id)}
+                      style={{
+                        background: '#7f1d1d', color: '#fca5a5', border: 'none',
+                        borderRadius: 6, padding: '4px 12px', fontSize: 11,
+                        cursor: 'pointer', fontWeight: 600,
+                      }}
+                    >
+                      ✗ Reject
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Entities tab */}
+      {tab === 'entities' && (
+        <div id="graph-entities-list">
+          {mentions.length === 0 ? (
+            <div style={{ color: '#475569', fontSize: 13, padding: '24px 0' }}>
+              {entryId ? 'No entity mentions found for this entry.' : 'Enter an entry ID above.'}
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, padding: '8px 0' }}>
+              {mentions.map(m => (
+                <span
+                  key={m.id}
+                  title={`${m.entity.entityType} · ${m.entity.mentionCount} mentions · confidence: ${m.confidence.toFixed(2)}`}
+                  style={{
+                    background: '#1e3a5f',
+                    color: '#93c5fd',
+                    borderRadius: 99,
+                    padding: '4px 12px',
+                    fontSize: 13,
+                    fontWeight: 600,
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 6,
+                  }}
+                >
+                  <span style={{ fontSize: 10, color: '#60a5fa', textTransform: 'uppercase' }}>
+                    {m.entity.entityType}
+                  </span>
+                  {m.entity.entityText}
+                  <span style={{ fontSize: 10, color: '#3b82f6' }}>×{m.entity.mentionCount}</span>
+                </span>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
 // ─── App ──────────────────────────────────────────────────────────────────────
 
 function App() {
   const [results, setResults] = React.useState<SearchResponse | null>(null)
   const [searchedQuery, setSearchedQuery] = React.useState('')
   const [loading, setLoading] = React.useState(false)
-  const [view, setView] = React.useState<'search' | 'ai'>('search')
+  const [view, setView] = React.useState<'search' | 'ai' | 'graph'>('search')
 
   return (
     <div style={appStyle}>
@@ -652,6 +1098,17 @@ function App() {
             >
               🧠 AI
             </button>
+            <button
+              id="nav-graph"
+              onClick={() => setView('graph')}
+              style={{
+                ...navBtnStyle,
+                background: view === 'graph' ? '#6366f1' : 'transparent',
+                color: view === 'graph' ? '#fff' : '#94a3b8',
+              }}
+            >
+              🕸️ Graph
+            </button>
           </nav>
         </div>
         {view === 'search' && (
@@ -664,10 +1121,12 @@ function App() {
       <main style={mainStyle}>
         {view === 'search' && <SearchResults response={results} query={searchedQuery} loading={loading} />}
         {view === 'ai' && <AIDashboard />}
+        {view === 'graph' && <GraphPanel />}
       </main>
     </div>
   )
 }
+
 
 // ─── Styles ───────────────────────────────────────────────────────────────────
 

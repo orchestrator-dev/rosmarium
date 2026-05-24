@@ -19,8 +19,10 @@ from ..intelligence.duplicate_detector import duplicate_detector
 from ..intelligence.ner import ner_extractor
 from ..intelligence.summarizer import content_summarizer
 from ..intelligence.tagger import auto_tagger
+from ..graph.inference import inference_engine
 
 logger = structlog.get_logger(__name__)
+
 
 
 class AnalyseJobPayload(BaseModel):
@@ -158,3 +160,44 @@ async def process_intelligence_job(raw_payload: dict[str, Any]) -> None:
                 for d in results.get("duplicates", [])
             ),
         )
+
+    # ── Graph inference ───────────────────────────────────────────────────────
+    # Runs after intelligence results are persisted. Reads graph settings directly
+    # from the content_types table to avoid an HTTP round-trip.
+    pool = await get_pool()
+    async with pool.acquire() as conn:
+        ct_row = await conn.fetchrow(
+            """
+            SELECT settings
+            FROM content_types
+            WHERE name = $1
+              AND archived_at IS NULL
+            """,
+            payload.contentType,
+        )
+
+    if ct_row is not None:
+        import json as _json
+
+        raw_settings: dict[str, Any] = _json.loads(ct_row["settings"] or "{}")
+        graph_settings: dict[str, Any] = raw_settings.get("graph", {})
+
+        if graph_settings.get("enabled", False):
+            ner_results: dict[str, list[str]] | None = results.get("entities")
+            async with pool.acquire() as graph_conn:
+                try:
+                    await inference_engine.run_all(
+                        entry_id=payload.contentEntryId,
+                        content_type=payload.contentType,
+                        ner_results=ner_results,
+                        text_content=text,
+                        graph_settings=graph_settings,
+                        conn=graph_conn,
+                    )
+                except Exception as exc:  # noqa: BLE001
+                    logger.warning(
+                        "graph_inference_failed",
+                        entry_id=payload.contentEntryId,
+                        error=str(exc),
+                    )
+
