@@ -1,5 +1,6 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
+import cytoscape from 'cytoscape'
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -692,6 +693,60 @@ function AcceptanceBadge({ status }: { status: GraphEdge['isAccepted'] }) {
   )
 }
 
+function CytoscapeViewer({ rootId }: { rootId: string }) {
+  const containerRef = React.useRef<HTMLDivElement>(null)
+  const cyRef = React.useRef<cytoscape.Core | null>(null)
+  const [loading, setLoading] = React.useState(false)
+  const [depth, setDepth] = React.useState(2)
+  const [edgeType, setEdgeType] = React.useState('')
+
+  const loadGraph = async () => {
+    if (!rootId) return
+    setLoading(true)
+    try {
+      const qs = new URLSearchParams({ rootId, depth: depth.toString() })
+      if (edgeType) qs.set('edgeType', edgeType)
+      const res = await fetch(`/api/graph/visualize?${qs}`)
+      if (res.ok) {
+        const json = await res.json()
+        if (cyRef.current) cyRef.current.destroy()
+        if (containerRef.current) {
+          cyRef.current = cytoscape({
+            container: containerRef.current,
+            elements: [...json.data.nodes, ...json.data.edges],
+            style: [
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              { selector: 'node', style: { 'label': 'data(label)', 'background-color': '#6366f1', 'color': '#fff', 'text-valign': 'center', 'font-size': '10px', 'text-outline-width': 2, 'text-outline-color': '#1e293b' } as any },
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              { selector: 'node[group="article"]', style: { 'background-color': '#0891b2' } as any },
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              { selector: `node[id="${rootId}"]`, style: { 'background-color': '#d946ef', 'width': 40, 'height': 40 } as any },
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              { selector: 'edge', style: { 'label': 'data(label)', 'width': 2, 'line-color': '#475569', 'target-arrow-color': '#475569', 'target-arrow-shape': 'triangle', 'curve-style': 'bezier', 'font-size': '8px', 'color': '#cbd5e1', 'text-outline-width': 1, 'text-outline-color': '#0f172a' } as any },
+            ],
+            layout: { name: 'cose', padding: 30 }
+          })
+        }
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  React.useEffect(() => { void loadGraph() }, [rootId])
+
+  return (
+    <div style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: 12, padding: 16 }}>
+      <div style={{ display: 'flex', gap: 8, marginBottom: 12 }}>
+        <input type="number" value={depth} onChange={e => setDepth(Number(e.target.value))} style={{...dashInputStyle, flex: 0.5}} min={1} max={5} />
+        <input type="text" value={edgeType} onChange={e => setEdgeType(e.target.value)} placeholder="Edge type filter..." style={{...dashInputStyle, flex: 1}} />
+        <button onClick={() => void loadGraph()} style={dashBtnStyle} disabled={loading}>{loading ? '⏳' : 'Refresh'}</button>
+      </div>
+      <div ref={containerRef} style={{ width: '100%', height: 500, background: '#1e293b', borderRadius: 8 }} />
+    </div>
+  )
+}
+
 function GraphPanel() {
   const [entryId, setEntryId] = React.useState('')
   const [edges, setEdges] = React.useState<GraphEdge[]>([])
@@ -699,7 +754,7 @@ function GraphPanel() {
   const [mentions, setMentions] = React.useState<EntityMention[]>([])
   const [loading, setLoading] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
-  const [tab, setTab] = React.useState<'edges' | 'pending' | 'entities'>('edges')
+  const [tab, setTab] = React.useState<'edges' | 'pending' | 'entities' | 'explore'>('edges')
   const [showAddEdge, setShowAddEdge] = React.useState(false)
   const [addToEntryId, setAddToEntryId] = React.useState('')
   const [addEdgeType, setAddEdgeType] = React.useState('relatedTo')
@@ -890,7 +945,7 @@ function GraphPanel() {
 
       {/* Tabs */}
       <div style={{ display: 'flex', gap: 4, marginBottom: 16 }}>
-        {(['edges', 'pending', 'entities'] as const).map(t => (
+        {(['edges', 'explore', 'pending', 'entities'] as const).map(t => (
           <button
             key={t}
             id={`graph-tab-${t}`}
@@ -903,11 +958,24 @@ function GraphPanel() {
             }}
           >
             {t === 'edges' && `🔗 Relations (${edges.length})`}
+            {t === 'explore' && `🧭 Explorer`}
             {t === 'pending' && `⏳ Pending (${pending.length})`}
             {t === 'entities' && `🏷️ Entities (${mentions.length})`}
           </button>
         ))}
       </div>
+
+      {tab === 'explore' && (
+        <div id="graph-explore-tab">
+          {entryId ? (
+            <CytoscapeViewer rootId={entryId} />
+          ) : (
+            <div style={{ color: '#475569', fontSize: 13, padding: '24px 0' }}>
+              Enter an entry ID above to explore the graph.
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Relations tab */}
       {tab === 'edges' && (

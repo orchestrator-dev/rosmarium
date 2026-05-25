@@ -15,11 +15,11 @@ import structlog
 from pydantic import BaseModel
 
 from ..database import get_pool
+from ..graph.inference import inference_engine
 from ..intelligence.duplicate_detector import duplicate_detector
 from ..intelligence.ner import ner_extractor
 from ..intelligence.summarizer import content_summarizer
 from ..intelligence.tagger import auto_tagger
-from ..graph.inference import inference_engine
 
 logger = structlog.get_logger(__name__)
 
@@ -194,7 +194,7 @@ async def process_intelligence_job(raw_payload: dict[str, Any]) -> None:
                         graph_settings=graph_settings,
                         conn=graph_conn,
                     )
-                except Exception as exc:  # noqa: BLE001
+                except Exception as exc:
                     logger.warning(
                         "graph_inference_failed",
                         entry_id=payload.contentEntryId,

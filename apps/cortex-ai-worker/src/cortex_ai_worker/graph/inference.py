@@ -12,8 +12,8 @@ import asyncpg
 import structlog
 
 from .ner_inference import infer_from_ner
-from .similarity_inference import infer_from_similarity
 from .reference_inference import infer_from_references
+from .similarity_inference import infer_from_similarity
 
 logger = structlog.get_logger(__name__)
 
@@ -62,7 +62,7 @@ class GraphInferenceEngine:
                     ner_results=ner_results,
                     conn=conn,
                 )
-            except Exception as exc:  # noqa: BLE001
+            except Exception as exc:
                 logger.warning(
                     "graph_ner_strategy_failed",
                     entry_id=entry_id,
@@ -80,7 +80,7 @@ class GraphInferenceEngine:
                     max_edges=max_edges,
                     conn=conn,
                 )
-            except Exception as exc:  # noqa: BLE001
+            except Exception as exc:
                 logger.warning(
                     "graph_similarity_strategy_failed",
                     entry_id=entry_id,
@@ -97,7 +97,7 @@ class GraphInferenceEngine:
                     text_content=text_content,
                     conn=conn,
                 )
-            except Exception as exc:  # noqa: BLE001
+            except Exception as exc:
                 logger.warning(
                     "graph_reference_strategy_failed",
                     entry_id=entry_id,

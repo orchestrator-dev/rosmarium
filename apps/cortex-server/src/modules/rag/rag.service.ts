@@ -20,6 +20,7 @@ import { rbacService } from "../rbac/rbac.service.js";
 import { PERMISSIONS } from "../rbac/permissions.js";
 import type { AuthenticatedUser } from "../auth/auth.service.js";
 import type { ContentEntry } from "../../db/schema/index.js";
+import { graphEdges } from "../../db/schema/index.js";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -165,6 +166,7 @@ export const ragService = {
      * @param opts.rerank        - Enable Cohere rerank (default false)
      * @param opts.format        - Response format: 'chunks' | 'context' | 'json'
      * @param opts.maxTokens     - Token budget for context format (default 4000)
+     * @param opts.enhanceWithGraph - Blend vector with graph neighbors (default false)
      * @param opts.user          - Authenticated user (for RBAC)
      */
     async retrieve(opts: {
@@ -174,6 +176,7 @@ export const ragService = {
         rerank?: boolean;
         format?: RagFormat;
         maxTokens?: number;
+        enhanceWithGraph?: boolean;
         user: AuthenticatedUser;
     }): Promise<RagResponse> {
         const { query, user } = opts;
@@ -201,6 +204,34 @@ export const ragService = {
             topK,
             rerank: opts.rerank ?? false,
         });
+
+        if (opts.enhanceWithGraph && workerResponse.chunks.length > 0) {
+            // Find graph neighbors of top 5 results
+            const baseEntryIds = [...new Set(workerResponse.chunks.map(c => c.contentEntryId))].slice(0, 5);
+            const edges = await db.select().from(graphEdges).where(inArray(graphEdges.fromEntryId, baseEntryIds));
+            const neighborIds = edges.map(e => e.toEntryId);
+            
+            if (neighborIds.length > 0) {
+                // Fetch chunks from neighbors to enhance context
+                const neighborResponse = await ragClient.retrieve({
+                    query,
+                    contentTypes,
+                    allowedEntryIds: neighborIds,
+                    topK: 5,
+                    rerank: false
+                });
+
+                for (const nc of neighborResponse.chunks) {
+                    if (!workerResponse.chunks.some(c => c.contentEntryId === nc.contentEntryId && c.chunkIndex === nc.chunkIndex)) {
+                        nc.score = nc.score * 0.9; // Apply graph discount
+                        workerResponse.chunks.push(nc);
+                    }
+                }
+                // Re-sort and truncate
+                workerResponse.chunks.sort((a, b) => b.score - a.score);
+                workerResponse.chunks = workerResponse.chunks.slice(0, topK);
+            }
+        }
 
         const meta: RagMeta = {
             query: workerResponse.query,

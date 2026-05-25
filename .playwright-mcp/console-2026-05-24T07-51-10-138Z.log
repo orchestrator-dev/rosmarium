@@ -1,0 +1,4 @@
+[    1090ms] [WARNING] Pagefind JS version doesn't match the version in your search index.
+Pagefind JS: 1.4.0. Pagefind index: 1.5.2
+If you upgraded Pagefind recently, you likely have a cached pagefind.js file.
+If you encounter any search errors, try clearing your cache. @ https://orchestrator.dev/pagefind/pagefind.js:0

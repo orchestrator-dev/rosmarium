@@ -10,7 +10,6 @@ For each named entity in ner_results:
 from __future__ import annotations
 
 import uuid
-from typing import Any
 
 import asyncpg
 import structlog
@@ -119,7 +118,7 @@ async def infer_from_ner(
                         "pending",
                     )
                     edges_created += 1
-                except Exception:  # noqa: BLE001
+                except Exception:
                     logger.warning(
                         "ner_edge_insert_failed",
                         entry_id=entry_id,

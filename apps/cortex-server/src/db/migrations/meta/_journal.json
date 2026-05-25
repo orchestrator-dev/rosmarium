@@ -50,6 +50,13 @@
       "when": 1748130000000,
       "tag": "0007_graph_data_model",
       "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1779741743790,
+      "tag": "0007_ordinary_network",
+      "breakpoints": true
     }
   ]
 }
