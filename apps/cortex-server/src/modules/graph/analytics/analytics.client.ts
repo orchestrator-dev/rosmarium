@@ -23,14 +23,14 @@ class AnalyticsError extends Error {
 }
 
 export const analyticsClient = {
-    async triggerCompute(contentType?: string): Promise<void> {
+    async triggerCompute(contentType?: string, requestedBy = "system"): Promise<void> {
         const res = await fetch(`${config.AI_WORKER_URL}/graph/analytics/compute`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
                 "X-Worker-Secret": config.AI_WORKER_SECRET,
             },
-            body: JSON.stringify({ contentType }),
+            body: JSON.stringify({ contentType, requestedBy }),
         });
 
         if (!res.ok) {

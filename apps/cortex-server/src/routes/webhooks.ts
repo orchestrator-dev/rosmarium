@@ -1,19 +1,37 @@
 import type { FastifyInstance, FastifyPluginAsync } from "fastify";
 import fp from "fastify-plugin";
 import { webhookService } from "../modules/webhooks/webhook.service.js";
+import { requireRole } from "../modules/rbac/rbac.middleware.js";
 
 const webhookRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
-    // GET /api/webhooks
+    // GET /api/webhooks — read-only, authenticated but no role required
     app.get("/api/webhooks", {
         schema: { tags: ["Webhooks"], summary: "List all webhooks" },
     }, async () => {
         return { data: await webhookService.list() };
     });
 
-    // POST /api/webhooks
+    // POST /api/webhooks — admin only
     app.post<{ Body: { name: string; url: string; events: string[]; contentTypes?: string[]; secret?: string } }>(
         "/api/webhooks",
-        { schema: { tags: ["Webhooks"], summary: "Register a webhook", body: { type: "object", required: ["name", "url", "events"], properties: { name: { type: "string" }, url: { type: "string" }, events: { type: "array", items: { type: "string" } }, contentTypes: { type: "array", items: { type: "string" } }, secret: { type: "string" } } } } },
+        {
+            preHandler: requireRole("admin", "super_admin"),
+            schema: {
+                tags: ["Webhooks"],
+                summary: "Register a webhook",
+                body: {
+                    type: "object",
+                    required: ["name", "url", "events"],
+                    properties: {
+                        name: { type: "string" },
+                        url: { type: "string" },
+                        events: { type: "array", items: { type: "string" } },
+                        contentTypes: { type: "array", items: { type: "string" } },
+                        secret: { type: "string" },
+                    },
+                },
+            },
+        },
         async (request, reply) => {
             try {
                 const webhook = await webhookService.register(request.body);
@@ -25,7 +43,7 @@ const webhookRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
         },
     );
 
-    // GET /api/webhooks/:id
+    // GET /api/webhooks/:id — read-only
     app.get<{ Params: { id: string } }>("/api/webhooks/:id", {
         schema: { tags: ["Webhooks"], summary: "Get a webhook by id" },
     }, async (request, reply) => {
@@ -34,10 +52,13 @@ const webhookRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
         return { data: webhook };
     });
 
-    // PATCH /api/webhooks/:id
+    // PATCH /api/webhooks/:id — admin only
     app.patch<{ Params: { id: string }; Body: { name?: string; url?: string; events?: string[]; contentTypes?: string[]; isActive?: boolean } }>(
         "/api/webhooks/:id",
-        { schema: { tags: ["Webhooks"], summary: "Update a webhook" } },
+        {
+            preHandler: requireRole("admin", "super_admin"),
+            schema: { tags: ["Webhooks"], summary: "Update a webhook" },
+        },
         async (request, reply) => {
             try {
                 const webhook = await webhookService.update(request.params.id, request.body);
@@ -50,8 +71,9 @@ const webhookRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
         },
     );
 
-    // DELETE /api/webhooks/:id
+    // DELETE /api/webhooks/:id — admin only
     app.delete<{ Params: { id: string } }>("/api/webhooks/:id", {
+        preHandler: requireRole("admin", "super_admin"),
         schema: { tags: ["Webhooks"], summary: "Delete a webhook" },
     }, async (request, reply) => {
         try {
@@ -63,7 +85,7 @@ const webhookRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
         }
     });
 
-    // GET /api/webhooks/:id/deliveries
+    // GET /api/webhooks/:id/deliveries — read-only
     app.get<{ Params: { id: string }; Querystring: { limit?: string; offset?: string } }>(
         "/api/webhooks/:id/deliveries",
         { schema: { tags: ["Webhooks"], summary: "Get delivery history for a webhook" } },
@@ -74,10 +96,13 @@ const webhookRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
         },
     );
 
-    // POST /api/webhooks/:id/deliveries/:dId/replay
+    // POST /api/webhooks/:id/deliveries/:dId/replay — admin only
     app.post<{ Params: { id: string; dId: string } }>(
         "/api/webhooks/:id/deliveries/:dId/replay",
-        { schema: { tags: ["Webhooks"], summary: "Replay a failed delivery" } },
+        {
+            preHandler: requireRole("admin", "super_admin"),
+            schema: { tags: ["Webhooks"], summary: "Replay a failed delivery" },
+        },
         async (request, reply) => {
             try {
                 await webhookService.replay(request.params.dId);

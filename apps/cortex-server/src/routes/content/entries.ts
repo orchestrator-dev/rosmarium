@@ -366,7 +366,7 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     }>(
         "/api/content/:type/:id/unpublish",
         {
-            preHandler: requireAuth(),
+            preHandler: requirePermission(PERMISSIONS.CONTENT_PUBLISH),
             schema: {
                 tags: ["Content Entries"],
                 summary: "Unpublish a content entry",
