@@ -1,0 +1,194 @@
+- generic [ref=e1]:
+  - banner [ref=e2]:
+    - navigation [ref=e3]:
+      - generic [ref=e4]:
+        - link "orchestrator.dev" [ref=e5] [cursor=pointer]:
+          - /url: /
+        - generic [ref=e6]:
+          - list [ref=e7]:
+            - listitem [ref=e8]:
+              - link "Home" [ref=e9] [cursor=pointer]:
+                - /url: /
+            - listitem [ref=e10]:
+              - link "Blog" [ref=e11] [cursor=pointer]:
+                - /url: /blog
+            - listitem [ref=e12]:
+              - link "Portfolio" [ref=e13] [cursor=pointer]:
+                - /url: /portfolio
+            - listitem [ref=e14]:
+              - link "About" [ref=e15] [cursor=pointer]:
+                - /url: /about
+          - button "Open search" [ref=e16] [cursor=pointer]:
+            - img [ref=e17]
+          - button "Toggle dark mode" [ref=e19] [cursor=pointer]:
+            - img [ref=e20]
+  - generic [ref=e140]:
+    - searchbox "Search..." [active] [ref=e141]
+    - button "Close search" [ref=e142] [cursor=pointer]:
+      - img [ref=e143]
+  - main [ref=e22]:
+    - generic [ref=e23]:
+      - generic [ref=e24]:
+        - img "Orchestrator icon" [ref=e25]
+        - generic [ref=e26]: Orchestrator
+      - heading "Building reliable, observable, and automated systems." [level=1] [ref=e27]
+      - paragraph [ref=e28]: I write about engineering decisions, automation, infrastructure, and the projects I build.
+      - generic [ref=e29]:
+        - link "View portfolio" [ref=e30] [cursor=pointer]:
+          - /url: /portfolio
+        - link "Read the blog" [ref=e31] [cursor=pointer]:
+          - /url: /blog
+    - generic [ref=e32]:
+      - generic [ref=e33]:
+        - heading "Recent Blog Posts" [level=2] [ref=e34]
+        - link "View all →" [ref=e35] [cursor=pointer]:
+          - /url: /blog
+      - generic [ref=e36]:
+        - article [ref=e37]:
+          - 'link "CUDA vs ROCm vs Vulkan vs Metal: GPU Compute in 2026" [ref=e38] [cursor=pointer]':
+            - /url: /blog/2026-05-24-gpu-compute-platforms-comparison
+            - 'img "CUDA vs ROCm vs Vulkan vs Metal: GPU Compute in 2026" [ref=e39]'
+          - generic [ref=e40]:
+            - 'link "CUDA vs ROCm vs Vulkan vs Metal: GPU Compute in 2026" [ref=e41] [cursor=pointer]':
+              - /url: /blog/2026-05-24-gpu-compute-platforms-comparison
+              - 'heading "CUDA vs ROCm vs Vulkan vs Metal: GPU Compute in 2026" [level=3] [ref=e42]'
+            - paragraph [ref=e43]: A deep technical comparison of the four major GPU compute platforms—when to use each, their trade-offs, ecosystem maturity, and what 2025–2026 has changed.
+            - generic [ref=e44]:
+              - time [ref=e45]: May 24, 2026
+              - generic [ref=e46]:
+                - link "View all posts with tag gpu-compute" [ref=e47] [cursor=pointer]:
+                  - /url: /tags/gpu-compute
+                  - text: "#gpu-compute"
+                - link "View all posts with tag cuda" [ref=e48] [cursor=pointer]:
+                  - /url: /tags/cuda
+                  - text: "#cuda"
+        - article [ref=e49]:
+          - 'link "Claude Code & Agent Memory: Best Practices for 2026" [ref=e50] [cursor=pointer]':
+            - /url: /blog/2026-04-06--claude-code-agent-memory-2026
+            - 'img "Claude Code & Agent Memory: Best Practices for 2026" [ref=e51]'
+          - generic [ref=e52]:
+            - 'link "Claude Code & Agent Memory: Best Practices for 2026" [ref=e53] [cursor=pointer]':
+              - /url: /blog/2026-04-06--claude-code-agent-memory-2026
+              - 'heading "Claude Code & Agent Memory: Best Practices for 2026" [level=3] [ref=e54]'
+            - paragraph [ref=e55]: A deep-dive into Claude Code's layered memory architecture and how to engineer persistent, context-aware agents that don't forget what matters.
+            - generic [ref=e56]:
+              - time [ref=e57]: April 6, 2026
+              - generic [ref=e58]:
+                - link "View all posts with tag claude-code" [ref=e59] [cursor=pointer]:
+                  - /url: /tags/claude-code
+                  - text: "#claude-code"
+                - link "View all posts with tag agent-memory" [ref=e60] [cursor=pointer]:
+                  - /url: /tags/agent-memory
+                  - text: "#agent-memory"
+        - article [ref=e61]:
+          - 'link "Prompt Tuning: Adapt LLMs Without Retraining" [ref=e62] [cursor=pointer]':
+            - /url: /blog/2026-03-30-prompt-tuning
+            - 'img "Prompt Tuning: Adapt LLMs Without Retraining" [ref=e63]'
+          - generic [ref=e64]:
+            - 'link "Prompt Tuning: Adapt LLMs Without Retraining" [ref=e65] [cursor=pointer]':
+              - /url: /blog/2026-03-30-prompt-tuning
+              - 'heading "Prompt Tuning: Adapt LLMs Without Retraining" [level=3] [ref=e66]'
+            - paragraph [ref=e67]: Learn how prompt tuning uses soft prompts to specialize large language models for specific tasks at a fraction of the cost of full fine-tuning.
+            - generic [ref=e68]:
+              - time [ref=e69]: March 30, 2026
+              - generic [ref=e70]:
+                - link "View all posts with tag prompt-tuning" [ref=e71] [cursor=pointer]:
+                  - /url: /tags/prompt-tuning
+                  - text: "#prompt-tuning"
+                - link "View all posts with tag llm" [ref=e72] [cursor=pointer]:
+                  - /url: /tags/llm
+                  - text: "#llm"
+    - generic [ref=e73]:
+      - generic [ref=e74]:
+        - heading "Featured Projects" [level=2] [ref=e75]
+        - link "View all →" [ref=e76] [cursor=pointer]:
+          - /url: /portfolio
+      - generic [ref=e77]:
+        - article [ref=e78]:
+          - 'link "Cortex CMS: AI-Native Headless Content Repository" [ref=e79] [cursor=pointer]':
+            - /url: /portfolio/2026-03-12-project-cortex-cms
+            - 'img "Cortex CMS: AI-Native Headless Content Repository" [ref=e80]'
+          - generic [ref=e81]:
+            - 'link "Cortex CMS: AI-Native Headless Content Repository" [ref=e82] [cursor=pointer]':
+              - /url: /portfolio/2026-03-12-project-cortex-cms
+              - 'heading "Cortex CMS: AI-Native Headless Content Repository" [level=3] [ref=e83]'
+            - paragraph [ref=e84]: An open-source, polyglot headless CMS featuring automated GraphQL APIs, Webhooks, and built-in AI pipelines.
+            - generic [ref=e85]:
+              - link "View all items tagged typescript" [ref=e86] [cursor=pointer]:
+                - /url: /tags/typescript
+                - text: "#typescript"
+              - link "View all items tagged fastify" [ref=e87] [cursor=pointer]:
+                - /url: /tags/fastify
+                - text: "#fastify"
+              - link "View all items tagged graphql-yoga" [ref=e88] [cursor=pointer]:
+                - /url: /tags/graphql-yoga
+                - text: "#graphql-yoga"
+            - generic [ref=e89]:
+              - link "Visit →" [ref=e90] [cursor=pointer]:
+                - /url: https://github.com/orchestrator-dev/cortex
+              - link "GitHub" [ref=e91] [cursor=pointer]:
+                - /url: https://github.com/orchestrator-dev/cortex
+        - article [ref=e92]:
+          - 'link "Project Morpheus: GenAI Security Framework" [ref=e93] [cursor=pointer]':
+            - /url: /portfolio/2026-02-25-project-morpheus
+            - 'img "Project Morpheus: GenAI Security Framework" [ref=e94]'
+          - generic [ref=e95]:
+            - 'link "Project Morpheus: GenAI Security Framework" [ref=e96] [cursor=pointer]':
+              - /url: /portfolio/2026-02-25-project-morpheus
+              - 'heading "Project Morpheus: GenAI Security Framework" [level=3] [ref=e97]'
+            - paragraph [ref=e98]: A comprehensive, automated red-teaming orchestrator for Autonomous Agents and LLMs.
+            - generic [ref=e99]:
+              - link "View all items tagged python" [ref=e100] [cursor=pointer]:
+                - /url: /tags/python
+                - text: "#python"
+              - link "View all items tagged pytest" [ref=e101] [cursor=pointer]:
+                - /url: /tags/pytest
+                - text: "#pytest"
+              - link "View all items tagged pydantic" [ref=e102] [cursor=pointer]:
+                - /url: /tags/pydantic
+                - text: "#pydantic"
+            - generic [ref=e103]:
+              - link "Visit →" [ref=e104] [cursor=pointer]:
+                - /url: https://github.com/orchestrator-dev/morpheus
+              - link "GitHub" [ref=e105] [cursor=pointer]:
+                - /url: https://github.com/orchestrator-dev/morpheus
+        - article [ref=e106]:
+          - 'link "Octo: Intelligent Distributed HTTP Monitoring" [ref=e107] [cursor=pointer]':
+            - /url: /portfolio/2026-02-16-octo-monitor
+            - 'img "Octo: Intelligent Distributed HTTP Monitoring" [ref=e108]'
+          - generic [ref=e109]:
+            - 'link "Octo: Intelligent Distributed HTTP Monitoring" [ref=e110] [cursor=pointer]':
+              - /url: /portfolio/2026-02-16-octo-monitor
+              - 'heading "Octo: Intelligent Distributed HTTP Monitoring" [level=3] [ref=e111]'
+            - paragraph [ref=e112]: A lightweight, high-performance monitoring system built with Go, React, and TimescaleDB.
+            - generic [ref=e113]:
+              - link "View all items tagged go" [ref=e114] [cursor=pointer]:
+                - /url: /tags/go
+                - text: "#go"
+              - link "View all items tagged react" [ref=e115] [cursor=pointer]:
+                - /url: /tags/react
+                - text: "#react"
+              - link "View all items tagged timescaledb" [ref=e116] [cursor=pointer]:
+                - /url: /tags/timescaledb
+                - text: "#timescaledb"
+            - generic [ref=e117]:
+              - link "Visit →" [ref=e118] [cursor=pointer]:
+                - /url: https://github.com/vsmanu/octo
+              - link "GitHub" [ref=e119] [cursor=pointer]:
+                - /url: https://github.com/vsmanu/octo
+  - contentinfo [ref=e120]:
+    - generic [ref=e122]:
+      - paragraph [ref=e123]: © 2026 orchestrator.dev. All rights reserved.
+      - generic [ref=e124]:
+        - link "RSS Feed" [ref=e125] [cursor=pointer]:
+          - /url: /rss.xml
+        - generic [ref=e126]:
+          - link "GitHub" [ref=e127] [cursor=pointer]:
+            - /url: https://github.com/vsmanu/
+            - img [ref=e128]
+          - link "LinkedIn" [ref=e130] [cursor=pointer]:
+            - /url: https://www.linkedin.com/in/manu-vamadevan-96998932/
+            - img [ref=e131]
+          - link "X (Twitter)" [ref=e133] [cursor=pointer]:
+            - /url: https://x.com/vsmanu
+            - img [ref=e134]

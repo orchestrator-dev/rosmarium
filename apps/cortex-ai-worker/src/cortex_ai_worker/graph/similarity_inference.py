@@ -8,7 +8,6 @@ pgvector's <=> operator and inserts 'relatedTo' edges for results above threshol
 from __future__ import annotations
 
 import uuid
-from typing import Any
 
 import asyncpg
 import structlog
@@ -50,7 +49,7 @@ async def infer_from_similarity(
         WHERE content_entry_id = $1
         ORDER BY chunk_index
         LIMIT 1
-        """,
+        """,  # noqa: S608
         entry_id,
     )
 
@@ -79,7 +78,7 @@ async def infer_from_similarity(
           AND 1 - (e.embedding <=> $1::vector) >= $3
         ORDER BY e.content_entry_id, (e.embedding <=> $1::vector)
         LIMIT $4
-        """,
+        """,  # noqa: S608
         embedding,
         entry_id,
         threshold,
@@ -136,7 +135,7 @@ async def infer_from_similarity(
                 "pending",
             )
             edges_created += 1
-        except Exception:  # noqa: BLE001
+        except Exception:
             logger.warning(
                 "similarity_edge_insert_failed",
                 entry_id=entry_id,

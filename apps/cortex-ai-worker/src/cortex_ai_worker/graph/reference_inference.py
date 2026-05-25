@@ -108,7 +108,7 @@ async def infer_from_references(
                     "pending",
                 )
                 edges_created += 1
-            except Exception:  # noqa: BLE001
+            except Exception:
                 logger.warning(
                     "reference_edge_insert_failed",
                     entry_id=entry_id,

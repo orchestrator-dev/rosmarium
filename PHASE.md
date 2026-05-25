@@ -13,9 +13,10 @@
 -   [x] **Month 7:** API Foundation & Caching (REST, Fastify)
 -   [x] **Month 8:** GraphQL & Webhook Engine (Mercurius, background jobs)
 -   [x] **Month 9:** Graph Data Model (Relations, Edge inference, Graph service)
--   [ ] **Month 10:** Multi-Tenant Architecture & Sub-organizations (Row-level security, isolated content spaces)
--   [ ] **Month 11:** Edge CDN Integration & Static Export (Vercel/Cloudflare targets, asset optimization)
--   [ ] **Month 12:** Phase 3 Hardening (Rate limiting, abuse prevention, final scale tests)
+-   [x] **Month 10:** Graph Traversal API (Multi-hop traversal, Cypher parser, GraphQL @traverse, Cytoscape Explorer)
+-   [ ] **Month 11:** Multi-Tenant Architecture & Sub-organizations (Row-level security, isolated content spaces)
+-   [ ] **Month 12:** Edge CDN Integration & Static Export (Vercel/Cloudflare targets, asset optimization)
+-   [ ] **Month 13:** Phase 3 Hardening (Rate limiting, abuse prevention, final scale tests)
 
 ## Shipped Milestones
 - ✅ Phase 1 — CMS Foundation (v0.1.0)
@@ -93,3 +94,6 @@ NER extraction, content summarization, semantic duplicate detection,
 intelligence queue consumer, REST endpoints, admin AI Dashboard (v0.5.0).
 Month 9 shipped — Graph Data Model complete: edges, inference (NER, similarity, refs),
 REST API, graph service, Admin UI GraphPanel (v0.6.0).
+Month 10 shipped — Graph Traversal API complete: multi-hop traversal, pathfinding, 
+Cypher-lite DSL parser, GraphQL @traverse directive, Graph-enhanced RAG,
+and Cytoscape.js Explorer in Admin UI (v0.7.0).

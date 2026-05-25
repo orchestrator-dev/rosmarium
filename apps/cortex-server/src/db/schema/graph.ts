@@ -11,8 +11,8 @@ import {
     vector,
 } from "drizzle-orm/pg-core";
 import { createId } from "@paralleldrive/cuid2";
-import { contentEntries } from "./content-entries.js";
-import { users } from "./users.js";
+import { contentEntries } from "./content-entries";
+import { users } from "./users";
 
 // ─── Enum ─────────────────────────────────────────────────────────────────────
 
@@ -73,6 +73,7 @@ export const graphEdges = pgTable(
         ),
         toIdx: index("graph_edges_to_idx").on(table.toEntryId, table.edgeType),
         typeIdx: index("graph_edges_type_idx").on(table.edgeType, table.weight),
+        weightIdx: index("graph_edges_weight_idx").on(table.weight),
         sourceIdx: index("graph_edges_source_idx").on(table.source),
         statusIdx: index("graph_edges_status_idx").on(table.isAccepted),
         uniqueEdge: uniqueIndex("graph_edges_unique_idx").on(
