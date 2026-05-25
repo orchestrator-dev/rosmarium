@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-05-25
+
+### Added
+- **rosmarium-server**: Multi-hop graph traversal engine with PostgreSQL recursive CTEs.
+- **rosmarium-server**: Traversal REST endpoints (`/api/graph/traverse`, `/api/graph/neighbors`, `/api/graph/path`, `/api/graph/recommend`).
+- **rosmarium-server**: Cypher-lite DSL parser to convert Cypher patterns to parameterized SQL.
+- **rosmarium-server**: GraphQL `@traverse` directive for content entry schemas.
+- **rosmarium-ai-worker**: Semantic graph recommendation integration combining structural and semantic scores.
+
 ## [0.5.0] - 2026-05-23
 
 ### Added
