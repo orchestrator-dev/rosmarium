@@ -1,6 +1,6 @@
 {
   "name": "rosmarium-cms",
-  "version": "0.3.0",
+  "version": "0.7.0",
   "private": true,
   "description": "Rosmarium CMS - an open-source, AI-native headless content repository",
   "scripts": {
