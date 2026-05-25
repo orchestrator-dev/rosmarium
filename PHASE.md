@@ -97,3 +97,6 @@ REST API, graph service, Admin UI GraphPanel (v0.6.0).
 Month 10 shipped — Graph Traversal API complete: multi-hop traversal, pathfinding, 
 Cypher-lite DSL parser, GraphQL @traverse directive, Graph-enhanced RAG,
 and Cytoscape.js Explorer in Admin UI (v0.7.0).
+Month 11 shipped — Graph Analytics and Knowledge Graph Export complete: NetworkX algorithms
+(PageRank, Louvain, HITS), analytics REST endpoints, multi-format knowledge graph export 
+(JSON-LD, RDF, GraphML, Cytoscape), Admin UI Analytics & Export dashboard (v0.8.0).

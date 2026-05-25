@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-05-25
+
+### Added
+- **cortex-ai-worker**: NetworkX analytics worker for PageRank, betweenness, community detection (Louvain), and HITS hub/authority scoring.
+- **cortex-ai-worker**: Knowledge graph export engine supporting JSON-LD, RDF Turtle, Cytoscape.js JSON, and GraphML formats.
+- **cortex-server**: Analytics REST endpoints (`/api/graph/communities/:contentType`, `/api/graph/influential/:contentType`, `/api/graph/analytics/compute`, `/api/graph/export`).
+
+### Fixed
+- **cortex-ai-worker**: Resolved `FastAPIError` by allowing `response_model=None` for multiple export format responses.
+- **cortex-server**: Fixed `cortex-server` JSONB property mappings for retrieving analytical results from the database.
+
 ## [0.7.0] - 2026-05-25
 
 ### Added

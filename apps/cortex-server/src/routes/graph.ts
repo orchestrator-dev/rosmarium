@@ -20,6 +20,9 @@ import { traverse } from "../modules/graph/traversal/traversal.engine.js";
 import { findShortestPath } from "../modules/graph/traversal/path.finder.js";
 import { getRecommendations } from "../modules/graph/traversal/recommender.js";
 import { executeCypher } from "../modules/graph/traversal/cypher.parser.js";
+import { analyticsClient } from "../modules/graph/analytics/analytics.client.js";
+import { db } from "../db/index.js";
+import { sql } from "drizzle-orm";
 
 // ─── Zod schemas ─────────────────────────────────────────────────────────────
 
@@ -77,6 +80,12 @@ const visualizeQuery = z.object({
     rootId: z.string().min(1),
     depth: z.coerce.number().int().min(1).max(5).optional(),
     edgeType: z.string().optional(),
+});
+
+const exportQuery = z.object({
+    format: z.enum(["json-ld", "rdf", "cytoscape", "graphml"]),
+    contentType: z.string().optional(),
+    includeAnalytics: z.enum(["true", "false"]).transform(v => v === "true").optional(),
 });
 
 // ─── Route handler ────────────────────────────────────────────────────────────
@@ -322,6 +331,95 @@ export default async function graphRoutes(app: FastifyInstance) {
             const edges = result.edges.map(e => ({ data: { id: e.id, source: e.fromEntryId, target: e.toEntryId, edgeType: e.edgeType, weight: e.weight, label: e.edgeType } }));
             
             return reply.send({ data: { nodes, edges, meta: { rootId: q.rootId, nodeCount: nodes.length, edgeCount: edges.length } } });
+        }
+    );
+
+    // POST /api/graph/analytics/compute
+    app.post(
+        "/api/graph/analytics/compute",
+        { preHandler: requireRole("admin", "super_admin") },
+        async (request, reply) => {
+            const parsed = z.object({ contentType: z.string().optional() }).safeParse(request.body);
+            if (!parsed.success) return reply.status(400).send({ error: parsed.error.message });
+            
+            await analyticsClient.triggerCompute(parsed.data.contentType);
+            return reply.status(202).send({ message: "Analytics computation queued" });
+        }
+    );
+
+    // GET /api/graph/analytics/:entryId
+    app.get<{ Params: { entryId: string } }>(
+        "/api/graph/analytics/:entryId",
+        { preHandler: requireAuth() },
+        async (request, reply) => {
+            const analytics = await analyticsClient.getEntryAnalytics(request.params.entryId);
+            if (!analytics) return reply.status(404).send({ error: { code: "NOT_FOUND", message: "Analytics not found" } });
+            return reply.send({ data: analytics });
+        }
+    );
+
+    // GET /api/graph/export
+    app.get(
+        "/api/graph/export",
+        { preHandler: requireRole("admin", "super_admin") },
+        async (request, reply) => {
+            const parsed = exportQuery.safeParse(request.query);
+            if (!parsed.success) return reply.status(400).send({ error: parsed.error.message });
+            
+            const q = parsed.data;
+            const stream = await analyticsClient.exportGraph({
+                format: q.format,
+                contentType: q.contentType,
+                includeAnalytics: q.includeAnalytics,
+            });
+            
+            if (q.format === "json-ld" || q.format === "cytoscape") {
+                reply.header("Content-Type", q.format === "json-ld" ? "application/ld+json" : "application/json");
+            } else if (q.format === "rdf") {
+                reply.header("Content-Type", "text/turtle");
+            } else if (q.format === "graphml") {
+                reply.header("Content-Type", "application/xml");
+            }
+            
+            return reply.send(stream);
+        }
+    );
+
+    // GET /api/graph/communities/:contentType
+    app.get<{ Params: { contentType: string } }>(
+        "/api/graph/communities/:contentType",
+        { preHandler: requireAuth() },
+        async (request, reply) => {
+            const result = await db.execute(sql`
+                SELECT 
+                  (metadata->'graph'->>'communityId')::int as "communityId",
+                  COUNT(*) as count,
+                  json_agg(json_build_object('id', id, 'title', data->>'title')) as members
+                FROM content_entries
+                WHERE content_type_id = ${request.params.contentType}
+                  AND metadata->'graph'->>'communityId' IS NOT NULL
+                GROUP BY "communityId"
+                ORDER BY count DESC
+                LIMIT 10
+            `);
+            return reply.send({ data: result });
+        }
+    );
+
+    // GET /api/graph/influential/:contentType
+    app.get<{ Params: { contentType: string } }>(
+        "/api/graph/influential/:contentType",
+        { preHandler: requireAuth() },
+        async (request, reply) => {
+            const result = await db.execute(sql`
+                SELECT id, data->>'title' as title, (metadata->'graph'->>'pagerankScore')::float as "pagerankScore"
+                FROM content_entries
+                WHERE content_type_id = ${request.params.contentType}
+                  AND metadata->'graph'->>'pagerankScore' IS NOT NULL
+                ORDER BY "pagerankScore" DESC
+                LIMIT 10
+            `);
+            return reply.send({ data: result });
         }
     );
 }

@@ -10,12 +10,12 @@ import pytest
 from cortex_ai_worker.graph.inference import GraphInferenceEngine
 
 
-@pytest.fixture()
+@pytest.fixture
 def engine() -> GraphInferenceEngine:
     return GraphInferenceEngine()
 
 
-@pytest.fixture()
+@pytest.fixture
 def mock_conn() -> MagicMock:
     return MagicMock()
 
