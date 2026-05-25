@@ -182,10 +182,12 @@ intelligence_consumer = QueueConsumer(
 async def start_consumer() -> None:
     """Initialise and start both queue consumers with registered handlers."""
     from .embedding_worker import process_embedding_job
+    from .graph_worker import process_analytics_job
     from .intelligence_worker import process_intelligence_job
 
     consumer.register_handler("embed-content", process_embedding_job)
     intelligence_consumer.register_handler("analyse-content", process_intelligence_job)
+    intelligence_consumer.register_handler("compute-graph-analytics", process_analytics_job)
 
     await consumer.start()
     await intelligence_consumer.start()

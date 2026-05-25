@@ -643,6 +643,17 @@ interface EntityMention {
   }
 }
 
+interface NodeAnalytics {
+  pagerankScore: number;
+  betweennessScore: number;
+  communityId: number;
+  hubScore: number;
+  authorityScore: number;
+  degreeIn: number;
+  degreeOut: number;
+  computedAt: string;
+}
+
 const EDGE_TYPE_COLORS: Record<string, string> = {
   relatedTo: '#6366f1',
   mentions: '#0891b2',
@@ -752,9 +763,10 @@ function GraphPanel() {
   const [edges, setEdges] = React.useState<GraphEdge[]>([])
   const [pending, setPending] = React.useState<GraphEdge[]>([])
   const [mentions, setMentions] = React.useState<EntityMention[]>([])
+  const [analytics, setAnalytics] = React.useState<NodeAnalytics | null>(null)
   const [loading, setLoading] = React.useState(false)
   const [error, setError] = React.useState<string | null>(null)
-  const [tab, setTab] = React.useState<'edges' | 'pending' | 'entities' | 'explore'>('edges')
+  const [tab, setTab] = React.useState<'edges' | 'pending' | 'entities' | 'explore' | 'analytics' | 'export'>('edges')
   const [showAddEdge, setShowAddEdge] = React.useState(false)
   const [addToEntryId, setAddToEntryId] = React.useState('')
   const [addEdgeType, setAddEdgeType] = React.useState('relatedTo')
@@ -767,9 +779,10 @@ function GraphPanel() {
     setLoading(true)
     setError(null)
     try {
-      const [edgeRes, mentionRes] = await Promise.all([
+      const [edgeRes, mentionRes, analyticsRes] = await Promise.all([
         fetch(`/api/graph/edges/${id}`),
         fetch(`/api/graph/entities/${id}/mentions`),
+        fetch(`/api/graph/analytics/${id}`),
       ])
       if (edgeRes.ok) {
         const j = await edgeRes.json() as { data: GraphEdge[] }
@@ -778,6 +791,12 @@ function GraphPanel() {
       if (mentionRes.ok) {
         const j = await mentionRes.json() as { data: EntityMention[] }
         setMentions(j.data)
+      }
+      if (analyticsRes.ok) {
+        const j = await analyticsRes.json() as { data: NodeAnalytics }
+        setAnalytics(j.data)
+      } else {
+        setAnalytics(null)
       }
     } catch (e) {
       setError(String(e))
@@ -945,7 +964,7 @@ function GraphPanel() {
 
       {/* Tabs */}
       <div style={{ display: 'flex', gap: 4, marginBottom: 16 }}>
-        {(['edges', 'explore', 'pending', 'entities'] as const).map(t => (
+        {(['edges', 'explore', 'pending', 'entities', 'analytics', 'export'] as const).map(t => (
           <button
             key={t}
             id={`graph-tab-${t}`}
@@ -961,6 +980,8 @@ function GraphPanel() {
             {t === 'explore' && `🧭 Explorer`}
             {t === 'pending' && `⏳ Pending (${pending.length})`}
             {t === 'entities' && `🏷️ Entities (${mentions.length})`}
+            {t === 'analytics' && `📊 Analytics`}
+            {t === 'export' && `📥 Export`}
           </button>
         ))}
       </div>
@@ -1122,6 +1143,94 @@ function GraphPanel() {
               ))}
             </div>
           )}
+        </div>
+      )}
+
+      {/* Analytics tab */}
+      {tab === 'analytics' && (
+        <div id="graph-analytics-tab">
+          {!entryId ? (
+            <div style={{ color: '#475569', fontSize: 13, padding: '24px 0' }}>
+              Enter an entry ID above to view its graph analytics.
+            </div>
+          ) : !analytics ? (
+            <div style={{ color: '#475569', fontSize: 13, padding: '24px 0' }}>
+              No analytics computed for this entry yet. Trigger a compute job first.
+            </div>
+          ) : (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
+              {[
+                { label: 'PageRank', value: analytics.pagerankScore.toFixed(6) },
+                { label: 'Betweenness', value: analytics.betweennessScore.toFixed(6) },
+                { label: 'Hub Score', value: analytics.hubScore.toFixed(6) },
+                { label: 'Authority Score', value: analytics.authorityScore.toFixed(6) },
+                { label: 'In-Degree', value: analytics.degreeIn },
+                { label: 'Out-Degree', value: analytics.degreeOut },
+                { label: 'Community ID', value: analytics.communityId },
+              ].map(({ label, value }) => (
+                <div key={label} style={{
+                  background: '#1e293b', border: '1px solid #334155',
+                  borderRadius: 10, padding: '16px 20px', minWidth: 160,
+                }}>
+                  <div style={{ fontSize: 12, color: '#64748b', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                    {label}
+                  </div>
+                  <div style={{ fontSize: 24, fontWeight: 700, color: '#f1f5f9' }}>
+                    {value}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          
+          <div style={{ marginTop: 24, padding: '16px', background: '#0f172a', borderRadius: 8, border: '1px solid #334155' }}>
+            <h3 style={{ fontSize: 15, fontWeight: 700, color: '#f1f5f9', margin: '0 0 12px' }}>Compute Network Analytics</h3>
+            <p style={{ fontSize: 13, color: '#94a3b8', margin: '0 0 16px' }}>
+              Triggers a background job to compute graph analytics (PageRank, Community Detection, etc.) across the entire knowledge graph.
+            </p>
+            <button
+              onClick={async () => {
+                await fetch('/api/graph/analytics/compute', { method: 'POST', body: JSON.stringify({}) })
+                alert('Analytics compute job queued.')
+              }}
+              style={dashBtnStyle}
+            >
+              🚀 Run Compute Job
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Export tab */}
+      {tab === 'export' && (
+        <div id="graph-export-tab">
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+            {[
+              { id: 'json-ld', name: 'JSON-LD', desc: 'Schema.org compatible graph data' },
+              { id: 'rdf', name: 'RDF / Turtle', desc: 'Standard Semantic Web format' },
+              { id: 'cytoscape', name: 'Cytoscape JSON', desc: 'Visualizer ready graph' },
+              { id: 'graphml', name: 'GraphML', desc: 'XML-based standard' }
+            ].map(format => (
+              <div key={format.id} style={{
+                background: '#1e293b', border: '1px solid #334155',
+                borderRadius: 10, padding: '16px 20px',
+                display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              }}>
+                <div>
+                  <h3 style={{ fontSize: 15, fontWeight: 700, color: '#f1f5f9', margin: '0 0 4px' }}>{format.name}</h3>
+                  <p style={{ fontSize: 13, color: '#64748b', margin: 0 }}>{format.desc}</p>
+                </div>
+                <a
+                  href={`/api/graph/export?format=${format.id}`}
+                  target="_blank"
+                  download={`rosmarium-knowledge-graph.${format.id === 'rdf' ? 'ttl' : format.id === 'graphml' ? 'graphml' : 'json'}`}
+                  style={{ ...dashBtnStyle, textDecoration: 'none' }}
+                >
+                  📥 Download
+                </a>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
