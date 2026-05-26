@@ -49,11 +49,14 @@ export async function getQueueStats(): Promise<
     const embeddingQueue = new Queue("embedding-jobs", {
         connection: { url: config.REDIS_URL },
     });
+    const localIntelligenceQueue = new Queue("intelligence-jobs", {
+        connection: { url: config.REDIS_URL },
+    });
     const webhookQueue = new Queue("webhook-deliveries", {
         connection: { url: config.REDIS_URL },
     });
 
-    const queues = [embeddingQueue, intelligenceQueue, webhookQueue];
+    const queues = [embeddingQueue, localIntelligenceQueue, webhookQueue];
 
     const stats = await Promise.all(
         queues.map(async (q) => ({
