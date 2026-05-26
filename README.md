@@ -7,8 +7,8 @@
   <img src="https://img.shields.io/badge/node-22%20LTS-green" alt="Node" />
   <img src="https://img.shields.io/badge/python-3.12-blue" alt="Python" />
   <img src="https://img.shields.io/badge/postgresql-16%20+%20pgvector-336791" alt="PostgreSQL" />
-  <img src="https://img.shields.io/badge/version-v0.5.0-brightgreen" alt="Version" />
-  <img src="https://img.shields.io/badge/status-Phase%202%20complete-brightgreen" alt="Status" />
+  <img src="https://img.shields.io/badge/version-v0.9.0-brightgreen" alt="Version" />
+  <img src="https://img.shields.io/badge/status-Phase%203%20complete%20%C2%B7%20v0.9.0-brightgreen" alt="Status" />
   [![CI](https://github.com/orchestrator-dev/cortex/actions/workflows/ci.yml/badge.svg)](https://github.com/orchestrator-dev/cortex/actions/workflows/ci.yml)
 </p>
 
@@ -16,7 +16,12 @@
 
 ## What is Cortex?
 
-Most headless CMS tools treat AI as a plugin. Cortex treats it as infrastructure. A TypeScript/Fastify core handles content, auth, and REST/GraphQL. A Python/FastAPI worker handles embeddings, RAG pipelines, and semantic search. Both share PostgreSQL with pgvector. If you are building AI features on top of content — not retrofitting them — Cortex was designed for that workflow.
+Most headless CMS tools treat AI as a plugin. Cortex treats it as
+infrastructure. A TypeScript/Fastify core handles content, auth,
+REST/GraphQL, and a knowledge graph layer. A Python/FastAPI worker
+handles embeddings, RAG pipelines, semantic search, auto-tagging, NER,
+and graph analytics. Both share PostgreSQL with pgvector. Five phases,
+nine releases, 46 E2E integration tests — all verified on v0.9.0.
 
 ## Architecture
 
@@ -149,6 +154,14 @@ curl http://localhost:3000/health
 
 Visit [http://localhost:3000/docs](http://localhost:3000/docs) for the interactive API reference.
 
+## E2E Test Suite
+Cortex ships a 46-step integration suite that validates the complete
+feature journey — from content creation through embedding, hybrid
+search, RAG retrieval, graph traversal, and knowledge graph export.
+Run it with:
+  pnpm test:e2e
+
+
 ## Authentication
 
 All content API routes require authentication. Two methods are supported:
@@ -274,14 +287,19 @@ curl -H 'Authorization: Bearer $KEY' \
 
 | Phase | Milestone | Status |
 |---|---|---|
-| 1 | CMS Foundation — content engine, REST/GraphQL API, auth & RBAC, webhooks | ✅ v0.1.0 |
-| 2 — Month 5 | AI Worker — embeddings, pgvector indexing, 3 provider adapters | ✅ v0.2.0 |
-| 2 — Month 6 | Hybrid Search — BM25 + pgvector + RRF, `/api/search`, graceful fallback | ✅ v0.3.0 |
-| 2 — Month 7 | RAG Pipeline — LlamaIndex, spaCy chunking, SSE streaming, RBAC retrieval | ✅ v0.4.0 |
+| 1 | CMS Foundation — REST/GraphQL, auth & RBAC, webhooks, asset engine | ✅ v0.1.0 |
+| 2 — Month 5 | AI Worker — embeddings, pgvector, Ollama/OpenAI/Cohere | ✅ v0.2.0 |
+| 2 — Month 6 | Hybrid Search — BM25 + pgvector + RRF, graceful fallback | ✅ v0.3.0 |
+| 2 — Month 7 | RAG Pipeline — LlamaIndex, spaCy chunking, SSE streaming | ✅ v0.4.0 |
 | 2 — Month 8 | AI Metadata — auto-tagging, NER, summarization, duplicate detection | ✅ v0.5.0 |
-| 3 — Month 9 | Knowledge Graph — typed edges, traversal API, graph relations | 🟡 Next |
-| 3 — Month 10 | Graph Analytics — PageRank, community detection, auto-inference | ⚪ Planned |
-| 4 | Scale & Ecosystem — multi-tenant, SDK, plugin API, hosted offering | ⚪ Planned |
+| 3 — Month 9 | Graph Data Model — typed edges, entity nodes, auto-inference | ✅ v0.6.0 |
+| 3 — Month 10 | Graph Traversal — recursive CTE, Cypher-lite DSL, graph explorer | ✅ v0.7.0 |
+| 3 — Month 11 | Graph Analytics — PageRank, community detection, JSON-LD export | ✅ v0.8.0 |
+| Audit | Stability & integration audit — 46-step E2E suite, 5 critical fixes | ✅ v0.9.0 |
+| 4 — Month 12 | Multi-tenancy + Kubernetes Helm chart | 🟡 Next |
+| 4 — Month 13 | Observability — OpenTelemetry, Prometheus, Grafana dashboards | ⚪ Planned |
+| 4 — Month 14 | Plugin system + official plugins | ⚪ Planned |
+| 4 — Month 15 | TypeScript SDK + v1.0.0 stable | ⚪ Planned |
 
 
 ## Contributing
