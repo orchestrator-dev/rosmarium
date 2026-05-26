@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-05-26
+
+### Fixed
+- **cortex-server**: Fixed queue stats connection lifetime leak in `intelligence.jobs.ts`.
+- **cortex-ai-worker**: Fixed Python queue consumer job completion/failure ZSET schemas causing `WRONGTYPE` errors in Redis.
+- **cortex-server**: Fixed `publish` and `unpublish` route foreign key constraint violations by dynamically using the authenticated user ID.
+- **cortex-server**: Fixed API response schema serialization that was improperly stripping rich JSON `metadata.ai` from entries.
+- **cortex-admin**: Fixed frontend POST request for Graph Analytics missing `Content-Type: application/json` header.
+
 ## [0.8.0] - 2026-05-25
 
 ### Added

@@ -154,7 +154,7 @@ class QueueConsumer:
         completed_key = f"bull:{self._queue_name}:completed"
         timestamp = int(time.time() * 1000)
         await self._redis.lrem(active_key, 1, job_id)  # type: ignore[misc]
-        await self._redis.zadd(completed_key, {job_id: timestamp})  # type: ignore[misc]
+        await self._redis.zadd(completed_key, {job_id: timestamp})
 
     async def _mark_failed(self, job_id: str, error: str) -> None:
         """Move job from active to failed and record the error."""
@@ -165,7 +165,7 @@ class QueueConsumer:
         failed_key = f"bull:{self._queue_name}:failed"
         timestamp = int(time.time() * 1000)
         await self._redis.lrem(active_key, 1, job_id)  # type: ignore[misc]
-        await self._redis.zadd(failed_key, {job_id: timestamp})  # type: ignore[misc]
+        await self._redis.zadd(failed_key, {job_id: timestamp})
         # Store fail reason on the job hash
         job_key = f"bull:{self._queue_name}:{job_id}"
         await self._redis.hset(job_key, "failedReason", error)  # type: ignore[misc]

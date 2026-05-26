@@ -138,7 +138,7 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
                     },
                 },
                 response: {
-                    201: { type: "object", properties: { data: { type: "object" } } },
+                    201: { type: "object", properties: { data: { type: "object", additionalProperties: true } } },
                 },
             },
         },
@@ -180,7 +180,7 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
                     required: ["type", "id"],
                 },
                 response: {
-                    200: { type: "object", properties: { data: { type: "object" } } },
+                    200: { type: "object", properties: { data: { type: "object", additionalProperties: true } } },
                 },
             },
         },
@@ -229,7 +229,7 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
                     },
                 },
                 response: {
-                    200: { type: "object", properties: { data: { type: "object" } } },
+                    200: { type: "object", properties: { data: { type: "object", additionalProperties: true } } },
                 },
             },
         },
@@ -339,14 +339,14 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
                     properties: { type: { type: "string" }, id: { type: "string" } },
                     required: ["type", "id"],
                 },
-                response: { 200: { type: "object", properties: { data: { type: "object" } } } },
+                response: { 200: { type: "object", properties: { data: { type: "object", additionalProperties: true } } } },
             },
         },
         async (request, reply) => {
             try {
                 const entry = await contentCrudService.publish(
                     request.params.id,
-                    request.body?.updatedBy ?? "anonymous",
+                    request.body?.updatedBy ?? request.user?.id ?? "anonymous",
                 );
                 return { data: entry };
             } catch (err) {
@@ -375,14 +375,14 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
                     properties: { type: { type: "string" }, id: { type: "string" } },
                     required: ["type", "id"],
                 },
-                response: { 200: { type: "object", properties: { data: { type: "object" } } } },
+                response: { 200: { type: "object", properties: { data: { type: "object", additionalProperties: true } } } },
             },
         },
         async (request, reply) => {
             try {
                 const entry = await contentCrudService.unpublish(
                     request.params.id,
-                    request.body?.updatedBy ?? "anonymous",
+                    request.body?.updatedBy ?? request.user?.id ?? "anonymous",
                 );
                 return { data: entry };
             } catch (err) {
