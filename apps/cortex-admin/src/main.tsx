@@ -1190,7 +1190,11 @@ function GraphPanel() {
             </p>
             <button
               onClick={async () => {
-                await fetch('/api/graph/analytics/compute', { method: 'POST', body: JSON.stringify({}) })
+                await fetch('/api/graph/analytics/compute', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ contentType: 'article' })
+                })
                 alert('Analytics compute job queued.')
               }}
               style={dashBtnStyle}
