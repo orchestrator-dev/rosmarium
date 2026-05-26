@@ -93,3 +93,33 @@ class TestSearch:
         )
         call_sql = mock_conn.fetch.call_args[0][0]
         assert "ANY" not in call_sql
+
+    async def test_search_returns_empty_list_for_missing_table(
+        self, manager: VectorIndexManager, mock_conn: AsyncMock
+    ) -> None:
+        """Returns [] when the embedding table doesn't exist yet."""
+
+        class UndefinedTableError(Exception):
+            pass
+
+        mock_conn.fetch.side_effect = UndefinedTableError("relation does not exist")
+        result = await manager.search(
+            "article",
+            [0.1] * 768,
+            limit=10,
+            conn=mock_conn,
+        )
+        assert result == []
+
+    async def test_search_reraises_non_table_errors(
+        self, manager: VectorIndexManager, mock_conn: AsyncMock
+    ) -> None:
+        """Non-table errors should propagate (e.g. connection dropped)."""
+        mock_conn.fetch.side_effect = RuntimeError("connection closed")
+        with pytest.raises(RuntimeError, match="connection closed"):
+            await manager.search(
+                "article",
+                [0.1] * 768,
+                limit=10,
+                conn=mock_conn,
+            )
