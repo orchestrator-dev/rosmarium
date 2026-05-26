@@ -185,7 +185,7 @@ class SearchResponse(BaseModel):
     content_type: str
 
 
-@router.post("", response_model=SearchResponse)
+@router.post("", response_model=SearchResponse, dependencies=[Depends(require_worker_secret)])
 async def semantic_search(
     request: SearchRequest,
     conn: Any = Depends(get_db),

@@ -146,36 +146,44 @@ class VectorIndexManager:
         table = f"cortex_{content_type}_embeddings"
         embedding_str = json.dumps(query_embedding)
 
-        if allowed_entry_ids is not None:
-            rows = await conn.fetch(
-                f"""
-                SELECT content_entry_id, chunk_index, chunk_text,
-                       1 - (embedding <=> $1::vector) AS score,
-                       metadata
-                FROM {table}
-                WHERE content_entry_id = ANY($2)
-                  AND embedding IS NOT NULL
-                ORDER BY embedding <=> $1::vector
-                LIMIT $3
-                """,
-                embedding_str,
-                allowed_entry_ids,
-                limit,
-            )
-        else:
-            rows = await conn.fetch(
-                f"""
-                SELECT content_entry_id, chunk_index, chunk_text,
-                       1 - (embedding <=> $1::vector) AS score,
-                       metadata
-                FROM {table}
-                WHERE embedding IS NOT NULL
-                ORDER BY embedding <=> $1::vector
-                LIMIT $2
-                """,
-                embedding_str,
-                limit,
-            )
+        try:
+            if allowed_entry_ids is not None:
+                rows = await conn.fetch(
+                    f"""
+                    SELECT content_entry_id, chunk_index, chunk_text,
+                           1 - (embedding <=> $1::vector) AS score,
+                           metadata
+                    FROM {table}
+                    WHERE content_entry_id = ANY($2)
+                      AND embedding IS NOT NULL
+                    ORDER BY embedding <=> $1::vector
+                    LIMIT $3
+                    """,
+                    embedding_str,
+                    allowed_entry_ids,
+                    limit,
+                )
+            else:
+                rows = await conn.fetch(
+                    f"""
+                    SELECT content_entry_id, chunk_index, chunk_text,
+                           1 - (embedding <=> $1::vector) AS score,
+                           metadata
+                    FROM {table}
+                    WHERE embedding IS NOT NULL
+                    ORDER BY embedding <=> $1::vector
+                    LIMIT $2
+                    """,
+                    embedding_str,
+                    limit,
+                )
+        except Exception as exc:
+            # Table may not exist yet if this content type has never been embedded
+            err_str = str(exc)
+            if "UndefinedTable" in type(exc).__name__ or "does not exist" in err_str:
+                logger.info("search_table_not_found", table=table)
+                return []
+            raise
 
         return [
             {

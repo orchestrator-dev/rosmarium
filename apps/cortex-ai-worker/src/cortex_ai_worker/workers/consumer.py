@@ -1,7 +1,7 @@
 """BullMQ-compatible Redis queue consumer.
 
 Reads jobs from the 'embedding-jobs' queue using BullMQ's Redis key schema:
-  bull:{queue}:waiting   → Redis list of job IDs
+  bull:{queue}:wait      → Redis list of job IDs (BullMQ v4+)
   bull:{queue}:{id}      → Redis hash with name, data, opts, timestamp
 """
 
