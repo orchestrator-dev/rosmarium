@@ -14,7 +14,8 @@
 -   [x] **Month 8:** GraphQL & Webhook Engine (Mercurius, background jobs)
 -   [x] **Month 9:** Graph Data Model (Relations, Edge inference, Graph service)
 -   [x] **Month 10:** Graph Traversal API (Multi-hop traversal, Cypher parser, GraphQL @traverse, Cytoscape Explorer)
--   [ ] **Month 11:** Multi-Tenant Architecture & Sub-organizations (Row-level security, isolated content spaces)
+-   [x] **Month 11:** Graph Analytics and Knowledge Graph Export (NetworkX algorithms, JSON-LD, RDF)
+-   [x] **Month 12:** Multi-Tenancy Architecture & Kubernetes Deployment (PostgreSQL schema isolation, Helm chart)
 -   [ ] **Month 12:** Edge CDN Integration & Static Export (Vercel/Cloudflare targets, asset optimization)
 -   [ ] **Month 13:** Phase 3 Hardening (Rate limiting, abuse prevention, final scale tests)
 
@@ -24,6 +25,15 @@
 - ✅ Month 6 — Hybrid Search: BM25 + pgvector + RRF (v0.3.0)
 - ✅ Month 7 — RAG Pipeline: LlamaIndex retrieval, spaCy chunking, streaming (v0.4.0)
 - ✅ Month 8 — AI Metadata Intelligence: auto-tagging, NER, summarization, duplicate detection (v0.5.0)
+- ✅ Month 9 — Graph Data Model (v0.6.0)
+- ✅ Month 10 — Graph Traversal API (v0.7.0)
+- ✅ Month 11 — Graph Analytics and Knowledge Graph Export (v0.8.0)
+- ✅ Month 12 — Multi-tenancy and Kubernetes Deployment (v0.10.0)
+
+- Namespace-based multi-tenancy (PostgreSQL schema isolation).
+- Tenant provisioning API and storage bucket configuration.
+- Helm chart v1 for Kubernetes (cortex-server + cortex-ai-worker).
+- Production health/readiness probes and HPA configs.
 
 ## Phase 2 Checklist (Complete)
 - [x] cortex-ai-worker bootstrap (FastAPI, pyproject.toml, uv, Ruff, mypy)

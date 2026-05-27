@@ -1,0 +1,62 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "cortex.fullname" . }}-ai-worker
+  labels:
+    {{- include "cortex.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ai-worker
+spec:
+  {{- if not .Values.aiWorker.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount.aiWorker }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "cortex.selectorLabels" . | nindent 6 }}
+      app.kubernetes.io/component: ai-worker
+  template:
+    metadata:
+      {{- with .Values.podAnnotations }}
+      annotations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        {{- include "cortex.selectorLabels" . | nindent 8 }}
+        app.kubernetes.io/component: ai-worker
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}-ai-worker
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}/cortex-ai-worker:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "cortex.fullname" . }}-config
+          env:
+            - name: DATABASE_URL
+              value: {{ .Values.config.databaseUrl | quote }}
+            - name: REDIS_URL
+              value: {{ .Values.config.redisUrl | quote }}
+            - name: ANTHROPIC_API_KEY
+              value: {{ .Values.config.anthropicApiKey | quote }}
+            - name: COHERE_API_KEY
+              value: {{ .Values.config.cohereApiKey | quote }}
+          # The worker runs bullmq, not an HTTP server by default. 
+          # To use probes, the worker must expose an HTTP endpoint (e.g. fastAPI or similar if Python).
+          # Assuming the python worker exposes a basic health endpoint:
+          livenessProbe:
+            exec:
+              command:
+                - /bin/sh
+                - -c
+                - "ps aux | grep worker.py"
+            initialDelaySeconds: {{ .Values.aiWorker.probes.liveness.initialDelaySeconds }}
+            periodSeconds: {{ .Values.aiWorker.probes.liveness.periodSeconds }}
+          resources:
+            {{- toYaml .Values.aiWorker.resources | nindent 12 }}

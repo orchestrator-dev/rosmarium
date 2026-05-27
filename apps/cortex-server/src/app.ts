@@ -8,10 +8,15 @@ import { pubsub } from "./graphql/context.js";
 import { webhookService } from "./modules/webhooks/webhook.service.js";
 import graphqlPlugin from "./graphql/index.js";
 import { dispatchIntelligenceJob } from "./modules/jobs/intelligence.jobs.js";
+import { tenantMiddleware, tenantStorageHook } from "./modules/tenants/tenant.middleware.js";
 
 export async function buildApp() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const app = Fastify({ logger: logger as any });
+
+    // Register multi-tenant context
+    app.addHook("onRequest", tenantMiddleware);
+    app.addHook("onRequest", tenantStorageHook);
 
     await registerPlugins(app);
 

@@ -2,6 +2,7 @@
 export * from "./users";
 export * from "./sessions";
 export * from "./api-keys";
+export * from "./tenants";
 export * from "./content-types";
 export * from "./content-entries";
 export * from "./audit-log";
