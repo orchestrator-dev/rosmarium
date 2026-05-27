@@ -9,26 +9,32 @@ import {
   CardContent, 
   Chip, 
   Stack,
-  LinearProgress,
   List,
   ListItem,
   ListItemText,
-  Paper
+  Paper,
+  Skeleton
 } from '@mui/material';
 
 export interface SearchResponse {
-  results: Array<{
+  data: Array<{
     id: string
-    title: string
+    contentType: string
+    data: Record<string, unknown>
+    status: string
+    publishedAt: string | null
     score: number
-    content: string
-    _metadata?: Record<string, unknown>
+    matchType: string
+    snippet: string | null
+    chunkText: string | null
   }>
-  query: { text: string; alpha: number }
-  metrics: {
-    durationMs: number
-    totalFound: number
-    method: 'hybrid' | 'vector' | 'keyword'
+  meta: {
+    query: string
+    total: number
+    alpha: number
+    contentTypes: string[]
+    latencyMs: number
+    embeddingProvider: string | null
   }
 }
 
@@ -36,6 +42,7 @@ export function SearchPage() {
   const [results, setResults] = React.useState<SearchResponse | null>(null);
   const [searchedQuery, setSearchedQuery] = React.useState('');
   const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState(false);
   
   const [query, setQuery] = React.useState('');
   const [alpha, setAlpha] = React.useState(0.5);
@@ -45,14 +52,17 @@ export function SearchPage() {
     const q = overrideQ ?? query;
     if (!q) return;
     setLoading(true);
+    setError(false);
     setSuggestions([]);
     try {
       const res = await fetch(`/api/search?q=${encodeURIComponent(q)}&alpha=${alpha}`);
+      if (!res.ok) throw new Error('Search request failed');
       const data = await res.json() as SearchResponse;
       setResults(data);
       setSearchedQuery(q);
-    } catch {
+    } catch (e) {
       console.error(e);
+      setError(true);
     } finally {
       setLoading(false);
     }
@@ -67,7 +77,7 @@ export function SearchPage() {
     try {
       const res = await fetch(`/api/search/suggest?q=${encodeURIComponent(text)}`);
       const data = await res.json();
-      setSuggestions(data.suggestions || []);
+      setSuggestions((data.data || []).map((s: { title: string }) => s.title));
     } catch {
       // ignore
     }
@@ -145,53 +155,90 @@ export function SearchPage() {
       </Paper>
 
       {/* Loading State */}
-      {loading && <LinearProgress sx={{ mb: 4 }} />}
+      {loading && (
+        <Stack spacing={2} sx={{ mt: 4 }}>
+          {[1,2,3].map(i => (
+            <Card key={i} variant="outlined"><CardContent><Skeleton height={32} width="60%" /><Skeleton height={20} /><Skeleton height={20} width="80%" /></CardContent></Card>
+          ))}
+        </Stack>
+      )}
+
+      {/* Idle State */}
+      {!loading && !results && !error && (
+        <Box sx={{ textAlign: 'center', py: 8 }}>
+          <Typography variant="body1" color="text.secondary" gutterBottom>
+            Try: <a href="#" onClick={(e) => { e.preventDefault(); setQuery('vector database'); handleAutocomplete('vector database'); void handleSearch('vector database'); }}>vector database</a> | <a href="#" onClick={(e) => { e.preventDefault(); setQuery('RAG pipeline'); handleAutocomplete('RAG pipeline'); void handleSearch('RAG pipeline'); }}>RAG pipeline</a> | <a href="#" onClick={(e) => { e.preventDefault(); setQuery('knowledge graph'); handleAutocomplete('knowledge graph'); void handleSearch('knowledge graph'); }}>knowledge graph</a>
+          </Typography>
+        </Box>
+      )}
+
+      {/* Empty State */}
+      {!loading && results?.data?.length === 0 && (
+        <Box sx={{ textAlign: 'center', py: 8 }}>
+          <Typography variant="h6" gutterBottom>No results for "{searchedQuery}"</Typography>
+          <Typography variant="body2" color="text.secondary">Try a broader query or Adjust the Alpha slider</Typography>
+        </Box>
+      )}
+
+      {/* Error State */}
+      {error && (
+        <Box sx={{ textAlign: 'center', py: 8 }}>
+          <Typography variant="h6" color="error" gutterBottom>Search is unavailable</Typography>
+          <Button variant="outlined" onClick={() => void handleSearch()}>Retry</Button>
+        </Box>
+      )}
 
       {/* Search Results */}
-      {!loading && results && (
+      {!loading && results && results.data && results.data.length > 0 && (
         <Box>
           <Stack direction="row" sx={{justifyContent: "space-between", alignItems: "center", mb: 3}}>
             <Typography variant="body2" color="text.secondary">
-              Found {results.metrics.totalFound} results for "{searchedQuery}"
+              Found {results.meta.total} results for "{searchedQuery}"
             </Typography>
             <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
               <Typography variant="caption" color="text.secondary">Method:</Typography>
-              <Chip label={results.metrics.method} size="small" color="primary" />
+              <Chip label={results.meta.alpha === 0 ? 'keyword' : results.meta.alpha === 1 ? 'vector' : 'hybrid'} size="small" color="primary" />
               <Typography variant="caption" color="text.secondary" sx={{ ml: 2 }}>
-                {results.metrics.durationMs}ms
+                {results.meta.latencyMs}ms
               </Typography>
             </Stack>
           </Stack>
 
           <Stack spacing={2}>
-            {results.results.map((hit) => (
-              <Card key={hit.id} variant="outlined" sx={{ '&:hover': { borderColor: 'primary.main' } }}>
-                <CardContent>
-                  <Stack direction="row" sx={{justifyContent: "space-between", alignItems: "flex-start", mb: 1}}>
-                    <Typography variant="h3" color="primary.light">
-                      {hit.title || 'Untitled Document'}
+            {results.data.map((hit) => {
+              const contentPreview = hit.snippet || hit.chunkText || '';
+              const tags = (hit.data?._metadata?.tags || hit.data?.tags || []) as string[];
+              const entities = (hit.data?._metadata?.entities || hit.data?.entities || []) as string[];
+              
+              return (
+                <Card key={hit.id} variant="outlined" sx={{ '&:hover': { borderColor: 'primary.main' } }}>
+                  <CardContent>
+                    <Stack direction="row" sx={{justifyContent: "space-between", alignItems: "flex-start", mb: 1}}>
+                      <Typography variant="h3" color="primary.light">
+                        {String(hit.data?.title || hit.data?.name || 'Untitled Document')}
+                      </Typography>
+                      <Chip 
+                        label={`Score: ${hit.score.toFixed(3)}`} 
+                        size="small" 
+                        variant="outlined"
+                        sx={{ color: 'text.secondary', borderColor: 'divider' }}
+                      />
+                    </Stack>
+                    <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+                      {contentPreview.length > 200 ? contentPreview.slice(0, 200) + '...' : contentPreview}
                     </Typography>
-                    <Chip 
-                      label={`Score: ${hit.score.toFixed(3)}`} 
-                      size="small" 
-                      variant="outlined"
-                      sx={{ color: 'text.secondary', borderColor: 'divider' }}
-                    />
-                  </Stack>
-                  <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
-                    {hit.content.length > 200 ? hit.content.slice(0, 200) + '...' : hit.content}
-                  </Typography>
-                  <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
-                    {hit._metadata?.tags?.map((t: string) => (
-                      <Chip key={t} label={t} size="small" sx={{ bgcolor: 'rgba(34, 211, 238, 0.1)', color: 'secondary.main', mb: 1 }} />
-                    ))}
-                    {hit._metadata?.entities?.map((e: string) => (
-                      <Chip key={e} label={e} size="small" sx={{ bgcolor: 'rgba(244, 114, 182, 0.1)', color: '#f472b6', mb: 1 }} />
-                    ))}
-                  </Stack>
-                </CardContent>
-              </Card>
-            ))}
+                    <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap" }}>
+                      {tags.map((t: string) => (
+                        <Chip key={t} label={t} size="small" sx={{ bgcolor: 'rgba(34, 211, 238, 0.1)', color: 'secondary.main', mb: 1 }} />
+                      ))}
+                      {entities.map((e: string) => (
+                        <Chip key={e} label={e} size="small" sx={{ bgcolor: 'rgba(244, 114, 182, 0.1)', color: '#f472b6', mb: 1 }} />
+                      ))}
+                    </Stack>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </Stack>
         </Box>
       )}

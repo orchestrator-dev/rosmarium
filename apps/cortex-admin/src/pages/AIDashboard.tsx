@@ -12,6 +12,7 @@ import {
   
   Grid,
   Divider,
+  Paper,
 } from '@mui/material';
 import {
   BarChart as ChartIcon,
@@ -105,9 +106,10 @@ export function AIDashboardPage() {
         </Typography>
       </Box>
 
-      <Stack spacing={4}>
+      <Grid container spacing={3}>
         {/* Panel 1 — Embedding Coverage */}
-        <Card variant="outlined">
+        <Grid size={{xs: 12, lg: 6}}>
+        <Card variant="outlined" sx={{ height: '100%' }}>
           <CardHeader 
             avatar={<ChartIcon color="primary" />} 
             title="Embedding Coverage" 
@@ -130,9 +132,11 @@ export function AIDashboardPage() {
             </Box>
           </CardContent>
         </Card>
+        </Grid>
 
         {/* Panel 2 — Auto-tagging taxonomy */}
-        <Card variant="outlined">
+        <Grid size={{xs: 12, lg: 6}}>
+        <Card variant="outlined" sx={{ height: '100%' }}>
           <CardHeader 
             avatar={<LabelIcon color="primary" />} 
             title="Auto-tagging Taxonomy" 
@@ -141,7 +145,7 @@ export function AIDashboardPage() {
           <Divider />
           <CardContent>
             <Grid container spacing={3}>
-              <Grid size={{xs: 12, md: 6}}  >
+              <Grid size={{xs: 12, md: 6}}>
                 <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>
                   Content Type
                 </Typography>
@@ -153,11 +157,11 @@ export function AIDashboardPage() {
                   onChange={e => setTagContentType(e.target.value)}
                 />
               </Grid>
-              <Grid size={{xs: 12}}  >
+              <Grid size={{xs: 12}}>
                 <Typography variant="caption" color="text.secondary" sx={{ mb: 1, display: 'block', fontWeight: 'bold' }}>
                   Tag Taxonomy
                 </Typography>
-                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
+                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, rowGap: 1, mb: 2 }}>
                   {taxonomy.map(label => (
                     <Chip
                       key={label}
@@ -188,9 +192,11 @@ export function AIDashboardPage() {
             </Typography>
           </CardContent>
         </Card>
+        </Grid>
 
         {/* Panel 3 — Duplicate Detection */}
-        <Card variant="outlined">
+        <Grid size={{xs: 12, lg: 6}}>
+        <Card variant="outlined" sx={{ height: '100%' }}>
           <CardHeader 
             avatar={<SearchIcon color="primary" />} 
             title="Duplicate Detection" 
@@ -259,9 +265,11 @@ export function AIDashboardPage() {
             ) : null}
           </CardContent>
         </Card>
+        </Grid>
 
         {/* Panel 4 — Intelligence Queue */}
-        <Card variant="outlined">
+        <Grid size={{xs: 12, lg: 6}}>
+        <Card variant="outlined" sx={{ height: '100%' }}>
           <CardHeader 
             avatar={<BoltIcon color="primary" />} 
             title="Intelligence Queue" 
@@ -275,9 +283,9 @@ export function AIDashboardPage() {
             {queueStats.length > 0 ? (
               <Grid container spacing={2}>
                 {queueStats.map(stat => (
-                  <Grid size={{xs: 12, sm: 6, md: 4}}  key={stat.queueName}>
-                    <Box sx={{ p: 2, bgcolor: 'background.default', borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
-                      <Typography variant="caption" sx={{ display: 'block', mb: 1, fontWeight: 'bold', textTransform: 'uppercase', color: 'text.secondary' }}>
+                  <Grid size={{xs: 12, sm: 4}} key={stat.queueName}>
+                    <Paper elevation={0} sx={{ p: 2, bgcolor: 'background.default', borderRadius: 2, border: '1px solid', borderColor: 'divider', height: '100%' }}>
+                      <Typography variant="caption" sx={{ display: 'block', mb: 1, fontWeight: 'bold', textTransform: 'uppercase', color: 'text.secondary', textAlign: 'center' }}>
                         {stat.queueName}
                       </Typography>
                       <Grid container spacing={1}>
@@ -287,13 +295,13 @@ export function AIDashboardPage() {
                           { label: 'done', value: stat.completed, color: 'success.main' },
                           { label: 'failed', value: stat.failed, color: 'error.main' },
                         ].map(({ label, value, color }) => (
-                          <Grid size={{xs: 6}}  key={label} sx={{ textAlign: 'center' }}>
+                          <Grid size={{xs: 6}} key={label} sx={{ textAlign: 'center' }}>
                             <Typography variant="h6" sx={{ color, fontWeight: 'bold' }}>{value}</Typography>
                             <Typography variant="caption" color="text.secondary">{label}</Typography>
                           </Grid>
                         ))}
                       </Grid>
-                    </Box>
+                    </Paper>
                   </Grid>
                 ))}
               </Grid>
@@ -309,7 +317,8 @@ export function AIDashboardPage() {
             </Typography>
           </CardContent>
         </Card>
-      </Stack>
+        </Grid>
+      </Grid>
     </Box>
   );
 }

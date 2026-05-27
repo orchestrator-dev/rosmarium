@@ -224,14 +224,14 @@ export const searchService = {
         query: string;
         contentType?: string;
         limit?: number;
-    }): Promise<string[]> {
+    }): Promise<Array<{ id: string; title: string; contentType: string }>> {
         const query = opts.query?.trim() ?? "";
         if (!query) return [];
 
         const limit = Math.min(opts.limit ?? 5, 20);
 
         const rows = await db.execute(sql`
-            SELECT DISTINCT data->>'title' AS title
+            SELECT id, data->>'title' AS title, content_type_id AS "contentType"
             FROM content_entries
             WHERE
                 data->>'title' IS NOT NULL
@@ -244,9 +244,7 @@ export const searchService = {
             LIMIT ${limit}
         `);
 
-        return rows
-            .map((r) => r["title"])
-            .filter((t): t is string => typeof t === "string" && t.length > 0);
+        return rows as unknown as Array<{ id: string; title: string; contentType: string }>;
     },
 };
 

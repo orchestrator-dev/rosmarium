@@ -54,7 +54,17 @@ const searchRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
                     200: {
                         type: "object",
                         properties: {
-                            data: { type: "array", items: { type: "string" } },
+                            data: { 
+                                type: "array", 
+                                items: { 
+                                    type: "object",
+                                    properties: {
+                                        id: { type: "string" },
+                                        title: { type: "string" },
+                                        contentType: { type: "string" }
+                                    }
+                                } 
+                            },
                         },
                     },
                 },

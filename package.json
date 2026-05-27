@@ -20,7 +20,9 @@
     "db:generate": "pnpm --filter @rosmarium-cms/server db:generate",
     "db:migrate": "pnpm --filter @rosmarium-cms/server db:migrate",
     "db:studio": "pnpm --filter @rosmarium-cms/server db:studio",
-    "db:seed": "pnpm --filter @rosmarium-cms/server db:seed"
+    "db:seed": "pnpm --filter @rosmarium-cms/server db:seed",
+    "demo:seed": "pnpm --filter @rosmarium-cms/server db:demo-seed",
+    "demo:reset": "pnpm infra:reset && pnpm infra:up && pnpm infra:init && pnpm db:migrate && pnpm db:seed && pnpm demo:seed"
   },
   "devDependencies": {
     "turbo": "^1.13.0",

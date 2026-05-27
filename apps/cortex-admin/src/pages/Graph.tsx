@@ -17,7 +17,7 @@ import {
   FormControl,
   InputLabel,
   Paper,
-  
+  Autocomplete,
 } from '@mui/material';
 import {
   Delete as DeleteIcon,
@@ -27,6 +27,7 @@ import {
   PlayArrow as PlayIcon,
   Search as SearchIcon,
   Add as AddIcon,
+  AccountTreeOutlined as AccountTreeIcon,
 } from '@mui/icons-material';
 import cytoscape from 'cytoscape';
 
@@ -173,6 +174,25 @@ export function GraphPage() {
   const [addToCt, setAddToCt] = React.useState('');
   const [addLoading, setAddLoading] = React.useState(false);
 
+  // Autocomplete state
+  const [suggestOptions, setSuggestOptions] = React.useState<Array<{ id: string; title: string; contentType: string }>>([]);
+
+  const handleSuggest = async (text: string) => {
+    if (text.length < 2) {
+      setSuggestOptions([]);
+      return;
+    }
+    try {
+      const res = await fetch(`/api/search/suggest?q=${encodeURIComponent(text)}&limit=8`);
+      if (res.ok) {
+        const j = await res.json();
+        setSuggestOptions(j.data || []);
+      }
+    } catch {
+      // ignore
+    }
+  };
+
   const loadEntry = async (id: string) => {
     if (!id.trim()) return;
     setLoading(true);
@@ -271,13 +291,38 @@ export function GraphPage() {
           ENTRY ID
         </Typography>
         <Stack direction="row" spacing={2} sx={{ mb: showAddEdge ? 2 : 0 }}>
-          <TextField
+          <Autocomplete
             fullWidth
             size="small"
-            placeholder="Paste content entry ID…"
-            value={entryId}
-            onChange={e => setEntryId(e.target.value)}
-            onKeyDown={e => { if (e.key === 'Enter') void loadEntry(entryId); }}
+            freeSolo
+            options={suggestOptions}
+            getOptionLabel={(option) => typeof option === 'string' ? option : option.title}
+            filterOptions={(x) => x}
+            onInputChange={(_, val) => void handleSuggest(val)}
+            onChange={(_, val) => {
+              if (val && typeof val === 'object' && val.id) {
+                 setEntryId(val.id);
+                 void loadEntry(val.id);
+              } else if (typeof val === 'string') {
+                 setEntryId(val);
+              } else {
+                 setEntryId('');
+              }
+            }}
+            renderInput={(params) => (
+              <TextField {...params} placeholder="Search for an article, concept, or person..." />
+            )}
+            renderOption={(props, option) => (
+              <li {...props} key={option.id}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, width: '100%' }}>
+                  <Typography variant="body2" sx={{ flexGrow: 1 }}>{option.title}</Typography>
+                  <Chip size="small" label={option.contentType} sx={{ height: 20, fontSize: '0.7rem' }} />
+                  <Typography variant="caption" color="text.secondary" sx={{ fontFamily: 'monospace' }}>
+                    {option.id.slice(0, 8)}
+                  </Typography>
+                </Box>
+              </li>
+            )}
           />
           <Button 
             variant="contained" 
@@ -347,9 +392,22 @@ export function GraphPage() {
       {tab === 0 && (
         <Stack spacing={2}>
           {edges.length === 0 ? (
-            <Typography color="text.secondary" sx={{ py: 3 }}>
-              {entryId ? 'No edges found for this entry.' : 'Enter an entry ID above to load its relations.'}
-            </Typography>
+            <Box sx={{ textAlign: 'center', py: 8 }}>
+              {!entryId ? (
+                <>
+                  <AccountTreeIcon sx={{ fontSize: 48, color: 'text.disabled', mb: 2 }} />
+                  <Typography variant="h6" gutterBottom>Explore the Knowledge Graph</Typography>
+                  <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
+                    Search for an entity above, or try our interactive demo.
+                  </Typography>
+                  <Button variant="outlined" onClick={() => { setEntryId('article-1'); void loadEntry('article-1'); }}>
+                    View demo
+                  </Button>
+                </>
+              ) : (
+                <Typography color="text.secondary">No edges found for this entry.</Typography>
+              )}
+            </Box>
           ) : (
             edges.map(edge => (
               <Card key={edge.id} variant="outlined">

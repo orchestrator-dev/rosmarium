@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.1] - 2026-05-27
+
+### Fixed
+- **rosmarium-admin**: Fixed Hybrid Search component crash (white screen) caused by data schema mismatch.
+- **rosmarium-admin**: Implemented fully functional Edit and Create Entry UI overlays for content items.
+- **rosmarium-admin**: Improved Knowledge Graph search with Autocomplete UI and empty state guidance.
+- **rosmarium-admin**: Added robust Loading, Empty, and Error states to Hybrid Search view.
+- **rosmarium-admin**: Refactored AI Dashboard layout to be responsive.
+- **rosmarium-admin/rosmarium-server**: Fixed internal TypeScript and linting errors.
+
+## [1.0.0] - 2026-05-27
+
+### Added
+- **rosmarium-admin**: Complete redesign of Rosmarium Admin UI to production quality using Material UI.
+- **demo**: Introduced "Rosmarium Discovery" demo dataset with a full script to showcase CMS and AI features out of the box (`pnpm demo:seed`).
+
 ## [0.9.0] - 2026-05-26
 
 ### Fixed
