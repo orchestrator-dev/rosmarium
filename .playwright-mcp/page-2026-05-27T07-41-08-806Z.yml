@@ -1,0 +1,43 @@
+- generic [ref=e3]:
+  - banner [ref=e4]
+  - navigation "mailbox folders" [ref=e6]:
+    - generic [ref=e8]:
+      - heading "⬡ Rosmarium" [level=1] [ref=e10]
+      - separator [ref=e11]
+      - list [ref=e12]:
+        - listitem [ref=e13]:
+          - button "Content" [ref=e14] [cursor=pointer]:
+            - img [ref=e16]
+            - generic [ref=e19]: Content
+        - listitem [ref=e20]:
+          - button "Media" [ref=e21] [cursor=pointer]:
+            - img [ref=e23]
+            - generic [ref=e26]: Media
+        - listitem [ref=e27]:
+          - button "Search" [ref=e28] [cursor=pointer]:
+            - img [ref=e30]
+            - generic [ref=e33]: Search
+        - listitem [ref=e34]:
+          - button "AI Dashboard" [ref=e35] [cursor=pointer]:
+            - img [ref=e37]
+            - generic [ref=e40]: AI Dashboard
+        - listitem [ref=e41]:
+          - button "Knowledge Graph" [ref=e42] [cursor=pointer]:
+            - img [ref=e44]
+            - generic [ref=e47]: Knowledge Graph
+      - separator [ref=e48]
+      - list [ref=e49]:
+        - paragraph [ref=e50]: Settings
+        - listitem [ref=e51]:
+          - button "Content Types" [ref=e52] [cursor=pointer]:
+            - img [ref=e54]
+            - generic [ref=e57]: Content Types
+        - listitem [ref=e58]:
+          - button "Webhooks" [ref=e59] [cursor=pointer]:
+            - img [ref=e61]
+            - generic [ref=e64]: Webhooks
+        - listitem [ref=e65]:
+          - button "Access Control" [ref=e66] [cursor=pointer]:
+            - img [ref=e68]
+            - generic [ref=e71]: Access Control
+  - main [ref=e72]
