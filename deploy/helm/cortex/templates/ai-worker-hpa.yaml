@@ -1,0 +1,33 @@
+{{- if .Values.aiWorker.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "rosmarium.fullname" . }}-ai-worker
+  labels:
+    {{- include "rosmarium.labels" . | nindent 4 }}
+    app.kubernetes.io/component: ai-worker
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "rosmarium.fullname" . }}-ai-worker
+  minReplicas: {{ .Values.aiWorker.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.aiWorker.autoscaling.maxReplicas }}
+  metrics:
+    {{- if .Values.aiWorker.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.aiWorker.autoscaling.targetCPUUtilizationPercentage }}
+    {{- end }}
+    {{- if .Values.aiWorker.autoscaling.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ .Values.aiWorker.autoscaling.targetMemoryUtilizationPercentage }}
+    {{- end }}
+{{- end }}

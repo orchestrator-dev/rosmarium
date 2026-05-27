@@ -7,8 +7,8 @@
   <img src="https://img.shields.io/badge/node-22%20LTS-green" alt="Node" />
   <img src="https://img.shields.io/badge/python-3.12-blue" alt="Python" />
   <img src="https://img.shields.io/badge/postgresql-16%20+%20pgvector-336791" alt="PostgreSQL" />
-  <img src="https://img.shields.io/badge/version-v0.9.0-brightgreen" alt="Version" />
-  <img src="https://img.shields.io/badge/status-Phase%203%20complete%20%C2%B7%20v0.9.0-brightgreen" alt="Status" />
+  <img src="https://img.shields.io/badge/version-v1.0.0-brightgreen" alt="Version" />
+  <img src="https://img.shields.io/badge/status-Phase%204%20complete%20%C2%B7%20v1.0.0-brightgreen" alt="Status" />
   [![CI](https://github.com/orchestrator-dev/rosmarium/actions/workflows/ci.yml/badge.svg)](https://github.com/orchestrator-dev/rosmarium/actions/workflows/ci.yml)
 </p>
 
@@ -20,8 +20,8 @@ Most headless CMS tools treat AI as a plugin. Rosmarium treats it as
 infrastructure. A TypeScript/Fastify core handles content, auth,
 REST/GraphQL, and a knowledge graph layer. A Python/FastAPI worker
 handles embeddings, RAG pipelines, semantic search, auto-tagging, NER,
-and graph analytics. Both share PostgreSQL with pgvector. Five phases,
-nine releases, 46 E2E integration tests — all verified on v0.9.0.
+and graph analytics. Both share PostgreSQL with pgvector. Four phases,
+ten releases, 46 E2E integration tests — all verified on v1.0.0.
 
 ## Architecture
 
@@ -296,10 +296,10 @@ curl -H 'Authorization: Bearer $KEY' \
 | 3 — Month 10 | Graph Traversal — recursive CTE, Cypher-lite DSL, graph explorer | ✅ v0.7.0 |
 | 3 — Month 11 | Graph Analytics — PageRank, community detection, JSON-LD export | ✅ v0.8.0 |
 | Audit | Stability & integration audit — 46-step E2E suite, 5 critical fixes | ✅ v0.9.0 |
-| 4 — Month 12 | Multi-tenancy + Kubernetes Helm chart | 🟡 Next |
-| 4 — Month 13 | Observability — OpenTelemetry, Prometheus, Grafana dashboards | ⚪ Planned |
+| 4 — Month 12 | Multi-tenancy + Kubernetes Helm chart | ✅ v1.0.0 |
+| 4 — Month 13 | Observability — OpenTelemetry, Prometheus, Grafana dashboards | 🟡 Next |
 | 4 — Month 14 | Plugin system + official plugins | ⚪ Planned |
-| 4 — Month 15 | TypeScript SDK + v1.0.0 stable | ⚪ Planned |
+| 4 — Month 15 | TypeScript SDK + v1.1.0 stable | ⚪ Planned |
 
 
 ## Contributing
