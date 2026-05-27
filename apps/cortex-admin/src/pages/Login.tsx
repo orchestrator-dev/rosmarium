@@ -30,7 +30,7 @@ export function LoginPage() {
         const json = await res.json();
         setError(json.error || 'Login failed');
       }
-    } catch (err) {
+    } catch {
       setError('An error occurred during login');
     } finally {
       setLoading(false);

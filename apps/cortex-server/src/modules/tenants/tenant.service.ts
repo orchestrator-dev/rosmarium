@@ -7,7 +7,6 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 import { config } from "../../config.js";
 import { hashPassword } from "../auth/password.js";
-import { createId } from "@paralleldrive/cuid2";
 
 export type TenantPlan = "free" | "starter" | "pro" | "enterprise";
 

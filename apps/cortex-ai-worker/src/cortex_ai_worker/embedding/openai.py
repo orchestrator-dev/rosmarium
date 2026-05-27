@@ -58,7 +58,7 @@ class OpenAIEmbeddingProvider(EmbeddingProvider):
         # Flatten results maintaining order
         all_embeddings: list[list[float]] = []
         total_tokens = 0
-        for batch, result in zip(batches, batch_results):
+        for batch, result in zip(batches, batch_results, strict=True):
             all_embeddings.extend(result)
             # usage is only available on the full response, not per-item;
             # approximate by counting batch length as token proxy

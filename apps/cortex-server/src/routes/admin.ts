@@ -47,9 +47,9 @@ export default async function adminRoutes(app: FastifyInstance) {
                     plan: data.plan as TenantPlan,
                 });
                 return reply.status(201).send({ data: { tenant: result.tenant } });
-            } catch (err: any) {
+            } catch (err: unknown) {
                 app.log.error({ err }, "tenant provisioning failed");
-                return reply.status(400).send({ error: { code: "BAD_REQUEST", message: err.message } });
+                return reply.status(400).send({ error: { code: "BAD_REQUEST", message: err instanceof Error ? err.message : String(err) } });
             }
         }
     );

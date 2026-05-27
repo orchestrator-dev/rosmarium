@@ -1,8 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { tenantService } from "./tenant.service.js";
 import { db } from "../../db/index.js";
-import { tenants } from "../../db/schema/index.js";
-import { eq } from "drizzle-orm";
 
 // Mock external dependencies
 vi.mock("../../db/index.js", () => ({

@@ -19,11 +19,11 @@ export async function tenantMiddleware(request: FastifyRequest, reply: FastifyRe
     }
 
     // Attach to request
-    (request as any).tenant = tenant;
+    (request as unknown as Record<string, unknown>).tenant = tenant;
 }
 
 export function tenantStorageHook(request: FastifyRequest, reply: FastifyReply, done: () => void) {
-    const tenant = (request as any).tenant;
+    const tenant = (request as unknown as Record<string, unknown>).tenant as { slug: string };
     if (tenant) {
         tenantStorage.run(tenant.slug, done);
     } else {

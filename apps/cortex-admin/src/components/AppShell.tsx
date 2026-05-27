@@ -19,7 +19,7 @@ import {
   Search as SearchIcon,
   AutoAwesome as AIIcon,
   Hub as GraphIcon,
-  Settings as SettingsIcon,
+  
   Dashboard as DashboardIcon,
   PhotoLibrary as MediaIcon,
   Webhook as WebhookIcon,
