@@ -22,7 +22,7 @@ export interface SearchResponse {
     title: string
     score: number
     content: string
-    _metadata?: Record<string, any>
+    _metadata?: Record<string, unknown>
   }>
   query: { text: string; alpha: number }
   metrics: {
@@ -51,7 +51,7 @@ export function SearchPage() {
       const data = await res.json() as SearchResponse;
       setResults(data);
       setSearchedQuery(q);
-    } catch (e) {
+    } catch {
       console.error(e);
     } finally {
       setLoading(false);
@@ -68,7 +68,7 @@ export function SearchPage() {
       const res = await fetch(`/api/search/suggest?q=${encodeURIComponent(text)}`);
       const data = await res.json();
       setSuggestions(data.suggestions || []);
-    } catch (e) {
+    } catch {
       // ignore
     }
   };
