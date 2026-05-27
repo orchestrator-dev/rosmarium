@@ -52,6 +52,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **rosmarium-server**: GraphQL `@traverse` directive for content entry schemas.
 - **rosmarium-ai-worker**: Semantic graph recommendation integration combining structural and semantic scores.
 
+### Fixed
+- **rosmarium-server**: Resolved strict null check compilation errors in the server `tsc` pipeline, achieving perfect type safety for graph modules.
+- **rosmarium-server**: Refactored regex parsing and variable handling in `cypher.parser.ts` to ensure full compatibility with strict mode compilation.
+- **rosmarium-ai-worker**: Fixed `linting` warnings across the Python and TypeScript codebases (`ruff` compliance achieved).
+
+## [0.6.0] - 2026-05-24
+
+### Added
+- **rosmarium-server**: Graph Database Schema supporting typed content relationships (`graph_edges`), entity nodes (`graph_entity_nodes`), and mentions (via migration `0007_graph_data_model`).
+- **rosmarium-server**: Graph Service & Repository for edge validation, bidirectional flag handling, and transactional manual edge lifecycle.
+- **rosmarium-server**: Protected REST API endpoints under `/api/graph` for manual edge CRUD, pending AI edge approval workflows, and entity mention visualization.
+- **rosmarium-ai-worker**: Built-in inference orchestration engine strategy pipeline processing right after metadata analysis.
+- **rosmarium-ai-worker**: NER Co-mention Strategy that identifies extracted entity mentions and links content pieces referencing similar entities.
+- **rosmarium-ai-worker**: Semantic Similarity Strategy to automatically trigger bidirectional `relatedTo` links using `pgvector` (`<=>` operator) for neighbors exceeding the similarity threshold.
+- **rosmarium-ai-worker**: Reference Strategy to parse inline markdown wiki-links (`[[slug]]`) and relative pathways, creating explicit `references` edges.
+- **rosmarium-admin**: Interactive Graph Panel visual interface to query entry neighborhoods, review and approve/reject AI-generated relationships on the fly, and manually link documents together.
+
 ## [0.5.0] - 2026-05-23
 
 ### Added
