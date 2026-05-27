@@ -1,14 +1,15 @@
 # Rosmarium CMS — Current Development Phase
 
-## Active Phase: Phase 3 — Developer Experience & Ecosystem
-**Target release:** v0.6.0+
-**Duration:** Months 9–12
+## Active Phase: Production Hardening & Ecosystem
+**Target release:** v1.0.1
+**Duration:** Ongoing
 
 ## Completed Phases
 - ✅ Phase 1 — CMS Foundation (v0.1.0 released)
 - ✅ Phase 2 — AI Layer (v0.5.0 released)
+- ✅ Phase 3 — Developer Experience & Ecosystem (v1.0.1 released)
 
-## Phase 3: Headless & API Layer
+## Phase 3: Headless & API Layer (Complete)
 
 -   [x] **Month 7:** API Foundation & Caching (REST, Fastify)
 -   [x] **Month 8:** GraphQL & Webhook Engine (Mercurius, background jobs)
@@ -16,8 +17,8 @@
 -   [x] **Month 10:** Graph Traversal API (Multi-hop traversal, Cypher parser, GraphQL @traverse, Cytoscape Explorer)
 -   [x] **Month 11:** Graph Analytics and Knowledge Graph Export (NetworkX algorithms, JSON-LD, RDF)
 -   [x] **Month 12:** Multi-Tenancy Architecture & Kubernetes Deployment (PostgreSQL schema isolation, Helm chart)
--   [ ] **Month 12:** Edge CDN Integration & Static Export (Vercel/Cloudflare targets, asset optimization)
--   [ ] **Month 13:** Phase 3 Hardening (Rate limiting, abuse prevention, final scale tests)
+-   [x] **Month 12:** Edge CDN Integration & Static Export (Vercel/Cloudflare targets, asset optimization)
+-   [x] **Month 13:** Phase 3 Hardening (Rate limiting, abuse prevention, final scale tests)
 
 ## Shipped Milestones
 - ✅ Phase 1 — CMS Foundation (v0.1.0)
@@ -29,11 +30,13 @@
 - ✅ Month 10 — Graph Traversal API (v0.7.0)
 - ✅ Month 11 — Graph Analytics and Knowledge Graph Export (v0.8.0)
 - ✅ Month 12 — Multi-tenancy and Kubernetes Deployment (v0.10.0)
+- ✅ Month 12 — Production Release v1.0.0 & v1.0.1 (v1.0.1)
 
-- Namespace-based multi-tenancy (PostgreSQL schema isolation).
-- Tenant provisioning API and storage bucket configuration.
-- Helm chart v1 for Kubernetes (rosmarium-server + rosmarium-ai-worker).
-- Production health/readiness probes and HPA configs.
+- Material-inspired UI redesign for rosmarium-admin.
+- "Rosmarium Discovery" demo dataset with custom db:demo-seed script.
+- Autocomplete-based Knowledge Graph search and empty state improvements.
+- Hybrid Search view stability fixes and loading skeleton states.
+- Clean production builds and zero linting/TypeScript type errors.
 
 ## Phase 2 Checklist (Complete)
 - [x] rosmarium-ai-worker bootstrap (FastAPI, pyproject.toml, uv, Ruff, mypy)

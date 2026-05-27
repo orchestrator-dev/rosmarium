@@ -7,8 +7,8 @@
   <img src="https://img.shields.io/badge/node-22%20LTS-green" alt="Node" />
   <img src="https://img.shields.io/badge/python-3.12-blue" alt="Python" />
   <img src="https://img.shields.io/badge/postgresql-16%20+%20pgvector-336791" alt="PostgreSQL" />
-  <img src="https://img.shields.io/badge/version-v1.0.0-brightgreen" alt="Version" />
-  <img src="https://img.shields.io/badge/status-Phase%204%20complete%20%C2%B7%20v1.0.0-brightgreen" alt="Status" />
+  <img src="https://img.shields.io/badge/version-v1.0.1-brightgreen" alt="Version" />
+  <img src="https://img.shields.io/badge/status-Phase%204%20complete%20%C2%B7%20v1.0.1-brightgreen" alt="Status" />
   [![CI](https://github.com/orchestrator-dev/rosmarium/actions/workflows/ci.yml/badge.svg)](https://github.com/orchestrator-dev/rosmarium/actions/workflows/ci.yml)
 </p>
 
@@ -21,7 +21,7 @@ infrastructure. A TypeScript/Fastify core handles content, auth,
 REST/GraphQL, and a knowledge graph layer. A Python/FastAPI worker
 handles embeddings, RAG pipelines, semantic search, auto-tagging, NER,
 and graph analytics. Both share PostgreSQL with pgvector. Four phases,
-ten releases, 46 E2E integration tests — all verified on v1.0.0.
+ten releases, 46 E2E integration tests — all verified on v1.0.1.
 
 ## Architecture
 
@@ -87,13 +87,14 @@ flowchart LR
 <tr>
 <th>Content Management</th>
 <th>AI & Semantic Search</th>
+<th>Knowledge Graph</th>
 <th>Infrastructure & Scale</th>
 </tr>
 <tr>
 <td>
 
 ✦ Dynamic content type registry<br/>
-✦ JSONB-backed entries — no migration per type<br/>
+✦ JSONB entries — no migration per type<br/>
 ✦ REST + GraphQL APIs, auto-generated<br/>
 ✦ Field-level validation with Zod<br/>
 ✦ Content versioning and restore<br/>
@@ -102,12 +103,22 @@ flowchart LR
 </td>
 <td>
 
-✦ **Hybrid search** — BM25 + pgvector with RRF ✅<br/>
-✦ Automatic embedding on publish ✅<br/>
-✦ Graceful fulltext fallback (no AI worker needed) ✅<br/>
-✦ RAG pipeline & Semantic chunking ✅<br/>
-✦ Auto-tagging, NER, & Summarization ✅<br/>
-✦ Semantic Duplicate Detection ✅
+✦ Hybrid search — BM25 + pgvector + RRF<br/>
+✦ Automatic embedding on publish<br/>
+✦ Graceful fulltext fallback<br/>
+✦ RAG pipeline with LlamaIndex<br/>
+✦ Auto-tagging, NER, summarization<br/>
+✦ Semantic duplicate detection
+
+</td>
+<td>
+
+✦ Typed edges between content items<br/>
+✦ Multi-hop traversal (recursive CTE)<br/>
+✦ Cypher-lite query DSL<br/>
+✦ Graph analytics — PageRank, communities<br/>
+✦ Auto-inferred relations from NER<br/>
+✦ JSON-LD / RDF / GraphML export
 
 </td>
 <td>
@@ -115,9 +126,9 @@ flowchart LR
 ✦ PostgreSQL 16 with pgvector<br/>
 ✦ Redis 7 + BullMQ job queues<br/>
 ✦ S3-compatible asset storage<br/>
-✦ Role-based access control<br/>
-✦ Drizzle ORM with typed migrations<br/>
-✦ Structured audit log
+✦ Multi-tenancy (schema isolation)<br/>
+✦ Kubernetes Helm chart<br/>
+✦ Role-based access control
 
 </td>
 </tr>
@@ -147,6 +158,15 @@ pnpm db:seed
 
 # Start the server
 pnpm --filter @rosmarium-cms/server dev
+
+# Start the AI worker (in a separate terminal)
+cd apps/rosmarium-ai-worker && uv run uvicorn rosmarium_ai_worker.main:app --app-dir src --port 8001 --reload
+
+# Start the admin dashboard (in a separate terminal)
+pnpm --filter @rosmarium-cms/admin dev
+
+# Seed the Rosmarium Discovery demo dataset (optional)
+pnpm demo:seed
 
 # Verify
 curl http://localhost:3000/health
