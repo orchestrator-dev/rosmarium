@@ -37,6 +37,12 @@ jobs:
       - name: Build Astro site
         run: pnpm --filter @rosmarium-cms/www build
 
+      - name: Create Cloudflare Pages Project
+        run: npx wrangler pages project create rosmarium --production-branch main || true
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/pages-action@1
         with:
