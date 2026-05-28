@@ -89,6 +89,23 @@ export function AppShell() {
             </ListItemButton>
           </ListItem>
         ))}
+        <ListItem disablePadding>
+          <ListItemButton
+            onClick={() => navigate('/settings/content-types?action=new')}
+            sx={{ pl: 4, py: 0.5 }}
+          >
+            <ListItemText
+              primary="+ Add content type"
+              sx={{
+                '& .MuiListItemText-primary': {
+                  fontSize: '0.85rem',
+                  color: '#94a3b8',
+                  '&:hover': { color: '#f1f5f9' },
+                },
+              }}
+            />
+          </ListItemButton>
+        </ListItem>
       </List>
       <Divider sx={{ borderColor: 'rgba(255,255,255,0.05)' }} />
       <List subheader={<Typography sx={{ px: 3, py: 1, fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Settings</Typography>}>

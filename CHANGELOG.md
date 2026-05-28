@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- **rosmarium-admin**: Content Type Builder with an intuitive 5-step wizard and drag-and-drop field management.
+- **rosmarium-admin**: Access Control management screens for Users, Roles, and API Keys.
+- **rosmarium-admin**: Webhooks management interface.
+
+### Fixed
+- **rosmarium-admin**: Fixed TypeScript definitions and linting errors across the newly added Settings screens.
+- **rosmarium-server**: Corrected internal import path for `client.js` in `query.ts`.
+
 ## [1.0.1] - 2026-05-27
 
 ### Fixed

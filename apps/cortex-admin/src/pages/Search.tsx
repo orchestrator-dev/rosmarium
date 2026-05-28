@@ -207,8 +207,12 @@ export function SearchPage() {
           <Stack spacing={2}>
             {results.data.map((hit) => {
               const contentPreview = hit.snippet || hit.chunkText || '';
-              const tags = (hit.data?._metadata?.tags || hit.data?.tags || []) as string[];
-              const entities = (hit.data?._metadata?.entities || hit.data?.entities || []) as string[];
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const dataAny = hit.data as any;
+              const rawTags = dataAny?._metadata?.tags || dataAny?.tags;
+              const tags = Array.isArray(rawTags) ? rawTags : [];
+              const rawEntities = dataAny?._metadata?.entities || dataAny?.entities;
+              const entities = Array.isArray(rawEntities) ? rawEntities : [];
               
               return (
                 <Card key={hit.id} variant="outlined" sx={{ '&:hover': { borderColor: 'primary.main' } }}>
@@ -218,7 +222,7 @@ export function SearchPage() {
                         {String(hit.data?.title || hit.data?.name || 'Untitled Document')}
                       </Typography>
                       <Chip 
-                        label={`Score: ${hit.score.toFixed(3)}`} 
+                        label={`Score: ${(hit.score ?? 0).toFixed(3)}`} 
                         size="small" 
                         variant="outlined"
                         sx={{ color: 'text.secondary', borderColor: 'divider' }}
