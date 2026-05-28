@@ -1,0 +1,48 @@
+name: Deploy Rosmarium Landing Page
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'apps/rosmarium-www/**'
+      - '.github/workflows/deploy-www.yml'
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.0.0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'pnpm'
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build Astro site
+        run: pnpm --filter @rosmarium-cms/www build
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: 'rosmarium'
+          directory: 'apps/rosmarium-www/dist'
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+          branch: main

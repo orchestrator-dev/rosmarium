@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+@theme {
+  --color-neon-cyan: #0ff;
+  --color-neon-purple: #b026ff;
+  --color-dark-bg: #09090b;
+  --color-dark-surface: #18181b;
+  --color-dark-border: #27272a;
+}
+
+body {
+  @apply bg-dark-bg text-white antialiased selection:bg-neon-cyan selection:text-black;
+}
