@@ -1,7 +1,7 @@
 [project]
 name = "rosmarium-ai-worker"
-version = "1.0.1"
-description = "Rosmarium CMS AI pipeline worker"
+version = "1.1.0"
+description = "AI pipeline worker for Rosmarium CMS"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
