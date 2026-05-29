@@ -101,5 +101,6 @@ config:
   jwtSecret: "" # Should be set via external secrets or values override
   databaseUrl: "" # PostgreSQL URL
   redisUrl: "" # Redis URL
-  anthropicApiKey: ""
-  cohereApiKey: ""
+  workerSecret: ""
+  embeddingProvider: "ollama"
+  embeddingModel: "nomic-embed-text"

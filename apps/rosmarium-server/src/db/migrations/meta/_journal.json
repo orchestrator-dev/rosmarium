@@ -52,13 +52,6 @@
       "breakpoints": true
     },
     {
-      "idx": 7,
-      "version": "7",
-      "when": 1779741743790,
-      "tag": "0007_ordinary_network",
-      "breakpoints": true
-    },
-    {
       "idx": 8,
       "version": "7",
       "when": 1779833971092,

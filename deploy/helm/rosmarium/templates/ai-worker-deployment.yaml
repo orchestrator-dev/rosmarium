@@ -43,19 +43,22 @@ spec:
               value: {{ .Values.config.databaseUrl | quote }}
             - name: REDIS_URL
               value: {{ .Values.config.redisUrl | quote }}
-            - name: ANTHROPIC_API_KEY
-              value: {{ .Values.config.anthropicApiKey | quote }}
-            - name: COHERE_API_KEY
-              value: {{ .Values.config.cohereApiKey | quote }}
-          # The worker runs bullmq, not an HTTP server by default. 
-          # To use probes, the worker must expose an HTTP endpoint (e.g. fastAPI or similar if Python).
-          # Assuming the python worker exposes a basic health endpoint:
+            - name: EMBEDDING_PROVIDER
+              value: {{ .Values.config.embeddingProvider | quote }}
+            - name: EMBEDDING_MODEL
+              value: {{ .Values.config.embeddingModel | quote }}
+            - name: WORKER_SECRET
+              value: {{ .Values.config.workerSecret | quote }}
+            - name: ENVIRONMENT
+              value: {{ .Values.config.nodeEnv | quote }}
           livenessProbe:
-            exec:
-              command:
-                - /bin/sh
-                - -c
-                - "ps aux | grep worker.py"
+            httpGet:
+              path: {{ .Values.aiWorker.probes.liveness.path | default "/health" }}
+              port: 8001
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.aiWorker.probes.readiness.path | default "/health" }}
+              port: 8001
             initialDelaySeconds: {{ .Values.aiWorker.probes.liveness.initialDelaySeconds }}
             periodSeconds: {{ .Values.aiWorker.probes.liveness.periodSeconds }}
           resources:
