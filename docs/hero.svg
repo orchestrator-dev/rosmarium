@@ -1,95 +1,85 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" width="1200" height="400">
   <defs>
-    <radialGradient id="bg" cx="40%" cy="50%" r="65%">
-      <stop offset="0%" stop-color="#12191F"/>
-      <stop offset="100%" stop-color="#0D1117"/>
+    <!-- Background Gradient -->
+    <radialGradient id="bg" cx="50%" cy="50%" r="75%">
+      <stop offset="0%" stop-color="#1E1B4B"/>
+      <stop offset="100%" stop-color="#020617"/>
     </radialGradient>
+    
+    <!-- Periodic Table Element Gradients -->
+    <linearGradient id="borderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22D3EE"/>
+      <stop offset="100%" stop-color="#A855F7"/>
+    </linearGradient>
+    <linearGradient id="textGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#A855F7"/>
+      <stop offset="100%" stop-color="#22D3EE"/>
+    </linearGradient>
+
+    <!-- UI Effects -->
+    <filter id="neon" x="-50%" y="-50%" width="200%" height="200%">
+      <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#A855F7" flood-opacity="0.6"/>
+    </filter>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
   </defs>
 
   <!-- Background -->
-  <rect width="1200" height="400" fill="#0D1117"/>
   <rect width="1200" height="400" fill="url(#bg)"/>
+  
+  <!-- Subtle Grid Pattern -->
+  <g stroke="#FFFFFF" stroke-opacity="0.02" stroke-width="1">
+    <path d="M0,50 L1200,50 M0,100 L1200,100 M0,150 L1200,150 M0,200 L1200,200 M0,250 L1200,250 M0,300 L1200,300 M0,350 L1200,350"/>
+    <path d="M100,0 L100,400 M200,0 L200,400 M300,0 L300,400 M400,0 L400,400 M500,0 L500,400 M600,0 L600,400 M700,0 L700,400 M800,0 L800,400 M900,0 L900,400 M1000,0 L1000,400 M1100,0 L1100,400"/>
+  </g>
 
-  <!-- ─── Left: Logotype ─── -->
+  <!-- Periodic Table Logo -->
+  <g transform="translate(100, 100) scale(1)">
+    <rect x="20" y="20" width="160" height="160" rx="20" fill="#020617" stroke="url(#borderGrad)" stroke-width="12" filter="url(#neon)"/>
+    <text x="40" y="55" font-family="system-ui, monospace, sans-serif" font-size="24" font-weight="700" fill="#94A3B8">42</text>
+    <text x="100" y="125" font-family="system-ui, -apple-system, sans-serif" font-size="80" font-weight="800" fill="url(#textGrad)" text-anchor="middle" letter-spacing="-2">Ro</text>
+    <text x="100" y="152" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="700" fill="#E2E8F0" text-anchor="middle" letter-spacing="1">Rosmarium</text>
+    <text x="100" y="170" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="500" fill="#64748B" text-anchor="middle">284.15</text>
+  </g>
 
-  <!-- ROSMARIUM wordmark -->
-  <text
-    x="82" y="162"
-    font-family="system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
-    font-size="80" font-weight="700"
-    fill="#E6EDF3"
-    letter-spacing="-1">ROSMARIUM</text>
-
-  <!-- CMS sub-label -->
-  <text
-    x="87" y="197"
-    font-family="system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
-    font-size="27" font-weight="300"
-    fill="#7D8590">CMS</text>
+  <!-- Typography -->
+  <text x="320" y="195" font-family="system-ui, -apple-system, sans-serif" font-size="84" font-weight="800" fill="#FFFFFF" letter-spacing="-2">ROSMARIUM</text>
+  
+  <!-- "CMS" Badge -->
+  <rect x="760" y="135" width="90" height="56" rx="12" fill="#22D3EE" fill-opacity="0.1" stroke="#22D3EE" stroke-width="2"/>
+  <text x="805" y="176" font-family="system-ui, -apple-system, sans-serif" font-size="32" font-weight="700" fill="#22D3EE" text-anchor="middle">CMS</text>
 
   <!-- Tagline -->
-  <text
-    x="82" y="238"
-    font-family="system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif"
-    font-size="13" font-weight="400"
-    fill="#58A6FF"
-    letter-spacing="0.13em">AI-NATIVE CONTENT INFRASTRUCTURE</text>
+  <text x="325" y="255" font-family="system-ui, -apple-system, sans-serif" font-size="28" font-weight="300" fill="#94A3B8" letter-spacing="1.5">The <tspan fill="#22D3EE" font-weight="600">AI-Native</tspan> Content Infrastructure</text>
 
-  <!-- Divider -->
-  <line x1="82" y1="265" x2="480" y2="265" stroke="#21262D" stroke-width="1"/>
+  <!-- Badges -->
+  <g transform="translate(325, 300)" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="500" fill="#94A3B8">
+    <rect x="0" y="0" width="100" height="28" rx="6" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+    <text x="50" y="19" text-anchor="middle">TypeScript</text>
 
-  <!-- ─── Bottom badges ─── -->
-  <g font-family="system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif" font-size="11.5" fill="#7D8590">
+    <rect x="110" y="0" width="76" height="28" rx="6" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+    <text x="148" y="19" text-anchor="middle">Python</text>
 
-    <rect x="82" y="350" width="106" height="26" rx="13" fill="#161B22" stroke="#30363D" stroke-width="1"/>
-    <text x="135" y="368" text-anchor="middle">TypeScript</text>
-
-    <rect x="196" y="350" width="76" height="26" rx="13" fill="#161B22" stroke="#30363D" stroke-width="1"/>
-    <text x="234" y="368" text-anchor="middle">Python</text>
-
-    <rect x="280" y="350" width="190" height="26" rx="13" fill="#161B22" stroke="#30363D" stroke-width="1"/>
-    <text x="375" y="368" text-anchor="middle">PostgreSQL + pgvector</text>
+    <rect x="196" y="0" width="180" height="28" rx="6" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+    <text x="286" y="19" text-anchor="middle">PostgreSQL + pgvector</text>
   </g>
 
-  <!-- ─── Right: Node graph ─── -->
-
-  <!-- Connecting lines (behind nodes) -->
-  <g stroke="#30363D" stroke-width="1.5" opacity="0.75">
-    <!-- central → all -->
-    <line x1="950" y1="178" x2="838" y2="107"/>
-    <line x1="950" y1="178" x2="1068" y2="102"/>
-    <line x1="950" y1="178" x2="858" y2="258"/>
-    <line x1="950" y1="178" x2="1074" y2="248"/>
-    <line x1="950" y1="178" x2="950" y2="318"/>
-    <line x1="950" y1="178" x2="800" y2="195"/>
-    <!-- peripheral cross-links -->
-    <line x1="838" y1="107" x2="800" y2="195"/>
-    <line x1="1068" y1="102" x2="1074" y2="248"/>
-    <line x1="858" y1="258" x2="950" y2="318"/>
-    <line x1="950" y1="318" x2="1074" y2="248"/>
-    <line x1="800" y1="195" x2="858" y2="258"/>
+  <!-- Node Network Graphic on the Right -->
+  <g transform="translate(850, 0)">
+    <!-- Connections -->
+    <path d="M 150 100 L 250 150 L 180 280 L 100 200 Z" stroke="#3B82F6" stroke-width="2" stroke-opacity="0.4" fill="none"/>
+    <path d="M 250 150 L 320 80 L 280 250 L 180 280" stroke="#A855F7" stroke-width="2" stroke-opacity="0.4" fill="none"/>
+    <path d="M 100 200 L 50 300 L 180 280" stroke="#22D3EE" stroke-width="2" stroke-opacity="0.4" fill="none"/>
+    
+    <!-- Nodes -->
+    <circle cx="150" cy="100" r="10" fill="#22D3EE" filter="url(#glow)"/>
+    <circle cx="250" cy="150" r="14" fill="#A855F7" filter="url(#glow)"/>
+    <circle cx="180" cy="280" r="12" fill="#3B82F6" filter="url(#glow)"/>
+    <circle cx="100" cy="200" r="8" fill="#A855F7" filter="url(#glow)"/>
+    <circle cx="320" cy="80" r="8" fill="#3B82F6" filter="url(#glow)"/>
+    <circle cx="280" cy="250" r="10" fill="#22D3EE" filter="url(#glow)"/>
+    <circle cx="50" cy="300" r="6" fill="#3B82F6" filter="url(#glow)"/>
   </g>
-
-  <!-- Nodes -->
-  <!-- Central node — largest, blue, with outer ring -->
-  <circle cx="950" cy="178" r="24" fill="#58A6FF" opacity="0.92"/>
-  <circle cx="950" cy="178" r="32" fill="none" stroke="#58A6FF" stroke-width="1.5" opacity="0.22"/>
-
-  <!-- Node 2: green — top left -->
-  <circle cx="838" cy="107" r="13" fill="#3FB950" opacity="0.85"/>
-
-  <!-- Node 3: coral — top right -->
-  <circle cx="1068" cy="102" r="12" fill="#F78166" opacity="0.82"/>
-
-  <!-- Node 4: blue dim — bottom left -->
-  <circle cx="858" cy="258" r="15" fill="#58A6FF" opacity="0.55"/>
-
-  <!-- Node 5: green — bottom right -->
-  <circle cx="1074" cy="248" r="11" fill="#3FB950" opacity="0.70"/>
-
-  <!-- Node 6: coral — bottom centre -->
-  <circle cx="950" cy="318" r="13" fill="#F78166" opacity="0.68"/>
-
-  <!-- Node 7: blue small — far left -->
-  <circle cx="800" cy="195" r="9" fill="#58A6FF" opacity="0.45"/>
 </svg>

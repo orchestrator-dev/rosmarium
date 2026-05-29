@@ -15,7 +15,22 @@ const { title, description = 'The AI-Native Revolution headless CMS' } = Astro.p
     <meta charset="UTF-8" />
     <meta name="description" content={description} />
     <meta name="viewport" content="width=device-width" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href="/logo.svg" />
+    
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://rosmarium.com/" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content="https://rosmarium.com/og-image.png" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://rosmarium.com/" />
+    <meta property="twitter:title" content={title} />
+    <meta property="twitter:description" content={description} />
+    <meta property="twitter:image" content="https://rosmarium.com/og-image.png" />
+
     <meta name="generator" content={Astro.generator} />
     <title>{title}</title>
   </head>
@@ -23,12 +38,12 @@ const { title, description = 'The AI-Native Revolution headless CMS' } = Astro.p
     <header class="sticky top-0 z-50 bg-dark-bg/80 backdrop-blur-md border-b border-dark-border">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
         <div class="flex items-center gap-2">
-          <div class="w-8 h-8 rounded bg-gradient-to-br from-neon-cyan to-neon-purple flex items-center justify-center font-bold text-black">R</div>
+          <img src="/logo.svg" class="w-8 h-8 drop-shadow-md" alt="Rosmarium Logo" />
           <span class="text-xl font-bold tracking-tight">Rosmarium<span class="text-neon-cyan">.</span></span>
         </div>
         <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-zinc-400">
-          <a href="#" class="hover:text-white transition-colors">Features</a>
-          <a href="#" class="hover:text-white transition-colors">Docs</a>
+          <a href="https://demo.rosmarium.com" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors text-neon-purple font-semibold">Demo</a>
+          <a href="https://docs.rosmarium.com" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">Docs</a>
           <a href="#" class="hover:text-white transition-colors">Blog</a>
         </nav>
         <div class="flex items-center gap-4">
@@ -50,7 +65,7 @@ const { title, description = 'The AI-Native Revolution headless CMS' } = Astro.p
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8">
         <div class="col-span-1 md:col-span-2">
           <div class="flex items-center gap-2 mb-4">
-            <div class="w-6 h-6 rounded bg-gradient-to-br from-neon-cyan to-neon-purple flex items-center justify-center font-bold text-black text-xs">R</div>
+            <img src="/logo.svg" class="w-6 h-6" alt="Rosmarium Logo" />
             <span class="text-lg font-bold">Rosmarium<span class="text-neon-cyan">.</span></span>
           </div>
           <p class="text-zinc-400 text-sm max-w-sm">
@@ -60,8 +75,8 @@ const { title, description = 'The AI-Native Revolution headless CMS' } = Astro.p
         <div>
           <h3 class="text-sm font-semibold text-white tracking-wider uppercase mb-4">Resources</h3>
           <ul class="space-y-3">
-            <li><a href="#" class="text-sm text-zinc-400 hover:text-white">Documentation</a></li>
-            <li><a href="#" class="text-sm text-zinc-400 hover:text-white">API Reference</a></li>
+            <li><a href="https://docs.rosmarium.com" target="_blank" rel="noopener noreferrer" class="text-sm text-zinc-400 hover:text-white">Documentation</a></li>
+            <li><a href="https://docs.rosmarium.com/api" target="_blank" rel="noopener noreferrer" class="text-sm text-zinc-400 hover:text-white">API Reference</a></li>
             <li><a href="#" class="text-sm text-zinc-400 hover:text-white">Blog</a></li>
           </ul>
         </div>
