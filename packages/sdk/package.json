@@ -1,7 +1,9 @@
 {
     "name": "@rosmarium-cos/sdk",
     "version": "1.0.0",
-    "private": true,
+    "publishConfig": {
+        "access": "public"
+    },
     "type": "module",
     "main": "./src/index.ts",
     "scripts": {

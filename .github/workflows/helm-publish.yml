@@ -1,0 +1,32 @@
+name: Helm Chart Publish
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  publish-helm:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.14.0
+          
+      - name: Log in to the Container registry
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | helm registry login ghcr.io -u ${{ github.actor }} --password-stdin
+        
+      - name: Package Helm Chart
+        run: helm package deploy/helm/rosmarium --destination .helm-dist
+        
+      - name: Push Helm Chart
+        run: |
+          CHART_FILE=$(ls .helm-dist/*.tgz)
+          helm push $CHART_FILE oci://ghcr.io/${{ github.repository_owner }}/helm
