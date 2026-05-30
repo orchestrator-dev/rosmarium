@@ -19,3 +19,15 @@ Rosmarium_CMS_Project_Plan.md
 
 # Marketing content (not committed to public repo)
 marketing/
+
+# Sensitive files and DEV artifacts
+cookie.txt
+cookies.txt
+*.tar.gz
+get_helm.sh
+myhelm
+rename_dirs.py
+search_success.png
+.playwright-mcp/
+.serena/
+bin/helm
