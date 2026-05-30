@@ -15,6 +15,11 @@ export interface FieldDefinition {
   targetContentType?: string;
   many?: boolean;
   generatedFrom?: string;
+  // Group / Component / Blocks
+  fields?: FieldDefinition[];
+  allowedComponents?: string[];
+  minBlocks?: number;
+  maxBlocks?: number;
 }
 
 export interface ContentTypeSettings {
@@ -39,6 +44,7 @@ export interface ContentType {
   description: string | null;
   fields: FieldDefinition[];
   settings: ContentTypeSettings;
+  isComponent?: boolean;
   isSystem: boolean;
   createdAt: string;
   entriesCount?: number;
@@ -50,4 +56,5 @@ export interface ContentTypeInput {
   description: string;
   fields: FieldDefinition[];
   settings: ContentTypeSettings;
+  isComponent?: boolean;
 }

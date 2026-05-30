@@ -2,6 +2,7 @@ import React from 'react';
 import {
   AppBar,
   Box,
+  Collapse,
   CssBaseline,
   Divider,
   Drawer,
@@ -19,19 +20,31 @@ import {
   Search as SearchIcon,
   AutoAwesome as AIIcon,
   Hub as GraphIcon,
-  
+
   Dashboard as DashboardIcon,
   PhotoLibrary as MediaIcon,
   Webhook as WebhookIcon,
   Security as SecurityIcon,
   Schema as SchemaIcon,
+  ExpandLess,
+  ExpandMore,
+  Article as ArticleIcon,
 } from '@mui/icons-material';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+
+interface ContentType {
+  id: string;
+  name: string;
+  displayName: string;
+  description: string | null;
+  fields: unknown[];
+  settings: Record<string, unknown>;
+  isSystem: boolean;
+}
 
 const drawerWidth = 240;
 
 const menuItems = [
-  { text: 'Content', icon: <DashboardIcon />, path: '/content/article' },
   { text: 'Media', icon: <MediaIcon />, path: '/media' },
   { text: 'Search', icon: <SearchIcon />, path: '/search' },
   { text: 'AI Dashboard', icon: <AIIcon />, path: '/ai-dashboard' },
@@ -46,8 +59,28 @@ const settingsItems = [
 
 export function AppShell() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [contentOpen, setContentOpen] = React.useState(true);
+  const [contentTypes, setContentTypes] = React.useState<ContentType[]>([]);
   const navigate = useNavigate();
   const location = useLocation();
+
+  // Fetch content types for dynamic sidebar
+  React.useEffect(() => {
+    const fetchContentTypes = async () => {
+      try {
+        const res = await fetch('/api/content-types');
+        if (res.ok) {
+          const json = (await res.json()) as { data: ContentType[] };
+          setContentTypes(
+            (json.data || []).filter((t) => !t.settings?.isComponent)
+          );
+        }
+      } catch (err) {
+        console.error('Failed to fetch content types for sidebar', err);
+      }
+    };
+    void fetchContentTypes();
+  }, []);
 
   React.useEffect(() => {
     fetch('/api/auth/me').then(res => {
@@ -68,6 +101,99 @@ export function AppShell() {
       </Toolbar>
       <Divider sx={{ borderColor: 'rgba(255,255,255,0.05)' }} />
       <List>
+        {/* Dynamic Content section */}
+        <ListItem disablePadding>
+          <ListItemButton
+            selected={location.pathname === '/content'}
+            onClick={() => navigate('/content')}
+            sx={{
+              '&.Mui-selected': {
+                backgroundColor: 'rgba(99, 102, 241, 0.15)',
+                borderRight: '3px solid #6366F1',
+              },
+            }}
+          >
+            <ListItemIcon sx={{ color: location.pathname.startsWith('/content') ? '#6366F1' : '#94a3b8' }}>
+              <DashboardIcon />
+            </ListItemIcon>
+            <ListItemText
+              primary="Content"
+              sx={{
+                '& .MuiListItemText-primary': {
+                  fontWeight: location.pathname.startsWith('/content') ? 600 : 400,
+                  color: location.pathname.startsWith('/content') ? '#f1f5f9' : '#94a3b8',
+                },
+              }}
+            />
+            <IconButton
+              size="small"
+              onClick={(e) => {
+                e.stopPropagation();
+                setContentOpen(!contentOpen);
+              }}
+              sx={{ color: '#64748b' }}
+            >
+              {contentOpen ? <ExpandLess fontSize="small" /> : <ExpandMore fontSize="small" />}
+            </IconButton>
+          </ListItemButton>
+        </ListItem>
+        <Collapse in={contentOpen} timeout="auto" unmountOnExit>
+          <List component="div" disablePadding>
+            {contentTypes.map((ct) => {
+              const ctPath = `/content/${ct.name}`;
+              const isActive = location.pathname === ctPath;
+              return (
+                <ListItem key={ct.id} disablePadding>
+                  <ListItemButton
+                    selected={isActive}
+                    onClick={() => navigate(ctPath)}
+                    sx={{
+                      pl: 4,
+                      py: 0.5,
+                      '&.Mui-selected': {
+                        backgroundColor: 'rgba(99, 102, 241, 0.15)',
+                        borderRight: '3px solid #6366F1',
+                      },
+                    }}
+                  >
+                    <ListItemIcon sx={{ color: isActive ? '#6366F1' : '#64748b', minWidth: 32 }}>
+                      <ArticleIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={ct.displayName}
+                      sx={{
+                        '& .MuiListItemText-primary': {
+                          fontSize: '0.875rem',
+                          fontWeight: isActive ? 600 : 400,
+                          color: isActive ? '#f1f5f9' : '#94a3b8',
+                        },
+                      }}
+                    />
+                  </ListItemButton>
+                </ListItem>
+              );
+            })}
+            <ListItem disablePadding>
+              <ListItemButton
+                onClick={() => navigate('/settings/content-types?action=new')}
+                sx={{ pl: 4, py: 0.5 }}
+              >
+                <ListItemText
+                  primary="+ Add content type"
+                  sx={{
+                    '& .MuiListItemText-primary': {
+                      fontSize: '0.85rem',
+                      color: '#94a3b8',
+                      '&:hover': { color: '#f1f5f9' },
+                    },
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
+          </List>
+        </Collapse>
+
+        {/* Other menu items */}
         {menuItems.map((item) => (
           <ListItem key={item.text} disablePadding>
             <ListItemButton
@@ -83,35 +209,18 @@ export function AppShell() {
               <ListItemIcon sx={{ color: location.pathname.startsWith(item.path) ? '#6366F1' : '#94a3b8' }}>
                 {item.icon}
               </ListItemIcon>
-              <ListItemText 
-                primary={item.text} 
-                sx={{ 
+              <ListItemText
+                primary={item.text}
+                sx={{
                   '& .MuiListItemText-primary': {
                     fontWeight: location.pathname.startsWith(item.path) ? 600 : 400,
                     color: location.pathname.startsWith(item.path) ? '#f1f5f9' : '#94a3b8',
-                  }
-                }} 
+                  },
+                }}
               />
             </ListItemButton>
           </ListItem>
         ))}
-        <ListItem disablePadding>
-          <ListItemButton
-            onClick={() => navigate('/settings/content-types?action=new')}
-            sx={{ pl: 4, py: 0.5 }}
-          >
-            <ListItemText
-              primary="+ Add content type"
-              sx={{
-                '& .MuiListItemText-primary': {
-                  fontSize: '0.85rem',
-                  color: '#94a3b8',
-                  '&:hover': { color: '#f1f5f9' },
-                },
-              }}
-            />
-          </ListItemButton>
-        </ListItem>
       </List>
       <Divider sx={{ borderColor: 'rgba(255,255,255,0.05)' }} />
       <List subheader={<Typography sx={{ px: 3, py: 1, fontSize: '0.75rem', fontWeight: 700, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Settings</Typography>}>

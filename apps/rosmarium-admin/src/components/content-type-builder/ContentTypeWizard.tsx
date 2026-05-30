@@ -21,6 +21,7 @@ export function ContentTypeWizard({ existingType, onClose, onSave }: ContentType
   const [name, setName] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [description, setDescription] = useState('');
+  const [isComponent, setIsComponent] = useState(false);
 
   // Fields
   const [fields, setFields] = useState<FieldDefinition[]>([]);
@@ -43,6 +44,7 @@ export function ContentTypeWizard({ existingType, onClose, onSave }: ContentType
       setDisplayName(existingType.displayName);
       setDescription(existingType.description || '');
       setFields(existingType.fields || []);
+      setIsComponent(existingType.isComponent || false);
       
       if (existingType.settings?.ai?.enabled) {
         setAiEnabled(true);
@@ -67,6 +69,7 @@ export function ContentTypeWizard({ existingType, onClose, onSave }: ContentType
     displayName,
     description,
     fields,
+    isComponent,
     settings: {
       ai: { enabled: aiEnabled, operations: aiOperations, taxonomy: taxonomyTags },
       graph: { enabled: graphEnabled, edgeTypes, autoInferNer, autoInferSimilarity, similarityThreshold }
@@ -98,6 +101,7 @@ export function ContentTypeWizard({ existingType, onClose, onSave }: ContentType
             displayName={displayName} setDisplayName={setDisplayName}
             name={name} setName={setName}
             description={description} setDescription={setDescription}
+            isComponent={isComponent} onIsComponentChange={setIsComponent}
           />
         )}
 

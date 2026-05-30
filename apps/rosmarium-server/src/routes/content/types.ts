@@ -32,6 +32,7 @@ const contentTypeRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
                                         description: { type: ["string", "null"] },
                                         fields: { type: "array" },
                                         isSystem: { type: "boolean" },
+                                        isComponent: { type: "boolean" },
                                         createdAt: { type: "string" },
                                         updatedAt: { type: "string" },
                                     },
@@ -66,6 +67,7 @@ const contentTypeRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
                         description: { type: "string" },
                         fields: { type: "array" },
                         settings: { type: "object" },
+                        isComponent: { type: "boolean" },
                         createdBy: { type: "string" },
                     },
                 },
@@ -153,6 +155,7 @@ const contentTypeRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
                         description: { type: "string" },
                         fields: { type: "array" },
                         settings: { type: "object" },
+                        isComponent: { type: "boolean" },
                     },
                 },
                 response: {

@@ -1,0 +1,1 @@
+ALTER TABLE "content_types" ADD COLUMN "is_component" boolean DEFAULT false NOT NULL;

@@ -1,0 +1,421 @@
+import React, { useEffect, useState, useCallback } from 'react';
+import { useParams, useNavigate, Link as RouterLink } from 'react-router-dom';
+import {
+  Box,
+  Typography,
+  Breadcrumbs,
+  Link,
+  Tabs,
+  Tab,
+  Button,
+  Stack,
+  Paper,
+  Chip,
+  CircularProgress,
+  Alert,
+  TextField,
+  Grid,
+} from '@mui/material';
+import {
+  Save as SaveIcon,
+  Close as CancelIcon,
+  Publish as PublishIcon,
+  Unpublished as UnpublishIcon,
+} from '@mui/icons-material';
+import type { ContentType } from '../components/content-type-builder/types';
+import { FieldRenderer } from '../components/editor/FieldRenderer';
+
+interface ContentEntry {
+  id: string;
+  contentType: string;
+  status: 'draft' | 'published' | 'archived';
+  locale?: string;
+  data: Record<string, unknown>;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export function ContentEditorPage() {
+  const { type, id } = useParams<{ type: string; id: string }>();
+  const navigate = useNavigate();
+  const isNew = id === 'new' || !id;
+
+  const [contentType, setContentType] = useState<ContentType | null>(null);
+  const [allContentTypes, setAllContentTypes] = useState<ContentType[]>([]);
+  const [entry, setEntry] = useState<ContentEntry | null>(null);
+  const [formData, setFormData] = useState<Record<string, unknown>>({});
+  const [jsonStr, setJsonStr] = useState('{}');
+  const [activeTab, setActiveTab] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState('');
+  const [jsonError, setJsonError] = useState('');
+
+  // Fetch content type definition + entry (if editing) + all content types (for component lookup)
+  useEffect(() => {
+    let cancelled = false;
+
+    const load = async () => {
+      setLoading(true);
+      setError('');
+      try {
+        // Fetch content type schema
+        const ctRes = await fetch(`/api/content-types/${type}`);
+        if (!ctRes.ok) throw new Error('Failed to load content type');
+        const ctJson = await ctRes.json() as { data: ContentType };
+        if (!cancelled) setContentType(ctJson.data);
+
+        // Fetch all content types (for component / blocks lookups)
+        const allRes = await fetch('/api/content-types');
+        if (allRes.ok) {
+          const allJson = await allRes.json() as { data: ContentType[] };
+          if (!cancelled) setAllContentTypes(allJson.data ?? []);
+        }
+
+        // Fetch existing entry if editing
+        if (!isNew) {
+          const entryRes = await fetch(`/api/content/${type}/${id}`);
+          if (!entryRes.ok) throw new Error('Failed to load entry');
+          const entryJson = await entryRes.json() as { data: ContentEntry };
+          if (!cancelled) {
+            setEntry(entryJson.data);
+            setFormData(entryJson.data.data ?? {});
+            setJsonStr(JSON.stringify(entryJson.data.data ?? {}, null, 2));
+          }
+        } else {
+          // New entry: start with empty data
+          const initialData: Record<string, unknown> = {};
+          if (!cancelled) {
+            setFormData(initialData);
+            setJsonStr(JSON.stringify(initialData, null, 2));
+          }
+        }
+      } catch (err) {
+        if (!cancelled) setError(err instanceof Error ? err.message : 'Load failed');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    if (type) void load();
+    return () => { cancelled = true; };
+  }, [type, id, isNew]);
+
+  const handleFieldChange = useCallback((fieldName: string, value: unknown) => {
+    setFormData((prev) => ({ ...prev, [fieldName]: value }));
+  }, []);
+
+  const handleTabChange = (_: React.SyntheticEvent, newValue: number) => {
+    if (newValue === 1) {
+      // Switching to JSON tab – sync form data to JSON
+      setJsonStr(JSON.stringify(formData, null, 2));
+      setJsonError('');
+    } else {
+      // Switching to Fields tab – sync JSON to form data
+      try {
+        const parsed = JSON.parse(jsonStr);
+        setFormData(parsed as Record<string, unknown>);
+        setJsonError('');
+      } catch {
+        setJsonError('Invalid JSON — fix errors before switching tabs');
+        return; // don't switch
+      }
+    }
+    setActiveTab(newValue);
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    setError('');
+    try {
+      // If on JSON tab, parse first
+      let dataToSave = formData;
+      if (activeTab === 1) {
+        try {
+          dataToSave = JSON.parse(jsonStr) as Record<string, unknown>;
+        } catch {
+          setError('Invalid JSON');
+          setSaving(false);
+          return;
+        }
+      }
+
+      const url = isNew ? `/api/content/${type}` : `/api/content/${type}/${id}`;
+      const method = isNew ? 'POST' : 'PATCH';
+
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ data: dataToSave }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(
+          (errData as { error?: { message?: string } })?.error?.message || 'Failed to save',
+        );
+      }
+
+      const result = await res.json() as { data: ContentEntry };
+      if (isNew) {
+        // Navigate to the edit URL for the new entry
+        navigate(`/content/${type}/${result.data.id}/edit`, { replace: true });
+      } else {
+        setEntry(result.data);
+        setFormData(result.data.data ?? {});
+        setJsonStr(JSON.stringify(result.data.data ?? {}, null, 2));
+      }
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Save failed');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handlePublish = async (publish: boolean) => {
+    if (!entry) return;
+    setSaving(true);
+    try {
+      const res = await fetch(`/api/content/${type}/${entry.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status: publish ? 'published' : 'draft' }),
+      });
+      if (res.ok) {
+        const result = await res.json() as { data: ContentEntry };
+        setEntry(result.data);
+      }
+    } catch (err) {
+      console.error('Publish/unpublish failed', err);
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleCancel = () => {
+    navigate(`/content/${type}`);
+  };
+
+  if (loading) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  const entryTitle =
+    String(
+      (formData as Record<string, unknown>)?.title ??
+      (formData as Record<string, unknown>)?.name ??
+      (isNew ? 'New Entry' : entry?.id ?? ''),
+    );
+
+  return (
+    <Box sx={{ maxWidth: 1400, mx: 'auto' }}>
+      {/* Breadcrumbs */}
+      <Breadcrumbs sx={{ mb: 2 }}>
+        <Link component={RouterLink} to="/content" underline="hover" color="inherit">
+          Content
+        </Link>
+        <Link component={RouterLink} to={`/content/${type}`} underline="hover" color="inherit" sx={{ textTransform: 'capitalize' }}>
+          {contentType?.displayName ?? type}
+        </Link>
+        <Typography color="text.primary">
+          {entryTitle}
+        </Typography>
+      </Breadcrumbs>
+
+      {error && (
+        <Alert severity="error" sx={{ mb: 2 }}>
+          {error}
+        </Alert>
+      )}
+
+      <Grid container spacing={3}>
+        {/* Main Editor Area */}
+        <Grid size={{ xs: 12, md: 8 }}>
+          <Paper variant="outlined" sx={{ borderRadius: 2 }}>
+            {/* Toolbar */}
+            <Box
+              sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', px: 2, py: 1, borderBottom: '1px solid', borderColor: 'divider' }}
+            >
+              <Tabs value={activeTab} onChange={handleTabChange}>
+                <Tab label="Fields" />
+                <Tab label="JSON" />
+              </Tabs>
+              <Stack direction="row" spacing={1}>
+                <Button
+                  variant="contained"
+                  startIcon={<SaveIcon />}
+                  onClick={() => void handleSave()}
+                  disabled={saving}
+                  size="small"
+                >
+                  {saving ? 'Saving…' : 'Save'}
+                </Button>
+                <Button
+                  variant="outlined"
+                  startIcon={<CancelIcon />}
+                  onClick={handleCancel}
+                  size="small"
+                >
+                  Cancel
+                </Button>
+              </Stack>
+            </Box>
+
+            {/* Tab Content */}
+            <Box sx={{ p: 3 }}>
+              {activeTab === 0 && contentType && (
+                <Stack spacing={3}>
+                  {contentType.fields.map((field) => (
+                    <FieldRenderer
+                      key={field.name}
+                      field={field}
+                      value={formData[field.name]}
+                      onChange={handleFieldChange}
+                      contentTypes={allContentTypes}
+                    />
+                  ))}
+                  {contentType.fields.length === 0 && (
+                    <Typography variant="body2" color="text.secondary" sx={{ py: 4, textAlign: 'center' }}>
+                      This content type has no fields defined.
+                    </Typography>
+                  )}
+                </Stack>
+              )}
+
+              {activeTab === 1 && (
+                <Box>
+                  {jsonError && (
+                    <Alert severity="warning" sx={{ mb: 2 }}>
+                      {jsonError}
+                    </Alert>
+                  )}
+                  <TextField
+                    fullWidth
+                    multiline
+                    rows={24}
+                    value={jsonStr}
+                    onChange={(e) => setJsonStr(e.target.value)}
+                    sx={{
+                      '& .MuiInputBase-root': {
+                        fontFamily: 'monospace',
+                        fontSize: '0.875rem',
+                      },
+                    }}
+                  />
+                </Box>
+              )}
+            </Box>
+          </Paper>
+        </Grid>
+
+        {/* Sidebar */}
+        <Grid size={{ xs: 12, md: 4 }}>
+          <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
+            <Typography variant="h3" sx={{ mb: 2 }}>
+              Entry Info
+            </Typography>
+
+            <Stack spacing={2}>
+              {/* Status */}
+              <Box>
+                <Typography variant="caption" color="text.secondary">
+                  Status
+                </Typography>
+                <Box sx={{ mt: 0.5 }}>
+                  <Chip
+                    label={entry?.status ?? 'draft'}
+                    size="small"
+                    color={
+                      entry?.status === 'published'
+                        ? 'success'
+                        : entry?.status === 'draft'
+                          ? 'warning'
+                          : 'default'
+                    }
+                  />
+                </Box>
+              </Box>
+
+              {/* Content Type */}
+              <Box>
+                <Typography variant="caption" color="text.secondary">
+                  Content Type
+                </Typography>
+                <Typography variant="body2">
+                  {contentType?.displayName ?? type}
+                </Typography>
+              </Box>
+
+              {/* Locale */}
+              <Box>
+                <Typography variant="caption" color="text.secondary">
+                  Locale
+                </Typography>
+                <Typography variant="body2">
+                  {entry?.locale ?? 'en'}
+                </Typography>
+              </Box>
+
+              {/* Created */}
+              {entry && (
+                <Box>
+                  <Typography variant="caption" color="text.secondary">
+                    Created
+                  </Typography>
+                  <Typography variant="body2">
+                    {new Date(entry.createdAt).toLocaleString()}
+                  </Typography>
+                </Box>
+              )}
+
+              {/* Updated */}
+              {entry && (
+                <Box>
+                  <Typography variant="caption" color="text.secondary">
+                    Last Updated
+                  </Typography>
+                  <Typography variant="body2">
+                    {new Date(entry.updatedAt).toLocaleString()}
+                  </Typography>
+                </Box>
+              )}
+
+              {/* Publish / Unpublish */}
+              {!isNew && entry && (
+                <Stack spacing={1} sx={{ mt: 1 }}>
+                  {entry.status !== 'published' ? (
+                    <Button
+                      variant="contained"
+                      color="success"
+                      startIcon={<PublishIcon />}
+                      onClick={() => void handlePublish(true)}
+                      disabled={saving}
+                      fullWidth
+                    >
+                      Publish
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="outlined"
+                      color="warning"
+                      startIcon={<UnpublishIcon />}
+                      onClick={() => void handlePublish(false)}
+                      disabled={saving}
+                      fullWidth
+                    >
+                      Unpublish
+                    </Button>
+                  )}
+                </Stack>
+              )}
+            </Stack>
+          </Paper>
+        </Grid>
+      </Grid>
+    </Box>
+  );
+}

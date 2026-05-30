@@ -57,6 +57,13 @@
       "when": 1779833971092,
       "tag": "0008_eager_crystal",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1780144090576,
+      "tag": "0009_nappy_gunslinger",
+      "breakpoints": true
     }
   ]
 }

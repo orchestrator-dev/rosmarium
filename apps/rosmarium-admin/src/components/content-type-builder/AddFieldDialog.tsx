@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, Button, Stack, TextField,
-  FormGroup, FormControlLabel, Checkbox, Grid, Typography
+  FormGroup, FormControlLabel, Checkbox, Grid, Typography, Alert
 } from '@mui/material';
 import { FieldDefinition } from './types';
 import { FieldTypeGrid } from './FieldTypeGrid';
@@ -96,6 +96,37 @@ export function AddFieldDialog({ open, onClose, onSave, initialField, isEditMode
             )}
             {field.type === 'select' && (
               <Typography variant="body2" color="warning.main">Options configuration is supported via API. Visual editor for options coming soon.</Typography>
+            )}
+            {field.type === 'group' && (
+              <Alert severity="info">Sub-fields are configured after adding the group field.</Alert>
+            )}
+            {field.type === 'component' && (
+              <TextField
+                fullWidth
+                label="Allowed Components"
+                value={(field.allowedComponents || []).join(', ')}
+                onChange={e => setField(prev => ({ ...prev, allowedComponents: e.target.value.split(',').map(s => s.trim()).filter(Boolean) }))}
+                helperText="Comma-separated list of component type API names (e.g. 'hero, callToAction, featureGrid')"
+              />
+            )}
+            {field.type === 'blocks' && (
+              <Stack spacing={2}>
+                <TextField
+                  fullWidth
+                  label="Allowed Components"
+                  value={(field.allowedComponents || []).join(', ')}
+                  onChange={e => setField(prev => ({ ...prev, allowedComponents: e.target.value.split(',').map(s => s.trim()).filter(Boolean) }))}
+                  helperText="Comma-separated list of component type API names (e.g. 'hero, callToAction, featureGrid')"
+                />
+                <Grid container spacing={2}>
+                  <Grid size={{ xs: 6 }}>
+                    <TextField fullWidth type="number" label="Min Blocks" value={field.minBlocks ?? ''} onChange={e => setField(prev => ({ ...prev, minBlocks: parseInt(e.target.value) || undefined }))} />
+                  </Grid>
+                  <Grid size={{ xs: 6 }}>
+                    <TextField fullWidth type="number" label="Max Blocks" value={field.maxBlocks ?? ''} onChange={e => setField(prev => ({ ...prev, maxBlocks: parseInt(e.target.value) || undefined }))} />
+                  </Grid>
+                </Grid>
+              </Stack>
             )}
 
             <FormGroup row>

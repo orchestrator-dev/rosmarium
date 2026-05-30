@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -15,11 +15,6 @@ import {
   IconButton,
   Stack,
   CircularProgress,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
 } from '@mui/material';
 import {
   Add as AddIcon,
@@ -38,15 +33,9 @@ interface ContentEntry {
 
 export function ContentListPage() {
   const { type } = useParams<{ type: string }>();
+  const navigate = useNavigate();
   const [entries, setEntries] = useState<ContentEntry[]>([]);
   const [loading, setLoading] = useState(true);
-
-  // Editor State
-  const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [editingEntry, setEditingEntry] = useState<ContentEntry | null>(null);
-  const [editJsonStr, setEditJsonStr] = useState('{\n  \n}');
-  const [editError, setEditError] = useState('');
-  const [saving, setSaving] = useState(false);
 
   const fetchEntries = async () => {
     setLoading(true);
@@ -81,50 +70,6 @@ export function ContentListPage() {
     }
   };
 
-  const handleOpenCreate = () => {
-    setEditingEntry(null);
-    setEditJsonStr('{\n  "title": "",\n  "slug": ""\n}');
-    setEditError('');
-    setEditDialogOpen(true);
-  };
-
-  const handleOpenEdit = (entry: ContentEntry) => {
-    setEditingEntry(entry);
-    setEditJsonStr(JSON.stringify(entry.data, null, 2));
-    setEditError('');
-    setEditDialogOpen(true);
-  };
-
-  const handleSave = async () => {
-    try {
-      setSaving(true);
-      const parsedData = JSON.parse(editJsonStr);
-      setEditError('');
-      
-      const isEdit = !!editingEntry;
-      const url = isEdit ? `/api/content/${type}/${editingEntry.id}` : `/api/content/${type}`;
-      const method = isEdit ? 'PATCH' : 'POST';
-      
-      const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ data: parsedData }),
-      });
-      
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData?.error?.message || 'Failed to save');
-      }
-      
-      setEditDialogOpen(false);
-      void fetchEntries();
-    } catch (e: unknown) {
-      setEditError(e instanceof Error ? e.message : 'Invalid JSON or API Error');
-    } finally {
-      setSaving(false);
-    }
-  };
-
   return (
     <Box sx={{ maxWidth: 1200, mx: 'auto' }}>
       <Stack direction="row" sx={{justifyContent: "space-between", alignItems: "center", mb: 4}}>
@@ -136,7 +81,7 @@ export function ContentListPage() {
             Manage your {type} content entries.
           </Typography>
         </Box>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={handleOpenCreate}>
+        <Button variant="contained" startIcon={<AddIcon />} onClick={() => navigate(`/content/${type}/new`)}>
           Create Entry
         </Button>
       </Stack>
@@ -186,7 +131,7 @@ export function ContentListPage() {
                   <TableCell>{new Date(entry.createdAt).toLocaleDateString()}</TableCell>
                   <TableCell>{new Date(entry.updatedAt).toLocaleDateString()}</TableCell>
                   <TableCell align="right">
-                    <IconButton size="small" color="primary" onClick={() => handleOpenEdit(entry)}>
+                    <IconButton size="small" color="primary" onClick={() => navigate(`/content/${type}/${entry.id}/edit`)}>
                       <EditIcon fontSize="small" />
                     </IconButton>
                     <IconButton size="small" color="error" onClick={() => void handleDelete(entry.id)}>
@@ -199,34 +144,6 @@ export function ContentListPage() {
           </TableBody>
         </Table>
       </TableContainer>
-
-      {/* Edit/Create Dialog */}
-      <Dialog open={editDialogOpen} onClose={() => setEditDialogOpen(false)} maxWidth="md" fullWidth>
-        <DialogTitle>{editingEntry ? 'Edit Entry' : 'Create Entry'}</DialogTitle>
-        <DialogContent dividers>
-          {editError && (
-            <Typography color="error" variant="body2" sx={{ mb: 2 }}>
-              {editError}
-            </Typography>
-          )}
-          <TextField
-            fullWidth
-            multiline
-            rows={15}
-            variant="outlined"
-            label="Entry Data (JSON)"
-            value={editJsonStr}
-            onChange={(e) => setEditJsonStr(e.target.value)}
-            sx={{ '& .MuiInputBase-root': { fontFamily: 'monospace', fontSize: '0.875rem' } }}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setEditDialogOpen(false)} disabled={saving}>Cancel</Button>
-          <Button onClick={() => void handleSave()} variant="contained" disabled={saving}>
-            {saving ? 'Saving...' : 'Save'}
-          </Button>
-        </DialogActions>
-      </Dialog>
     </Box>
   );
 }

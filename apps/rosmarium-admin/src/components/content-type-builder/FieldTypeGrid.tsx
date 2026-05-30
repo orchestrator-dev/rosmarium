@@ -12,6 +12,9 @@ import {
   DataObject as JsonIcon,
   List as SelectIcon,
   LinkOff as SlugIcon,
+  ViewModule as ViewModuleIcon,
+  Widgets as WidgetsIcon,
+  ViewStream as ViewStreamIcon,
 } from '@mui/icons-material';
 
 export const FIELD_TYPES = [
@@ -26,6 +29,9 @@ export const FIELD_TYPES = [
   { value: 'json', label: 'JSON', icon: <JsonIcon />, description: 'Arbitrary JSON object' },
   { value: 'select', label: 'Select', icon: <SelectIcon />, description: 'Dropdown of values' },
   { value: 'slug', label: 'Slug', icon: <SlugIcon />, description: 'URL-friendly string' },
+  { value: 'group', label: 'Group', icon: <ViewModuleIcon />, description: 'Group of sub-fields' },
+  { value: 'component', label: 'Component', icon: <WidgetsIcon />, description: 'Reusable content component' },
+  { value: 'blocks', label: 'Blocks', icon: <ViewStreamIcon />, description: 'Ordered content blocks' },
 ];
 
 export interface FieldTypeGridProps {

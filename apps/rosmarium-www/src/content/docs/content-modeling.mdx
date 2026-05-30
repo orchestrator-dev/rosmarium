@@ -1,0 +1,46 @@
+---
+title: Content Modeling
+description: Build nested, composite, and dynamic content models in Rosmarium COS.
+order: 4
+---
+
+# Content Modeling
+
+Rosmarium supports creating advanced content models beyond just linear content, allowing developers and editors to construct rich, nested, and repeatable structures comparable to Enterprise Headless CMS platforms like Contentful and Contentstack.
+
+## Basic Fields
+
+Rosmarium includes all standard field types to model data:
+- **Text & Rich Text**: For titles, short descriptions, and long-form markdown content.
+- **Number & Boolean**: For precise values and toggles.
+- **Date & DateTime**: For scheduling and tracking.
+- **Slug**: Auto-generated identifiers for URL routing.
+- **Media**: References to uploaded assets and images.
+- **Relation**: Link entries to other content types (e.g. Authors to Posts).
+- **JSON**: Store arbitrary untyped structured data.
+
+## Composite Fields (Nested Content)
+
+To support complex layouts and repeating blocks (e.g. page builders, nested component trees), Rosmarium provides three advanced field types:
+
+### 1. Group
+A **Group** field allows you to define a fixed set of sub-fields grouped together under a single object key.
+- **Use Case**: Grouping SEO metadata (Title, Description, Keywords) or grouping Address details (Street, City, Zip).
+- **Schema**: Defined inline with the parent content type.
+
+### 2. Component
+A **Component** field embeds exactly one instance of a predefined "Component" content type.
+- **Use Case**: Reusing a standard "Call to Action" component or "Author Bio" block across multiple different content models.
+- **Setup**: You must first create a Content Type and mark it as a `Component`. Then, your component field can reference it.
+
+### 3. Blocks (Dynamic Zones)
+A **Blocks** field (often called Dynamic Zones or Modular Content) allows editors to insert a dynamic array of different components in any order.
+- **Use Case**: Building landing pages where editors can freely mix and match Hero Sections, Feature Grids, and Testimonials.
+- **Validation**: You can specify minimum and maximum limits on the number of blocks, and restrict which Component types are allowed inside the array.
+
+## The Content Editor
+
+The Admin Dashboard provides a rich visual editor for these composite fields:
+- **Nested Rendering**: Groups and Components are visually nested in the form.
+- **Block Builder**: Blocks are rendered as a sortable, collapsible list where editors can add, reorder, and remove sections visually.
+- **Dual Mode**: Editors can instantly switch between the visual form ("Fields") and raw data ("JSON") via the tabbed interface to inspect the resulting structure.

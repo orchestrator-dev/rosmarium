@@ -9,6 +9,8 @@ import { SearchPage } from './pages/Search';
 import { AIDashboardPage } from './pages/AIDashboard';
 import { GraphPage } from './pages/Graph';
 import { ContentListPage } from './pages/ContentList';
+import { ContentLandingPage } from './pages/ContentLanding';
+import { ContentEditorPage } from './pages/ContentEditor';
 import { MediaLibraryPage } from './pages/MediaLibrary';
 import { ContentTypesPage } from './pages/settings/ContentTypes';
 import { WebhooksPage } from './pages/settings/Webhooks';
@@ -27,6 +29,9 @@ export function App() {
             <Route path="search" element={<SearchPage />} />
             <Route path="ai-dashboard" element={<AIDashboardPage />} />
             <Route path="graph" element={<GraphPage />} />
+            <Route path="content" element={<ContentLandingPage />} />
+            <Route path="content/:type/new" element={<ContentEditorPage />} />
+            <Route path="content/:type/:id/edit" element={<ContentEditorPage />} />
             <Route path="content/:type" element={<ContentListPage />} />
             <Route path="media" element={<MediaLibraryPage />} />
             

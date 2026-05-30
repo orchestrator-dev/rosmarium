@@ -1,5 +1,5 @@
 import React from 'react';
-import { Stack, TextField } from '@mui/material';
+import { Stack, TextField, FormControlLabel, Switch, Typography } from '@mui/material';
 
 export interface StepBasicInfoProps {
   displayName: string;
@@ -8,10 +8,13 @@ export interface StepBasicInfoProps {
   setName: (val: string) => void;
   description: string;
   setDescription: (val: string) => void;
+  isComponent?: boolean;
+  onIsComponentChange?: (val: boolean) => void;
 }
 
 export function StepBasicInfo({
-  displayName, setDisplayName, name, setName, description, setDescription
+  displayName, setDisplayName, name, setName, description, setDescription,
+  isComponent, onIsComponentChange,
 }: StepBasicInfoProps) {
   
   const handleDisplayNameChange = (val: string) => {
@@ -48,6 +51,23 @@ export function StepBasicInfo({
         multiline 
         rows={2} 
       />
+      {onIsComponentChange && (
+        <div>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={isComponent || false}
+                onChange={e => onIsComponentChange(e.target.checked)}
+              />
+            }
+            label="Use as Component"
+          />
+          <Typography variant="caption" color="text.secondary" sx={{ display: 'block', ml: 4.5 }}>
+            Component types can be embedded inside other content types via Component or Blocks fields.
+          </Typography>
+        </div>
+      )}
     </Stack>
   );
 }
+

@@ -16,6 +16,7 @@ export interface ParsedContentType {
     fields: FieldDefinition[];
     settings: Record<string, unknown>;
     isSystem: boolean;
+    isComponent: boolean;
     archivedAt: Date | null;
     createdBy: string | null;
     createdAt: Date;
@@ -28,6 +29,7 @@ export interface CreateContentTypeInput {
     description?: string;
     fields: FieldDefinition[];
     settings?: Record<string, unknown>;
+    isComponent?: boolean;
     createdBy?: string;
 }
 
@@ -36,6 +38,7 @@ export interface UpdateContentTypeInput {
     description?: string;
     fields?: FieldDefinition[];
     settings?: Record<string, unknown>;
+    isComponent?: boolean;
 }
 
 export interface FieldError {
@@ -62,6 +65,7 @@ function parseRow(row: typeof contentTypes.$inferSelect): ParsedContentType {
         fields,
         settings,
         isSystem: row.isSystem,
+        isComponent: row.isComponent,
         archivedAt: row.archivedAt,
         createdBy: row.createdBy,
         createdAt: row.createdAt,
@@ -119,6 +123,7 @@ export class ContentTypeRegistry {
                 description: input.description,
                 fields: input.fields,
                 settings: input.settings ?? {},
+                isComponent: input.isComponent ?? false,
                 createdBy: input.createdBy,
             })
             .returning();
@@ -156,6 +161,7 @@ export class ContentTypeRegistry {
         if (patch.description !== undefined) updateData.description = patch.description;
         if (patch.fields !== undefined) updateData.fields = patch.fields;
         if (patch.settings !== undefined) updateData.settings = patch.settings;
+        if (patch.isComponent !== undefined) updateData.isComponent = patch.isComponent;
 
         const [row] = await db
             .update(contentTypes)
@@ -229,9 +235,16 @@ export class ContentTypeRegistry {
         const dataRecord = data as Record<string, unknown>;
         const errors: FieldError[] = [];
 
+        // Lookup function for component/blocks field validation — resolves
+        // component content type names to their field definitions via the cache.
+        const lookupComponentFields = (componentName: string): FieldDefinition[] | null => {
+            const ct = this.cache.get(componentName);
+            return ct ? ct.fields : null;
+        };
+
         for (const field of contentType.fields) {
             const value = dataRecord[field.name];
-            const error = validateFieldValue(field, value);
+            const error = validateFieldValue(field, value, lookupComponentFields);
             if (error) {
                 errors.push({ field: field.name, message: error });
             }

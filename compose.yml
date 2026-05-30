@@ -97,21 +97,25 @@ services:
       retries: 5
       start_period: "15s"
 
+  grafana:
+    image: docker.io/grafana/grafana:latest
+    ports: ["3001:3000"]
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./deploy/grafana:/etc/grafana/provisioning/dashboards:z
+      - ./deploy/datasources.yaml:/etc/grafana/provisioning/datasources/datasources.yaml:z
+    profiles: ["observability"]
+
+  prometheus:
+    image: docker.io/prom/prometheus:latest
+    ports: ["9090:9090"]
+    volumes:
+      - ./deploy/prometheus.yml:/etc/prometheus/prometheus.yml:z
+    profiles: ["observability"]
+
 volumes:
   postgres_data:
   redis_data:
   minio_data:
-
-  grafana:
-    image: docker.io/grafana/grafana:11-alpine
-    ports: ["3001:3000"]
-    volumes:
-      - ./deploy/grafana:/etc/grafana/provisioning/dashboards
-    profiles: ["observability"]
-
-  prometheus:
-    image: docker.io/prom/prometheus:v3-slim
-    ports: ["9090:9090"]
-    volumes:
-      - ./deploy/prometheus.yml:/etc/prometheus/prometheus.yml
-    profiles: ["observability"]
