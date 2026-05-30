@@ -1,5 +1,5 @@
 {
-    "name": "@orchestrator.dev/sdk",
+    "name": "@orchestrator.dev/rosmarium-sdk",
     "version": "1.0.0",
     "publishConfig": {
         "access": "public"

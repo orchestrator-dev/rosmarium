@@ -12,7 +12,7 @@ const sdk = new NodeSDK({
   resource: resourceFromAttributes({
     [SEMRESATTRS_SERVICE_NAME]: config.OTEL_SERVICE_NAME || "rosmarium-server",
   }),
-  // @ts-expect-error
+  // @ts-expect-error: custom property definition
   traceExporter: config.OTEL_EXPORTER_OTLP_ENDPOINT
     ? new OTLPTraceExporter({ url: config.OTEL_EXPORTER_OTLP_ENDPOINT + "/v1/traces" })
     : undefined,
