@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Button, Paper, Stack, IconButton, Stepper, Step, StepLabel } from '@mui/material';
 import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
-import { ContentType, FieldDefinition, ContentTypeInput, ContentTypeSettings } from './types';
+import { ContentType, FieldDefinition, ContentTypeInput } from './types';
 import { StepBasicInfo } from './StepBasicInfo';
 import { StepFields } from './StepFields';
 import { StepAISettings } from './StepAISettings';

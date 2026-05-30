@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, Card, CardActionArea, CardContent, Typography, Box } from '@mui/material';
+import { Grid, Card, CardActionArea, Typography, Box } from '@mui/material';
 import {
   TextFields as TextIcon,
   Article as RichTextIcon,

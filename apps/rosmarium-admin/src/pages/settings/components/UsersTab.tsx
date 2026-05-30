@@ -35,9 +35,9 @@ export function UsersTab() {
       await inviteUser(input);
       setOpenDialog(false);
       void fetchUsers();
-    } catch (e: any) {
+    } catch (e) {
       console.error(e);
-      alert('Failed to invite user: ' + e.message);
+      alert('Failed to invite user: ' + (e instanceof Error ? e.message : String(e)));
     }
   };
 

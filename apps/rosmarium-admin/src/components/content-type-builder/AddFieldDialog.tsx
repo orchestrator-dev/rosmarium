@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, Button, Stack, TextField,
-  FormGroup, FormControlLabel, Checkbox, Grid, Typography, Box
+  FormGroup, FormControlLabel, Checkbox, Grid, Typography
 } from '@mui/material';
 import { FieldDefinition } from './types';
 import { FieldTypeGrid } from './FieldTypeGrid';
