@@ -27,7 +27,7 @@ if settings.otel_exporter_otlp_endpoint:
             endpoint=settings.otel_exporter_otlp_endpoint)))
     trace.set_tracer_provider(provider)
 
-AsyncPGInstrumentor().instrument()
+AsyncPGInstrumentor().instrument()  # type: ignore[no-untyped-call]
 
 logger = structlog.get_logger(__name__)
 
