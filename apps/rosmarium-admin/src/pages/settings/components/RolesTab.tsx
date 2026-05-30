@@ -1,14 +1,10 @@
 import React from 'react';
 import {
-  Box,
-  Typography,
-  Card,
-  CardContent,
-  Grid,
-  Chip,
-  Stack,
-  Divider,
+  Box, Typography, Card, CardContent, Grid, Divider
 } from '@mui/material';
+
+import { RoleChip } from '../../../components/access/RoleChip';
+import { PermissionsList } from '../../../components/access/PermissionsList';
 
 const ROLES = [
   {
@@ -74,7 +70,7 @@ export function RolesTab() {
             <Card variant="outlined" sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
               <CardContent sx={{ flexGrow: 1 }}>
                 <Typography variant="h6" sx={{ fontWeight: 'bold', mb: 1, color: '#6366F1' }}>
-                  {role.name}
+                  <RoleChip role={role.name} sx={{ fontSize: '0.9rem', fontWeight: 'bold' }} />
                 </Typography>
                 <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
                   {role.description}
@@ -82,24 +78,7 @@ export function RolesTab() {
                 
                 <Divider sx={{ my: 2 }} />
                 
-                {Object.entries(role.permissions).map(([group, perms]) => (
-                  <Box key={group} sx={{ mb: 2 }}>
-                    <Typography variant="caption" sx={{ fontWeight: 'bold', textTransform: 'uppercase', color: '#94a3b8', display: 'block', mb: 1 }}>
-                      {group}
-                    </Typography>
-                    {perms.length === 0 ? (
-                      <Typography variant="body2" color="text.secondary" sx={{ fontStyle: 'italic' }}>
-                        None
-                      </Typography>
-                    ) : (
-                      <Stack direction="row" spacing={1} sx={{ flexWrap: "wrap", gap: 1 }}>
-                        {perms.map(p => (
-                          <Chip key={p} label={p} size="small" variant="outlined" sx={{ mb: 0.5, bgcolor: 'rgba(255,255,255,0.02)' }} />
-                        ))}
-                      </Stack>
-                    )}
-                  </Box>
-                ))}
+                <PermissionsList permissions={role.permissions} />
               </CardContent>
             </Card>
           </Grid>
