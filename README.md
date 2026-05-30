@@ -18,7 +18,7 @@
 
 **[🚀 Try the Interactive Demo](https://demo.rosmarium.com)** | **[📚 Read the Documentation](https://rosmarium.com/docs)** | **[🌐 Visit Website](https://rosmarium.com)**
 
-Most headless CMS tools treat AI as a plugin. Rosmarium treats it as infrastructure. Built on a split-stack architecture, a TypeScript/Fastify core handles content, auth, REST/GraphQL, and a knowledge graph layer. A Python/FastAPI background worker handles LLM embeddings, RAG pipelines, semantic search, auto-tagging, NER, and graph analytics. Both components share PostgreSQL with `pgvector` extension natively.
+Most headless CMS tools treat AI as a plugin. Rosmarium treats it as infrastructure, acting as a true Content Orchestration System (COS). Built on a split-stack architecture, a TypeScript/Fastify core handles content, auth, REST/GraphQL, and a knowledge graph layer. A Python/FastAPI background worker handles LLM embeddings, RAG pipelines, semantic search, auto-tagging, NER, and graph analytics. Both components share PostgreSQL with `pgvector` extension natively.
 
 ## Documentation
 
