@@ -49,6 +49,12 @@ export function AppShell() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  React.useEffect(() => {
+    fetch('/api/auth/me').then(res => {
+      if (!res.ok) navigate('/login');
+    }).catch(() => navigate('/login'));
+  }, [navigate]);
+
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
@@ -164,7 +170,11 @@ export function AppShell() {
             <MenuIcon />
           </IconButton>
           <Box sx={{ flexGrow: 1 }} />
-          {/* Add user profile / logout here if needed */}
+          <IconButton color="inherit" onClick={() => {
+            fetch('/api/auth/logout', { method: 'POST' }).finally(() => navigate('/login'));
+          }} sx={{ fontSize: '0.875rem', color: '#94a3b8' }}>
+            Logout
+          </IconButton>
         </Toolbar>
       </AppBar>
       <Box

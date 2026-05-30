@@ -29,7 +29,7 @@ Rosmarium is an open-source, AI-native headless content repository. It consists 
    - **React**: Use functional components, hooks, and MUI v6. Note: MUI v6 `Grid` uses `size={{ xs: 12 }}` instead of `xs={12}`.
 2. **Database Changes**: Always update the Drizzle schema in `apps/rosmarium-server/src/db/schema/` and generate migrations using `pnpm db:generate`.
 3. **Agent Skills**: Custom, project-specific agent instructions and operational scripts (e.g., custom prompts or workflow instructions) are located in the `.agent/skills/` directory.
-4. **Documentation**: Whenever there are functional or API changes, the documentation located in `apps/rosmarium-www/src/content/docs/` must be refreshed and amended accordingly. Ensure `README.md` is updated if necessary.
+4. **Documentation & Screenshots**: Whenever there are functional or API changes, the documentation located in `apps/rosmarium-www/src/content/docs/` must be refreshed and amended accordingly. **CRITICAL RULE**: Documentation shall use screenshots taken ONLY using `chrome-devtools` MCP. No synthetic generations or placeholders are allowed. Ensure `README.md` is updated if necessary.
 
 ## Custom Agent Skills
 To further extend AI agent capabilities for this project, check the `.agent/skills/` directory. When working on specific architectural domains (e.g., the Graph Database layer, Vector Embeddings, or Webhooks), please consult the relevant skill markdown files stored there if they exist.
