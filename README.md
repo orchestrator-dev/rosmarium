@@ -27,6 +27,7 @@ We maintain exhaustive documentation similar to FastAPI and Swagger at **[rosmar
 Please refer to the site for detailed guides on:
 - 🚀 **[Getting Started](https://rosmarium.com/docs/getting-started)**: Installation and Docker compose.
 - 🏗️ **[Architecture](https://rosmarium.com/docs/architecture)**: Understanding the Node/Python decoupled structure.
+- 🧩 **[Content Modeling](https://rosmarium.com/docs/content-modeling)**: Building composite and nested structures using blocks.
 - 🔌 **[API Reference](https://rosmarium.com/docs/api-reference)**: Comprehensive endpoints for REST and GraphQL.
 - 🤖 **[AI Pipeline](https://rosmarium.com/docs/ai-pipeline)**: Deep dive into chunking, vector embeddings, and semantic tagging.
 - 🕸️ **[Knowledge Graph](https://rosmarium.com/docs/knowledge-graph)**: Typed edges, Cypher queries, and graph analytics.
