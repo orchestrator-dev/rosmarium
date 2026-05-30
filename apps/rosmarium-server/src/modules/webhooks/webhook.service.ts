@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { eq } from "drizzle-orm";
 import { db } from "../../db/index.js";
 import { webhooks, webhookDeliveries } from "../../db/schema/index.js";

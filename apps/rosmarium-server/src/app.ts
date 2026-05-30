@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import Fastify, { FastifyRequest } from "fastify";
 import { logger } from "./lib/logger.js";
 import { registerPlugins } from "./plugins/index.js";
