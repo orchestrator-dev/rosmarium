@@ -9,7 +9,6 @@ import pytest
 from rosmarium_ai_worker.chunking.base import Chunk
 from rosmarium_ai_worker.workers.embedding_worker import EmbedJobPayload, process_embedding_job
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------

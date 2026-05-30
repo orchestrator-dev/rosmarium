@@ -9,7 +9,6 @@ import pytest
 from rosmarium_ai_worker.graph.analytics import NodeAnalytics
 from rosmarium_ai_worker.workers.graph_worker import AnalyticsJobPayload, process_analytics_job
 
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------

@@ -18,7 +18,7 @@ def mock_conn() -> MagicMock:
 
 @pytest.mark.asyncio
 async def test_export_json_ld(exporter: KnowledgeGraphExporter, mock_conn: MagicMock) -> None:
-    async def mock_fetch(query, *args):
+    async def mock_fetch(query, *args):  # noqa: ANN002, ANN202
         if "graph_edges" in query:
             return [{"from_entry_id": "A", "to_entry_id": "B", "edge_type": "relatedTo", "weight": 1.0, "is_accepted": "accepted"}]
         else:
@@ -39,7 +39,7 @@ async def test_export_json_ld(exporter: KnowledgeGraphExporter, mock_conn: Magic
 
 @pytest.mark.asyncio
 async def test_export_rdf(exporter: KnowledgeGraphExporter, mock_conn: MagicMock) -> None:
-    async def mock_fetch(query, *args):
+    async def mock_fetch(query, *args):  # noqa: ANN002, ANN202
         if "graph_edges" in query:
             return [{"from_entry_id": "A", "to_entry_id": "B", "edge_type": "relatedTo", "weight": 1.0, "is_accepted": "accepted"}]
         else:
@@ -55,7 +55,7 @@ async def test_export_rdf(exporter: KnowledgeGraphExporter, mock_conn: MagicMock
 
 @pytest.mark.asyncio
 async def test_export_cytoscape(exporter: KnowledgeGraphExporter, mock_conn: MagicMock) -> None:
-    async def mock_fetch(query, *args):
+    async def mock_fetch(query, *args):  # noqa: ANN002, ANN202
         if "graph_edges" in query:
             return [{"from_entry_id": "A", "to_entry_id": "B", "edge_type": "relatedTo", "weight": 1.0, "is_accepted": "accepted", "id": "edge-1"}]
         else:

@@ -5,18 +5,18 @@ from contextlib import asynccontextmanager
 
 import structlog
 from fastapi import FastAPI
+from opentelemetry import trace
+from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+from opentelemetry.instrumentation.asyncpg import AsyncPGInstrumentor
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from opentelemetry.sdk.resources import Resource
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from prometheus_fastapi_instrumentator import Instrumentator
 
 from .config import settings
 from .database import close_pool, create_pool
 from .embedding.registry import init_embedding_provider
-from opentelemetry import trace
-from opentelemetry.sdk.resources import Resource
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import BatchSpanProcessor
-from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
-from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-from opentelemetry.instrumentation.asyncpg import AsyncPGInstrumentor
-from prometheus_fastapi_instrumentator import Instrumentator
 from .workers.consumer import start_consumer, stop_consumer
 
 if settings.otel_exporter_otlp_endpoint:

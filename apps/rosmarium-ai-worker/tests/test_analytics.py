@@ -24,10 +24,10 @@ def mock_conn() -> MagicMock:
 
 @pytest.mark.asyncio
 async def test_builds_graph(engine: GraphAnalyticsEngine, mock_conn: MagicMock) -> None:
-    G = await engine.build_networkx_graph(None, mock_conn)
-    assert isinstance(G, nx.DiGraph)
-    assert set(G.nodes) == {"A", "B", "C"}
-    assert G.edges["A", "B"]["weight"] == 1.0
+    g = await engine.build_networkx_graph(None, mock_conn)
+    assert isinstance(g, nx.DiGraph)
+    assert set(g.nodes) == {"A", "B", "C"}
+    assert g.edges["A", "B"]["weight"] == 1.0
 
 @pytest.mark.asyncio
 async def test_compute_all_generates_analytics(engine: GraphAnalyticsEngine, mock_conn: MagicMock) -> None:

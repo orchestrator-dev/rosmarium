@@ -8,7 +8,6 @@ import pytest
 
 from rosmarium_ai_worker.embedding.base import EmbeddingProvider
 
-
 # ---------------------------------------------------------------------------
 # spaCy stub — installed before any test module is imported so that
 # `import spacy` inside sentence.py / ner.py succeeds without the real package.
@@ -22,12 +21,13 @@ def _install_spacy_stub() -> None:
 
     # Minimal Language stub
     class _Language:
-        pipe_names: list[str] = []
+        def __init__(self) -> None:
+            self.pipe_names: list[str] = []
 
-        def __call__(self, text: str) -> MagicMock:  # noqa: ANN001
+        def __call__(self, text: str) -> MagicMock:
             return MagicMock(sents=iter([]))
 
-        def add_pipe(self, name: str) -> None:  # noqa: ANN001
+        def add_pipe(self, name: str) -> None:
             self.pipe_names.append(name)
 
     def _spacy_load(model: str, **kwargs: object) -> _Language:  # type: ignore[return]
