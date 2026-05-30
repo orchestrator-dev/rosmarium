@@ -1,3 +1,4 @@
+import "./observability/index.js";
 import { buildApp } from "./app.js";
 import { config } from "./config.js";
 import { WebSocketServer } from "ws";

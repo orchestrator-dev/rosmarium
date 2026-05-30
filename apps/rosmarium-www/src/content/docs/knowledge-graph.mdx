@@ -1,0 +1,36 @@
+---
+title: Knowledge Graph
+description: Utilizing typed edges and graph analytics in Rosmarium.
+order: 6
+---
+
+# Knowledge Graph
+
+Content doesn't live in isolation. Rosmarium provides a lightweight knowledge graph layer powered directly inside PostgreSQL.
+
+![Graph Explorer](/docs/admin_graph_explorer_placeholder.png)
+*(Screenshot: Cytoscape Graph Explorer in the Admin UI)*
+
+## Typed Edges
+You can define directional, typed edges between content items. 
+- Example: `Article -> AUTHORED_BY -> Person`
+- Example: `Company -> COMPETES_WITH -> Company`
+
+## Auto-Inference
+Rosmarium's AI worker automatically infers edges! When the NER pipeline extracts a named entity (like "Google"), the Graph Engine attempts to resolve it against existing "Company" entries and creates an `INFERRED_REFERENCE` edge.
+
+## Cypher-lite Traversal
+You can traverse the graph using a subset of the Cypher DSL:
+```cypher
+MATCH (a:article)-[:AUTHORED_BY]->(p:person)
+WHERE p.name = "John Doe"
+RETURN a
+```
+The API transpiles this into recursive CTEs executed natively in PostgreSQL.
+
+## Graph Analytics
+The Python worker leverages `NetworkX` to run heavy analytics across the entire graph dataset:
+- **PageRank**: Identify the most authoritative content entries.
+- **Louvain Communities**: Group highly interconnected entries into contextual clusters.
+
+You can export the entire graph in `JSON-LD`, `RDF`, or `GraphML` formats.

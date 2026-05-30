@@ -1,0 +1,24 @@
+{
+  "title": "Rosmarium AI Pipeline",
+  "uid": "rosmarium-ai-pipeline",
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Embedding Queue Depth",
+      "targets": [
+        {
+          "expr": "rosmarium_embedding_queue_depth"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Intelligence Queue Depth",
+      "targets": [
+        {
+          "expr": "rosmarium_intelligence_queue_depth"
+        }
+      ]
+    }
+  ]
+}

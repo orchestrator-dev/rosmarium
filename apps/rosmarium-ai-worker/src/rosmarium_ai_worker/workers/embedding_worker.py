@@ -59,22 +59,36 @@ async def process_embedding_job(raw_payload: dict[str, Any]) -> None:
         )
         return
 
+    from opentelemetry import trace
+    tracer = trace.get_tracer(__name__)
+
     # 2. Chunk the text using the configured strategy
-    chunker = get_chunker(settings.chunking_default_strategy)
-    raw_chunks = chunker.chunk(
-        text,
-        metadata={
-            "field_names": [f.fieldName for f in payload.fields],
-            "locale": payload.locale,
-        },
-    )
+    with tracer.start_as_current_span("chunking.process") as span:
+        chunker = get_chunker(settings.chunking_default_strategy)
+        raw_chunks = chunker.chunk(
+            text,
+            metadata={
+                "field_names": [f.fieldName for f in payload.fields],
+                "locale": payload.locale,
+            },
+        )
+        span.set_attribute("strategy", settings.chunking_default_strategy)
+        span.set_attribute("chunk_count", len(raw_chunks))
+        span.set_attribute("text_length", len(text))
 
     # 3. Embed all chunks in one batch call
-    provider = get_provider()
-    chunk_texts: list[str] = [c.text for c in raw_chunks]
-    start = time.monotonic()
-    embeddings = await provider.embed(chunk_texts)
-    latency_ms = int((time.monotonic() - start) * 1000)
+    with tracer.start_as_current_span("embedding.generate") as span:
+        provider = get_provider()
+        chunk_texts: list[str] = [c.text for c in raw_chunks]
+        start = time.monotonic()
+        embeddings = await provider.embed(chunk_texts)
+        latency_ms = int((time.monotonic() - start) * 1000)
+        
+        span.set_attribute("provider", settings.embedding_provider)
+        span.set_attribute("model", provider.model_name)
+        span.set_attribute("batch_size", len(chunk_texts))
+        span.set_attribute("latency_ms", latency_ms)
+        span.set_attribute("token_count", sum(len(c) for c in chunk_texts) // 4)
 
     logger.info(
         "embedding_complete",

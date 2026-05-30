@@ -1,0 +1,118 @@
+---
+title: API Reference
+description: Fastify & Swagger-inspired documentation for Rosmarium's REST API.
+order: 4
+---
+
+# API Reference
+
+Rosmarium provides a comprehensive REST API for content management, semantic search, and graph traversals. All endpoints expect and return JSON.
+
+## Authentication
+
+All API endpoints (except public reads if configured) require authentication. 
+You can use a **Session Cookie** (for browser contexts) or an **API Key** (for server-to-server).
+
+```bash
+# Example: Using an API Key via Bearer Token
+curl -H 'Authorization: Bearer ctx_live_...' http://localhost:3000/api/content-types
+```
+
+---
+
+## Content API
+
+### `GET /api/content/:type`
+Fetch a paginated list of entries for a specific content type.
+
+**Parameters:**
+- `filters` (query, optional): e.g. `filters[status][eq]=draft`
+- `sort` (query, optional): e.g. `createdAt:desc`
+- `limit` (query, optional): default 20.
+
+**Response:**
+```json
+{
+  "data": [
+    {
+      "id": "cuid...",
+      "data": { "title": "Hello World" }
+    }
+  ],
+  "meta": { "total": 1 }
+}
+```
+
+### `POST /api/content/:type`
+Create a new content entry.
+
+**Body:**
+```json
+{
+  "data": {
+    "title": "New Article",
+    "body": "Content goes here."
+  }
+}
+```
+
+---
+
+## Search API
+
+### `GET /api/search`
+Perform a hybrid search across all content types using Reciprocal Rank Fusion (RRF).
+
+**Parameters:**
+- `q` (query, required): The search string.
+- `alpha` (query, optional): Balance between BM25 and Vector. `0` = pure keyword, `1` = pure vector, `0.5` = balanced. Default: `0.5`.
+- `limit` (query, optional): default 10.
+
+**Response:**
+```json
+{
+  "data": [
+    {
+      "id": "entry-cuid",
+      "contentType": "article",
+      "score": 0.01563,
+      "snippet": "…getting <mark>started</mark> with…",
+      "data": { "title": "Getting Started" }
+    }
+  ],
+  "meta": { "alpha": 0.5, "latencyMs": 42 }
+}
+```
+
+---
+
+## RAG Retrieval API
+
+### `POST /api/rag/retrieve`
+Retrieve semantically relevant chunks formatted for LLM context windows.
+
+**Body:**
+```json
+{
+  "query": "How do I install Rosmarium?",
+  "content_types": ["documentation"],
+  "top_k": 5,
+  "rerank": true
+}
+```
+
+**Response:**
+```json
+{
+  "chunks": [
+    {
+      "chunk_text": "Run pnpm install...",
+      "score": 0.89,
+      "freshness_score": 0.95
+    }
+  ]
+}
+```
+
+![API Swagger Placeholder](/docs/swagger_ui_placeholder.png)
+*(Screenshot: Auto-generated API documentation preview)*

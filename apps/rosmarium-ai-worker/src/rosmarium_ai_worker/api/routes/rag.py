@@ -63,7 +63,15 @@ async def rag_retrieve(request: RetrieveRequest) -> RetrieveResponse:
         has_acl=bool(request.allowed_entry_ids),
     )
 
-    response = await _pipeline.retrieve(request)
+    from opentelemetry import trace
+    tracer = trace.get_tracer(__name__)
+
+    with tracer.start_as_current_span("rag.retrieve") as span:
+        response = await _pipeline.retrieve(request)
+        span.set_attribute("content_types", request.content_types)
+        span.set_attribute("top_k", request.top_k)
+        span.set_attribute("reranked", response.reranked)
+        span.set_attribute("latency_ms", response.latency_ms)
 
     logger.info(
         "rag_retrieve_complete",

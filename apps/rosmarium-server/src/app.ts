@@ -1,4 +1,4 @@
-import Fastify from "fastify";
+import Fastify, { FastifyRequest } from "fastify";
 import { logger } from "./lib/logger.js";
 import { registerPlugins } from "./plugins/index.js";
 import { registerRoutes } from "./routes/index.js";
@@ -12,7 +12,22 @@ import { tenantMiddleware, tenantStorageHook } from "./modules/tenants/tenant.mi
 
 export async function buildApp() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const app = Fastify({ logger: logger as any });
+    const app = Fastify({ 
+        logger: {
+            stream: (logger as any).stream,
+            level: logger.level,
+            serializers: {
+                req(request: FastifyRequest) {
+                    return {
+                        method: request.method,
+                        url: request.url,
+                        tenantId: (request as any).tenant,
+                        userId: (request as any).user?.id,
+                    };
+                }
+            }
+        } as any 
+    });
 
     // Register multi-tenant context
     app.addHook("onRequest", tenantMiddleware);
@@ -22,6 +37,10 @@ export async function buildApp() {
 
     // Load content type registry before routes
     await registry.load();
+
+    // Register observability plugin
+    const { observabilityPlugin } = await import("./observability/fastify-metrics.js");
+    await app.register(observabilityPlugin);
 
     // Register GraphQL plugin (Yoga + schema)
     await app.register(graphqlPlugin);

@@ -13,6 +13,7 @@
     "infra:down": "COMPOSE=$(command -v podman >/dev/null 2>&1 && echo 'podman compose' || echo 'docker compose') && $COMPOSE down",
     "infra:reset": "COMPOSE=$(command -v podman >/dev/null 2>&1 && echo 'podman compose' || echo 'docker compose') && $COMPOSE down -v",
     "infra:init": "COMPOSE=$(command -v podman >/dev/null 2>&1 && echo 'podman compose' || echo 'docker compose') && $COMPOSE --profile init up",
+    "infra:observability": "COMPOSE=$(command -v podman >/dev/null 2>&1 && echo 'podman compose' || echo 'docker compose') && $COMPOSE --profile observability up -d",
     "infra:logs": "COMPOSE=$(command -v podman >/dev/null 2>&1 && echo 'podman compose' || echo 'docker compose') && $COMPOSE logs -f",
     "infra:status": "COMPOSE=$(command -v podman >/dev/null 2>&1 && echo 'podman compose' || echo 'docker compose') && $COMPOSE ps",
     "infra:psql": "COMPOSE=$(command -v podman >/dev/null 2>&1 && echo 'podman' || echo 'docker') && $COMPOSE exec -it rosmarium-postgres psql -U rosmarium -d rosmarium",

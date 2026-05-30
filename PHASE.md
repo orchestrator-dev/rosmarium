@@ -113,3 +113,9 @@ and Cytoscape.js Explorer in Admin UI (v0.7.0).
 Month 11 shipped — Graph Analytics and Knowledge Graph Export complete: NetworkX algorithms
 (PageRank, Louvain, HITS), analytics REST endpoints, multi-format knowledge graph export 
 (JSON-LD, RDF, GraphML, Cytoscape), Admin UI Analytics & Export dashboard (v0.8.0).
+
+## Phase 4: Expansion & Scalability (Months 10–13)
+- [ ] **Month 10**: Advanced UI/UX (drag-and-drop hierarchy, bulk operations, visual schema builder).
+- [ ] **Month 11**: Multi-tenancy & Workspaces (RBAC at workspace level, shared content across spaces).
+- [ ] **Month 12**: Edge Delivery (read-only SQLite export distributed via Cloudflare/Vercel edges).
+- [x] **Month 13**: Observability (OpenTelemetry, Grafana dashboards, Prometheus metrics, k6 load testing).

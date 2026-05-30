@@ -57,6 +57,10 @@ class Settings(BaseSettings):
     graph_similarity_threshold: float = 0.85
     graph_max_similarity_edges: int = 5
 
+    # Observability
+    otel_exporter_otlp_endpoint: str | None = None
+    otel_service_name: str = "rosmarium-ai-worker"
+
 
     @field_validator("database_url")
     @classmethod

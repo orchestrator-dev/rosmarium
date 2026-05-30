@@ -20,6 +20,8 @@ const schema = z.object({
     EMBEDDING_PROVIDER: z.string().min(1),
     EMBEDDING_MODEL: z.string().min(1),
     OLLAMA_BASE_URL: z.string().url(),
+    OTEL_EXPORTER_OTLP_ENDPOINT: z.string().url().optional(),
+    OTEL_SERVICE_NAME: z.string().default("rosmarium-server"),
 });
 
 export const config = schema.parse(process.env);

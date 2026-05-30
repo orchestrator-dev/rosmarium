@@ -1,0 +1,24 @@
+{
+  "title": "Rosmarium Overview",
+  "uid": "rosmarium-overview",
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "HTTP Requests Total",
+      "targets": [
+        {
+          "expr": "rate(rosmarium_http_requests_total[5m])"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "HTTP Request Duration",
+      "targets": [
+        {
+          "expr": "rate(rosmarium_http_request_duration_seconds_sum[5m]) / rate(rosmarium_http_request_duration_seconds_count[5m])"
+        }
+      ]
+    }
+  ]
+}

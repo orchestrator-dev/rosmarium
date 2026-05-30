@@ -80,15 +80,25 @@ export const webhookService = {
         });
 
         const queue = getWebhookQueue();
+        const { trace } = await import("@opentelemetry/api");
+        const span = trace.getActiveSpan();
+        const traceparent = span ? `00-${span.spanContext().traceId}-${span.spanContext().spanId}-01` : undefined;
+
         await Promise.all(
             matching.map((wh) =>
-                queue.add("deliver", {
-                    webhookId: wh.id,
-                    event,
-                    contentType,
-                    payload,
-                    attempt: 1,
-                }),
+                queue.add(
+                    "deliver",
+                    {
+                        webhookId: wh.id,
+                        event,
+                        contentType,
+                        payload,
+                        attempt: 1,
+                    },
+                    {
+                        ...(traceparent && { customJobOptions: { traceparent } }),
+                    } as any
+                ),
             ),
         );
     },

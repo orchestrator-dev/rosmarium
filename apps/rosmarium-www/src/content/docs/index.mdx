@@ -1,0 +1,31 @@
+---
+title: Introduction
+description: Overview of Rosmarium CMS, the AI-native headless content repository.
+order: 1
+---
+
+# Welcome to Rosmarium CMS
+
+Most headless CMS tools treat AI as a plugin. Rosmarium treats it as infrastructure. A TypeScript/Fastify core handles content, auth, REST/GraphQL, and a knowledge graph layer. A Python/FastAPI worker handles embeddings, RAG pipelines, semantic search, auto-tagging, NER, and graph analytics.
+
+![Rosmarium Hero](../../../../../docs/hero.svg)
+
+## Why Rosmarium?
+
+In an era where unstructured content is fed directly into Large Language Models, traditional keyword search and rigid taxonomy aren't enough. Rosmarium provides:
+
+1. **Hybrid Search**: Blending BM25 full-text and pgvector semantic search using Reciprocal Rank Fusion (RRF).
+2. **AI Intelligence**: Automatic Named Entity Recognition (NER), summarization, and zero-shot tagging on publish.
+3. **Knowledge Graph**: Automatic typed edges and multi-hop graph traversal.
+4. **RAG Pipeline**: Built-in LlamaIndex integration to surface the most contextually relevant chunks.
+
+## Explore the Documentation
+
+- **[Getting Started](/docs/getting-started)**: Installation, Docker Compose setup, and first steps.
+- **[Architecture](/docs/architecture)**: Learn how the Node.js API and Python AI worker communicate.
+- **[API Reference](/docs/api-reference)**: Comprehensive endpoints for REST and GraphQL.
+- **[AI Pipeline](/docs/ai-pipeline)**: Deep dive into chunking, embeddings, and intelligence.
+- **[Knowledge Graph](/docs/knowledge-graph)**: Understanding nodes, typed edges, and Cypher queries.
+
+![Admin UI Dashboard](/docs/admin_dashboard_placeholder.png)
+*(Screenshot: The Rosmarium Admin Dashboard)*

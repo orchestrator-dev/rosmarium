@@ -1,0 +1,37 @@
+---
+title: Architecture
+description: Understanding the split-stack architecture of Rosmarium CMS.
+order: 3
+---
+
+# Architecture
+
+Rosmarium relies on a deliberate split-stack architecture. By using Node.js for I/O bound API tasks and Python for CPU-heavy AI tasks, each layer operates where it is most efficient.
+
+![Rosmarium Architecture](../../../../../docs/rosmarium_infographic.png)
+
+## Core Components
+
+### 1. `rosmarium-server` (Node.js / Fastify)
+The primary entrypoint for all clients.
+- **Content API**: Handles REST and GraphQL queries.
+- **Auth & RBAC**: Session management and API key validation.
+- **Job Dispatch**: When content is published, it dispatches a `BullMQ` job to the Redis queue for the AI worker to pick up.
+
+### 2. `rosmarium-ai-worker` (Python / FastAPI)
+The asynchronous background worker.
+- **Embedding Engine**: Generates vector embeddings for content via Ollama, OpenAI, or Cohere.
+- **RAG Pipeline**: Utilizes LlamaIndex and spaCy for semantic retrieval and chunking.
+- **Graph Analytics**: Uses NetworkX for PageRank and Louvain community detection.
+
+### 3. Shared Infrastructure
+- **PostgreSQL 16**: The central source of truth. Contains both structured JSONB content and `pgvector` embeddings.
+- **Redis 7**: The job queue intermediary using BullMQ schema.
+
+## Event Flow: Content Creation
+
+When a user creates and publishes content:
+1. `rosmarium-server` writes the JSONB entry to PostgreSQL.
+2. An event emitter dispatches an `embed-content` job to Redis.
+3. `rosmarium-ai-worker` pulls the job, chunks the text, hits the local Ollama LLM for embeddings, and directly upserts them to `pgvector`.
+4. A second `analyse-content` job is dispatched for NER extraction and auto-tagging.

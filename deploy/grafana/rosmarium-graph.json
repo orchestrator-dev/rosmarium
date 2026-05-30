@@ -1,0 +1,15 @@
+{
+  "title": "Rosmarium Graph",
+  "uid": "rosmarium-graph",
+  "panels": [
+    {
+      "type": "timeseries",
+      "title": "Graph Traversal Latency",
+      "targets": [
+        {
+          "expr": "rate(rosmarium_graph_traverse_duration_seconds_sum[5m]) / rate(rosmarium_graph_traverse_duration_seconds_count[5m])"
+        }
+      ]
+    }
+  ]
+}

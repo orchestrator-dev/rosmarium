@@ -1,0 +1,30 @@
+---
+title: AI Pipeline
+description: How Rosmarium's vector embedding, tagging, and intelligence pipeline works.
+order: 5
+---
+
+# AI Pipeline
+
+The Rosmarium AI Pipeline is driven by a separate Python background worker (`rosmarium-ai-worker`). 
+
+![AI Dashboard](/docs/admin_ai_dashboard_placeholder.png)
+*(Screenshot: The Rosmarium AI Intelligence Dashboard)*
+
+## 1. Vector Embeddings
+When content is created or updated, the system pushes a job to BullMQ. The worker:
+1. **Chunks** the text using `spaCy` sentencizer or HTML structure chunking.
+2. **Embeds** the text. By default, it uses a local `Ollama` instance running `nomic-embed-text`.
+3. **Upserts** to PostgreSQL via the `pgvector` extension.
+
+## 2. RAG (Retrieval-Augmented Generation)
+Rosmarium provides a native RAG integration powered by `LlamaIndex`. It supports:
+- **Parallel Retrieval**: Searching across multiple content types simultaneously.
+- **Freshness Decay**: Time-weighted scoring so newer content surfaces higher.
+- **Reranking**: An optional Cohere reranker pass to refine results.
+
+## 3. Metadata Intelligence
+Rosmarium automatically enhances your unstructured data with intelligence ops:
+- **Auto-tagging**: Uses a zero-shot cross-encoder NLI model to classify content against your custom taxonomy.
+- **Named Entity Recognition (NER)**: Extracts PERSON, ORG, and GPE entities via `spaCy`.
+- **Semantic Duplicate Detection**: Scans the vector space to flag identical or heavily overlapping content pieces.

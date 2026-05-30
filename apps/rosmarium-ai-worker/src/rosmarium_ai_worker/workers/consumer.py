@@ -132,7 +132,29 @@ class QueueConsumer:
         job_id = job.get("id", "unknown")
         try:
             data = json.loads(job.get("data", "{}"))
-            await handler(data)
+            opts = json.loads(job.get("opts", "{}"))
+            custom_opts = opts.get("customJobOptions", {})
+            traceparent = custom_opts.get("traceparent")
+
+            from opentelemetry import trace
+            from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
+
+            ctx = None
+            if traceparent:
+                ctx = TraceContextTextMapPropagator().extract({"traceparent": traceparent})
+
+            tracer = trace.get_tracer(__name__)
+            with tracer.start_as_current_span(job_name, context=ctx) as span:
+                span.set_attribute("job.id", job_id)
+                span.set_attribute("job.queue", self._queue_name)
+                
+                trace_id = trace.format_trace_id(span.get_span_context().trace_id)
+                structlog.contextvars.bind_contextvars(job_id=job_id, trace_id=trace_id)
+
+                await handler(data)
+
+            structlog.contextvars.clear_contextvars()
+
             await self._mark_completed(job_id)
             logger.info("job_completed", job_id=job_id, job_name=job_name)
         except Exception as e:

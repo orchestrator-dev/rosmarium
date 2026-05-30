@@ -24,12 +24,18 @@ export interface IntelligenceJobOpts {
 /**
  * Dispatch an intelligence analysis job to the ai-worker queue.
  */
+import { trace } from "@opentelemetry/api";
+
 export async function dispatchIntelligenceJob(opts: IntelligenceJobOpts): Promise<void> {
+    const span = trace.getActiveSpan();
+    const traceparent = span ? `00-${span.spanContext().traceId}-${span.spanContext().spanId}-01` : undefined;
+
     await intelligenceQueue.add("analyse-content", opts, {
         attempts: 3,
         backoff: { type: "exponential", delay: 2000 },
         removeOnComplete: 100,
         removeOnFail: 50,
+        ...(traceparent && { customJobOptions: { traceparent } }),
     });
 }
 

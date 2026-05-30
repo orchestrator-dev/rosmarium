@@ -1,0 +1,82 @@
+---
+title: Getting Started
+description: How to install and run Rosmarium locally using Docker Compose and pnpm.
+order: 2
+---
+
+# Getting Started
+
+Rosmarium is a monorepo that uses Turborepo and pnpm. The easiest way to get started is by running the shared infrastructure via Docker Compose and running the Node and Python services locally.
+
+## Prerequisites
+
+- **Node.js**: v22 LTS or higher
+- **pnpm**: v9.0.0 or higher
+- **Python**: v3.12 or higher with `uv` installed
+- **Docker** or **Podman**: For running PostgreSQL, Redis, and MinIO.
+
+## Installation
+
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/orchestrator-dev/rosmarium
+   cd rosmarium
+   ```
+
+2. **Install dependencies**:
+   ```bash
+   pnpm install
+   ```
+
+3. **Start infrastructure**:
+   ```bash
+   pnpm infra:up
+   pnpm infra:init
+   ```
+
+4. **Configure Environment**:
+   Copy the example environment file. Be sure to set `ADMIN_EMAIL` and `ADMIN_PASSWORD`.
+   ```bash
+   cp .env.example .env
+   ```
+
+5. **Database Setup**:
+   Generate migrations and seed the database with the initial admin user.
+   ```bash
+   pnpm db:migrate
+   pnpm db:seed
+   ```
+
+## Running the Services
+
+Rosmarium consists of three core applications that you can run simultaneously.
+
+**1. Start the Node.js API Server**
+```bash
+pnpm --filter @rosmarium-cms/server dev
+```
+*Runs on `http://localhost:3000`*
+
+**2. Start the Python AI Worker**
+```bash
+cd apps/rosmarium-ai-worker
+uv run uvicorn rosmarium_ai_worker.main:app --app-dir src --port 8001 --reload
+```
+*Runs on `http://localhost:8001`*
+
+**3. Start the Admin Dashboard**
+```bash
+pnpm --filter @rosmarium-cms/admin dev
+```
+*Runs on `http://localhost:5173`*
+
+![Admin Content Builder](/docs/admin_content_builder_placeholder.png)
+*(Screenshot: Creating a new content type in the Admin UI)*
+
+## Demo Dataset
+
+To immediately see Rosmarium's AI features in action, you can seed the demo dataset:
+```bash
+pnpm demo:seed
+```
+This will insert sample articles, trigger embedding generation, and run graph analytics!
