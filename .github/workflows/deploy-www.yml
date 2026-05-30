@@ -35,7 +35,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build Astro site
-        run: pnpm --filter @rosmarium-cms/www build
+        run: pnpm --filter rosmarium-www build
 
       - name: Create Cloudflare Pages Project & Bind Domain
         run: |
