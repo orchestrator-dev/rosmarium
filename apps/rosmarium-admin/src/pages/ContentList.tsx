@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -10,37 +10,81 @@ import {
   TableHead,
   TableRow,
   Paper,
-  Button,
   Chip,
-  IconButton,
   Stack,
   CircularProgress,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  OutlinedInput,
+  SelectChangeEvent,
+  Menu,
+  TableSortLabel,
 } from '@mui/material';
 import {
   Add as AddIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
+  FilterList as FilterIcon,
 } from '@mui/icons-material';
+import { TooltipButton, TooltipIconButton } from '../components/common/TooltipButton';
 
 interface ContentEntry {
   id: string;
-  contentType: string;
+  contentTypeId: string;
+  contentTypeName: string;
   status: 'draft' | 'published' | 'archived';
   data: Record<string, unknown>;
   createdAt: string;
   updatedAt: string;
 }
 
+interface ContentType {
+  id: string;
+  name: string;
+  displayName: string;
+}
+
 export function ContentListPage() {
-  const { type } = useParams<{ type: string }>();
   const navigate = useNavigate();
   const [entries, setEntries] = useState<ContentEntry[]>([]);
   const [loading, setLoading] = useState(true);
+  const [contentTypes, setContentTypes] = useState<ContentType[]>([]);
+  
+  // Filters state
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const [selectedStatus, setSelectedStatus] = useState<string>('all');
+  const [sortBy, setSortBy] = useState<string>('createdAt:desc');
+  
+  const [anchorElNew, setAnchorElNew] = useState<null | HTMLElement>(null);
+
+  useEffect(() => {
+    // Fetch available content types for filter dropdown
+    fetch('/api/content-types')
+      .then(r => r.json())
+      .then(json => {
+        const types = ((json as any).data || []).filter((t: any) => !t.settings?.isComponent);
+        setContentTypes(types);
+      })
+      .catch(e => console.error(e));
+  }, []);
 
   const fetchEntries = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/content/${type}`);
+      const params = new URLSearchParams();
+      if (selectedTypes.length > 0) {
+        params.append('contentTypes', selectedTypes.join(','));
+      }
+      if (selectedStatus !== 'all') {
+        params.append('status', selectedStatus);
+      }
+      if (sortBy) {
+        params.append('sort', sortBy);
+      }
+
+      const res = await fetch(`/api/content?${params.toString()}`);
       if (res.ok) {
         const json = await res.json() as { data: ContentEntry[] };
         setEntries(json.data || []);
@@ -53,15 +97,14 @@ export function ContentListPage() {
   };
 
   useEffect(() => {
-    if (type) {
-      void fetchEntries();
-    }
-  }, [type]);
+    void fetchEntries();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedTypes, selectedStatus, sortBy]);
 
-  const handleDelete = async (id: string) => {
+  const handleDelete = async (id: string, typeName: string) => {
     if (!window.confirm('Are you sure you want to delete this entry?')) return;
     try {
-      const res = await fetch(`/api/content/${type}/${id}`, { method: 'DELETE' });
+      const res = await fetch(`/api/content/${typeName}/${id}`, { method: 'DELETE' });
       if (res.ok) {
         setEntries(prev => prev.filter(e => e.id !== id));
       }
@@ -70,44 +113,145 @@ export function ContentListPage() {
     }
   };
 
+  const handleTypeChange = (event: SelectChangeEvent<typeof selectedTypes>) => {
+    const {
+      target: { value },
+    } = event;
+    setSelectedTypes(
+      typeof value === 'string' ? value.split(',') : value,
+    );
+  };
+
+  const handleSort = (field: string) => {
+    const isAsc = sortBy === `${field}:asc`;
+    setSortBy(`${field}:${isAsc ? 'desc' : 'asc'}`);
+  };
+
   return (
     <Box sx={{ maxWidth: 1200, mx: 'auto' }}>
       <Stack direction="row" sx={{justifyContent: "space-between", alignItems: "center", mb: 4}}>
         <Box>
           <Typography variant="h1" gutterBottom sx={{ textTransform: 'capitalize' }}>
-            {type} Entries
+            Content Dashboard
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Manage your {type} content entries.
+            Manage your content entries across all types.
           </Typography>
         </Box>
-        <Button variant="contained" startIcon={<AddIcon />} onClick={() => navigate(`/content/${type}/new`)}>
-          Create Entry
-        </Button>
+        <Box>
+          <TooltipButton 
+            actionKey="createEntry"
+            variant="contained" 
+            startIcon={<AddIcon />} 
+            onClick={(e) => setAnchorElNew(e.currentTarget)}
+            disabled={contentTypes.length === 0}
+          >
+            Create Entry
+          </TooltipButton>
+          <Menu
+            anchorEl={anchorElNew}
+            open={Boolean(anchorElNew)}
+            onClose={() => setAnchorElNew(null)}
+          >
+            {contentTypes.map((ct) => (
+              <MenuItem key={ct.id} onClick={() => {
+                setAnchorElNew(null);
+                navigate(`/content/${ct.name}/new`);
+              }}>
+                {ct.displayName}
+              </MenuItem>
+            ))}
+          </Menu>
+        </Box>
       </Stack>
+
+      {/* Expandable Filter Bar */}
+      <Paper variant="outlined" sx={{ p: 2, mb: 3, display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center', color: 'text.secondary', mr: 2 }}>
+          <FilterIcon sx={{ mr: 1 }} />
+          <Typography variant="subtitle2">Filters</Typography>
+        </Box>
+
+        <FormControl size="small" sx={{ minWidth: 200 }}>
+          <InputLabel id="filter-type-label">Content Type</InputLabel>
+          <Select
+            labelId="filter-type-label"
+            multiple
+            value={selectedTypes}
+            onChange={handleTypeChange}
+            input={<OutlinedInput label="Content Type" />}
+            renderValue={(selected) => (
+              <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                {selected.map((value) => (
+                  <Chip key={value} label={contentTypes.find(c => c.name === value)?.displayName || value} size="small" />
+                ))}
+              </Box>
+            )}
+          >
+            {contentTypes.map((ct) => (
+              <MenuItem key={ct.name} value={ct.name}>
+                {ct.displayName}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        <FormControl size="small" sx={{ minWidth: 150 }}>
+          <InputLabel id="filter-status-label">Status</InputLabel>
+          <Select
+            labelId="filter-status-label"
+            value={selectedStatus}
+            onChange={(e) => setSelectedStatus(e.target.value)}
+            input={<OutlinedInput label="Status" />}
+          >
+            <MenuItem value="all">All Statuses</MenuItem>
+            <MenuItem value="draft">Draft</MenuItem>
+            <MenuItem value="published">Published</MenuItem>
+            <MenuItem value="archived">Archived</MenuItem>
+          </Select>
+        </FormControl>
+
+      </Paper>
 
       <TableContainer component={Paper} variant="outlined">
         <Table>
           <TableHead>
             <TableRow>
               <TableCell>Title / ID</TableCell>
+              <TableCell>Type</TableCell>
               <TableCell>Status</TableCell>
-              <TableCell>Created</TableCell>
-              <TableCell>Last Updated</TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={sortBy.startsWith('createdAt')}
+                  direction={sortBy === 'createdAt:asc' ? 'asc' : 'desc'}
+                  onClick={() => handleSort('createdAt')}
+                >
+                  Created
+                </TableSortLabel>
+              </TableCell>
+              <TableCell>
+                <TableSortLabel
+                  active={sortBy.startsWith('updatedAt')}
+                  direction={sortBy === 'updatedAt:asc' ? 'asc' : 'desc'}
+                  onClick={() => handleSort('updatedAt')}
+                >
+                  Last Updated
+                </TableSortLabel>
+              </TableCell>
               <TableCell align="right">Actions</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={5} align="center" sx={{ py: 3 }}>
+                <TableCell colSpan={6} align="center" sx={{ py: 3 }}>
                   <CircularProgress size={24} />
                 </TableCell>
               </TableRow>
             ) : entries.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} align="center" sx={{ py: 3, color: 'text.secondary' }}>
-                  No entries found.
+                <TableCell colSpan={6} align="center" sx={{ py: 3, color: 'text.secondary' }}>
+                  No entries found matching filters.
                 </TableCell>
               </TableRow>
             ) : (
@@ -123,6 +267,13 @@ export function ContentListPage() {
                   </TableCell>
                   <TableCell>
                     <Chip 
+                      label={contentTypes.find(c => c.name === entry.contentTypeName)?.displayName || entry.contentTypeName} 
+                      size="small" 
+                      variant="outlined" 
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Chip 
                       label={entry.status} 
                       size="small" 
                       color={entry.status === 'published' ? 'success' : entry.status === 'draft' ? 'warning' : 'default'}
@@ -131,12 +282,12 @@ export function ContentListPage() {
                   <TableCell>{new Date(entry.createdAt).toLocaleDateString()}</TableCell>
                   <TableCell>{new Date(entry.updatedAt).toLocaleDateString()}</TableCell>
                   <TableCell align="right">
-                    <IconButton size="small" color="primary" onClick={() => navigate(`/content/${type}/${entry.id}/edit`)}>
+                    <TooltipIconButton actionKey="editEntry" size="small" color="primary" onClick={() => navigate(`/content/${entry.contentTypeName}/${entry.id}/edit`)}>
                       <EditIcon fontSize="small" />
-                    </IconButton>
-                    <IconButton size="small" color="error" onClick={() => void handleDelete(entry.id)}>
+                    </TooltipIconButton>
+                    <TooltipIconButton actionKey="deleteEntry" size="small" color="error" onClick={() => void handleDelete(entry.id, entry.contentTypeName)}>
                       <DeleteIcon fontSize="small" />
-                    </IconButton>
+                    </TooltipIconButton>
                   </TableCell>
                 </TableRow>
               ))

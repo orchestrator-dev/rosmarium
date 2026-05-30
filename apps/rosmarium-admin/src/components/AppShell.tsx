@@ -104,7 +104,7 @@ export function AppShell() {
         {/* Dynamic Content section */}
         <ListItem disablePadding>
           <ListItemButton
-            selected={location.pathname === '/content'}
+            selected={location.pathname.startsWith('/content')}
             onClick={() => navigate('/content')}
             sx={{
               '&.Mui-selected': {
@@ -125,73 +125,8 @@ export function AppShell() {
                 },
               }}
             />
-            <IconButton
-              size="small"
-              onClick={(e) => {
-                e.stopPropagation();
-                setContentOpen(!contentOpen);
-              }}
-              sx={{ color: '#64748b' }}
-            >
-              {contentOpen ? <ExpandLess fontSize="small" /> : <ExpandMore fontSize="small" />}
-            </IconButton>
           </ListItemButton>
         </ListItem>
-        <Collapse in={contentOpen} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            {contentTypes.map((ct) => {
-              const ctPath = `/content/${ct.name}`;
-              const isActive = location.pathname === ctPath;
-              return (
-                <ListItem key={ct.id} disablePadding>
-                  <ListItemButton
-                    selected={isActive}
-                    onClick={() => navigate(ctPath)}
-                    sx={{
-                      pl: 4,
-                      py: 0.5,
-                      '&.Mui-selected': {
-                        backgroundColor: 'rgba(99, 102, 241, 0.15)',
-                        borderRight: '3px solid #6366F1',
-                      },
-                    }}
-                  >
-                    <ListItemIcon sx={{ color: isActive ? '#6366F1' : '#64748b', minWidth: 32 }}>
-                      <ArticleIcon fontSize="small" />
-                    </ListItemIcon>
-                    <ListItemText
-                      primary={ct.displayName}
-                      sx={{
-                        '& .MuiListItemText-primary': {
-                          fontSize: '0.875rem',
-                          fontWeight: isActive ? 600 : 400,
-                          color: isActive ? '#f1f5f9' : '#94a3b8',
-                        },
-                      }}
-                    />
-                  </ListItemButton>
-                </ListItem>
-              );
-            })}
-            <ListItem disablePadding>
-              <ListItemButton
-                onClick={() => navigate('/settings/content-types?action=new')}
-                sx={{ pl: 4, py: 0.5 }}
-              >
-                <ListItemText
-                  primary="+ Add content type"
-                  sx={{
-                    '& .MuiListItemText-primary': {
-                      fontSize: '0.85rem',
-                      color: '#94a3b8',
-                      '&:hover': { color: '#f1f5f9' },
-                    },
-                  }}
-                />
-              </ListItemButton>
-            </ListItem>
-          </List>
-        </Collapse>
 
         {/* Other menu items */}
         {menuItems.map((item) => (

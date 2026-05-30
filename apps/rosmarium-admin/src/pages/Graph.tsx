@@ -3,14 +3,12 @@ import {
   Box,
   Typography,
   TextField,
-  Button,
   Tabs,
   Tab,
   Card,
   CardContent,
   Chip,
   Stack,
-  IconButton,
   Grid,
   Select,
   MenuItem,
@@ -19,6 +17,7 @@ import {
   Paper,
   Autocomplete,
 } from '@mui/material';
+import { TooltipButton, TooltipIconButton } from '../components/common/TooltipButton';
 import {
   Delete as DeleteIcon,
   Check as CheckIcon,
@@ -42,6 +41,8 @@ interface GraphEdge {
   source: string
   isAccepted: 'pending' | 'accepted' | 'rejected'
   createdAt: string
+  fromEntryTitle?: string
+  toEntryTitle?: string
 }
 
 interface EntityMention {
@@ -146,9 +147,9 @@ function CytoscapeViewer({ rootId }: { rootId: string }) {
             onChange={e => setEdgeType(e.target.value)} 
             sx={{ width: 200 }}
           />
-          <Button variant="outlined" onClick={() => void loadGraph()} disabled={loading}>
+          <TooltipButton actionKey="refreshGraph" variant="outlined" onClick={() => void loadGraph()} disabled={loading}>
             {loading ? 'Refreshing...' : 'Refresh'}
-          </Button>
+          </TooltipButton>
         </Stack>
         <Box ref={containerRef} sx={{ width: '100%', height: 500, bgcolor: 'background.paper', borderRadius: 1, border: '1px solid', borderColor: 'divider' }} />
       </CardContent>
@@ -160,6 +161,7 @@ export function GraphPage() {
   const [entryId, setEntryId] = React.useState('');
   const [edges, setEdges] = React.useState<GraphEdge[]>([]);
   const [pending, setPending] = React.useState<GraphEdge[]>([]);
+  const [pendingTotal, setPendingTotal] = React.useState(0);
   const [mentions, setMentions] = React.useState<EntityMention[]>([]);
   const [analytics, setAnalytics] = React.useState<NodeAnalytics | null>(null);
   const [loading, setLoading] = React.useState(false);
@@ -173,6 +175,12 @@ export function GraphPage() {
   const [addFromCt, setAddFromCt] = React.useState('');
   const [addToCt, setAddToCt] = React.useState('');
   const [addLoading, setAddLoading] = React.useState(false);
+
+  // Pending filter/sort state
+  const [pendingMinWeight, setPendingMinWeight] = React.useState(0.0);
+  const [pendingSortOrder, setPendingSortOrder] = React.useState<'desc'|'asc'>('desc');
+  const [pendingEdgeType, setPendingEdgeType] = React.useState('all');
+  const [bulkLoading, setBulkLoading] = React.useState(false);
 
   // Autocomplete state
   const [suggestOptions, setSuggestOptions] = React.useState<Array<{ id: string; title: string; contentType: string }>>([]);
@@ -227,8 +235,9 @@ export function GraphPage() {
   const loadPending = async () => {
     const res = await fetch('/api/graph/pending');
     if (res.ok) {
-      const j = await res.json() as { data: GraphEdge[] };
+      const j = await res.json() as { data: GraphEdge[], meta?: { total?: number } };
       setPending(j.data);
+      setPendingTotal(j.meta?.total || j.data.length);
     }
   };
 
@@ -244,6 +253,36 @@ export function GraphPage() {
     await fetch(`/api/graph/edges/${id}/reject`, { method: 'POST' });
     void loadPending();
     if (entryId) void loadEntry(entryId);
+  };
+
+  const handleAcceptAll = async () => {
+    if (!filteredPending.length) return;
+    if (!window.confirm(`Accept all ${filteredPending.length} edges in current view?`)) return;
+    setBulkLoading(true);
+    try {
+      await Promise.allSettled(filteredPending.map(edge => 
+        fetch(`/api/graph/edges/${edge.id}/accept`, { method: 'POST' })
+      ));
+      void loadPending();
+      if (entryId) void loadEntry(entryId);
+    } finally {
+      setBulkLoading(false);
+    }
+  };
+
+  const handleRejectAll = async () => {
+    if (!filteredPending.length) return;
+    if (!window.confirm(`Reject all ${filteredPending.length} edges in current view?`)) return;
+    setBulkLoading(true);
+    try {
+      await Promise.allSettled(filteredPending.map(edge => 
+        fetch(`/api/graph/edges/${edge.id}/reject`, { method: 'POST' })
+      ));
+      void loadPending();
+      if (entryId) void loadEntry(entryId);
+    } finally {
+      setBulkLoading(false);
+    }
   };
 
   const handleDelete = async (id: string) => {
@@ -273,6 +312,13 @@ export function GraphPage() {
       setAddLoading(false);
     }
   };
+
+  const filteredPending = React.useMemo(() => {
+    return pending
+      .filter(edge => edge.weight >= pendingMinWeight)
+      .filter(edge => pendingEdgeType === 'all' || edge.edgeType === pendingEdgeType)
+      .sort((a, b) => pendingSortOrder === 'desc' ? b.weight - a.weight : a.weight - b.weight);
+  }, [pending, pendingMinWeight, pendingSortOrder, pendingEdgeType]);
 
   return (
     <Box sx={{ maxWidth: 900, mx: 'auto' }}>
@@ -324,22 +370,24 @@ export function GraphPage() {
               </li>
             )}
           />
-          <Button 
+          <TooltipButton 
+            actionKey="loadGraph"
             variant="contained" 
             onClick={() => void loadEntry(entryId)}
             disabled={loading}
             startIcon={<SearchIcon />}
           >
             Load
-          </Button>
-          <Button 
+          </TooltipButton>
+          <TooltipButton 
+            actionKey="createEdge"
             variant="outlined" 
             onClick={() => setShowAddEdge(v => !v)}
             startIcon={<AddIcon />}
             color="secondary"
           >
             Edge
-          </Button>
+          </TooltipButton>
         </Stack>
 
         {showAddEdge && (
@@ -366,9 +414,9 @@ export function GraphPage() {
                 <TextField fullWidth size="small" label="To CT" value={addToCt} onChange={e => setAddToCt(e.target.value)} placeholder="article" />
               </Grid>
               <Grid size={{xs: 12}}  >
-                <Button variant="contained" onClick={() => void handleAddEdge()} disabled={addLoading} sx={{ mt: 1 }}>
+                <TooltipButton actionKey="createEdge" variant="contained" onClick={() => void handleAddEdge()} disabled={addLoading} sx={{ mt: 1 }}>
                   {addLoading ? 'Creating...' : 'Create Edge'}
-                </Button>
+                </TooltipButton>
               </Grid>
             </Grid>
           </Box>
@@ -381,7 +429,7 @@ export function GraphPage() {
         <Tabs value={tab} onChange={(_, nv) => setTab(nv)} variant="scrollable" scrollButtons="auto">
           <Tab label={`🔗 Relations (${edges.length})`} />
           <Tab label="🧭 Explorer" />
-          <Tab label={`⏳ Pending (${pending.length})`} />
+          <Tab label={`⏳ Pending (${filteredPending.length} / ${pendingTotal})`} />
           <Tab label={`🏷️ Entities (${mentions.length})`} />
           <Tab label="📊 Analytics" />
           <Tab label="📥 Export" />
@@ -400,9 +448,9 @@ export function GraphPage() {
                   <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
                     Search for an entity above, or try our interactive demo.
                   </Typography>
-                  <Button variant="outlined" onClick={() => { setEntryId('article-1'); void loadEntry('article-1'); }}>
+                  <TooltipButton actionKey="loadGraph" variant="outlined" onClick={() => { setEntryId('article-1'); void loadEntry('article-1'); }}>
                     View demo
-                  </Button>
+                  </TooltipButton>
                 </>
               ) : (
                 <Typography color="text.secondary">No edges found for this entry.</Typography>
@@ -413,21 +461,21 @@ export function GraphPage() {
               <Card key={edge.id} variant="outlined">
                 <CardContent sx={{ py: '12px !important', display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
                   <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-                    <Typography variant="body2" sx={{ fontFamily: 'monospace', color: 'text.secondary' }}>
-                      {edge.fromEntryId.slice(0, 8)}…
+                    <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                      {edge.fromEntryTitle || edge.fromEntryId.slice(0, 8)}
                     </Typography>
                     <Chip size="small" label={edge.edgeType} sx={{ bgcolor: EDGE_TYPE_COLORS[edge.edgeType] || '#475569', color: 'white', fontWeight: 'bold' }} />
-                    <Typography variant="body2" sx={{ fontFamily: 'monospace', color: 'text.secondary' }}>
-                      {edge.toEntryId.slice(0, 8)}…
+                    <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                      {edge.toEntryTitle || edge.toEntryId.slice(0, 8)}
                     </Typography>
                     <Typography variant="caption" color="text.secondary">w={edge.weight.toFixed(2)}</Typography>
                     <Typography variant="caption" color="text.secondary">{SOURCE_LABELS[edge.source] ?? edge.source}</Typography>
                   </Box>
                   <Chip size="small" label={edge.isAccepted} color={edge.isAccepted === 'accepted' ? 'success' : edge.isAccepted === 'pending' ? 'warning' : 'error'} />
                   {edge.source === 'manual' && (
-                    <IconButton size="small" color="error" onClick={() => void handleDelete(edge.id)}>
+                    <TooltipIconButton actionKey="deleteEdge" size="small" color="error" onClick={() => void handleDelete(edge.id)}>
                       <DeleteIcon fontSize="small" />
-                    </IconButton>
+                    </TooltipIconButton>
                   )}
                 </CardContent>
               </Card>
@@ -446,22 +494,76 @@ export function GraphPage() {
       {/* Pending Tab */}
       {tab === 2 && (
         <Stack spacing={2}>
-          {pending.length === 0 ? (
-            <Typography color="text.secondary" sx={{ py: 3 }}>No pending edges — the queue is clear.</Typography>
+          <Paper sx={{ p: 2, bgcolor: 'background.paper', display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
+            <Typography variant="body2" sx={{ fontWeight: 'bold' }}>Filters</Typography>
+            <TextField 
+              size="small" 
+              type="number"
+              label="Min Weight" 
+              value={pendingMinWeight} 
+              onChange={e => setPendingMinWeight(Number(e.target.value))}
+              slotProps={{ htmlInput: { min: 0, max: 1, step: 0.1 } }}
+              sx={{ width: 120 }}
+            />
+            <FormControl size="small" sx={{ minWidth: 150 }}>
+              <InputLabel>Relation</InputLabel>
+              <Select value={pendingEdgeType} label="Relation" onChange={e => setPendingEdgeType(e.target.value as string)}>
+                <MenuItem value="all">All Types</MenuItem>
+                <MenuItem value="relatedTo">relatedTo</MenuItem>
+                <MenuItem value="mentions">mentions</MenuItem>
+                <MenuItem value="references">references</MenuItem>
+                <MenuItem value="partOf">partOf</MenuItem>
+                <MenuItem value="deprecates">deprecates</MenuItem>
+              </Select>
+            </FormControl>
+            <FormControl size="small" sx={{ minWidth: 150 }}>
+              <InputLabel>Sort by Weight</InputLabel>
+              <Select value={pendingSortOrder} label="Sort by Weight" onChange={e => setPendingSortOrder(e.target.value as 'desc' | 'asc')}>
+                <MenuItem value="desc">High to Low</MenuItem>
+                <MenuItem value="asc">Low to High</MenuItem>
+              </Select>
+            </FormControl>
+            
+            <Box sx={{ flexGrow: 1 }} />
+            
+            <TooltipButton 
+              size="small" 
+              variant="contained" 
+              color="success" 
+              startIcon={<CheckIcon />} 
+              onClick={() => void handleAcceptAll()}
+              disabled={bulkLoading || filteredPending.length === 0}
+            >
+              Accept All ({filteredPending.length})
+            </TooltipButton>
+            <TooltipButton 
+              size="small" 
+              variant="outlined" 
+              color="error" 
+              startIcon={<CloseIcon />} 
+              onClick={() => void handleRejectAll()}
+              disabled={bulkLoading || filteredPending.length === 0}
+            >
+              Reject All ({filteredPending.length})
+            </TooltipButton>
+          </Paper>
+
+          {filteredPending.length === 0 ? (
+            <Typography color="text.secondary" sx={{ py: 3 }}>No pending edges match the criteria.</Typography>
           ) : (
-            pending.map(edge => (
+            filteredPending.map(edge => (
               <Card key={edge.id} variant="outlined" sx={{ borderColor: 'warning.dark' }}>
                 <CardContent sx={{ py: '12px !important', display: 'flex', alignItems: 'center', gap: 2, flexWrap: 'wrap' }}>
                   <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', gap: 1, flexWrap: 'wrap' }}>
-                    <Typography variant="body2" sx={{ fontFamily: 'monospace', color: 'text.secondary' }}>{edge.fromEntryId.slice(0, 8)}…</Typography>
+                    <Typography variant="body2" sx={{ fontWeight: 'bold' }}>{edge.fromEntryTitle || edge.fromEntryId.slice(0, 8)}</Typography>
                     <Chip size="small" label={edge.edgeType} sx={{ bgcolor: EDGE_TYPE_COLORS[edge.edgeType] || '#475569', color: 'white', fontWeight: 'bold' }} />
-                    <Typography variant="body2" sx={{ fontFamily: 'monospace', color: 'text.secondary' }}>{edge.toEntryId.slice(0, 8)}…</Typography>
+                    <Typography variant="body2" sx={{ fontWeight: 'bold' }}>{edge.toEntryTitle || edge.toEntryId.slice(0, 8)}</Typography>
                     <Typography variant="caption" color="text.secondary">{SOURCE_LABELS[edge.source] ?? edge.source}</Typography>
                     <Typography variant="caption" color="text.secondary">w={edge.weight.toFixed(2)}</Typography>
                   </Box>
                   <Stack direction="row" spacing={1}>
-                    <Button size="small" variant="contained" color="success" startIcon={<CheckIcon />} onClick={() => void handleAccept(edge.id)}>Accept</Button>
-                    <Button size="small" variant="outlined" color="error" startIcon={<CloseIcon />} onClick={() => void handleReject(edge.id)}>Reject</Button>
+                    <TooltipButton actionKey="acceptEdge" size="small" variant="contained" color="success" startIcon={<CheckIcon />} onClick={() => void handleAccept(edge.id)}>Accept</TooltipButton>
+                    <TooltipButton actionKey="rejectEdge" size="small" variant="outlined" color="error" startIcon={<CloseIcon />} onClick={() => void handleReject(edge.id)}>Reject</TooltipButton>
                   </Stack>
                 </CardContent>
               </Card>
@@ -531,7 +633,8 @@ export function GraphPage() {
             <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
               Triggers a background job to compute graph analytics (PageRank, Community Detection, etc.) across the entire knowledge graph.
             </Typography>
-            <Button
+            <TooltipButton
+              actionKey="runAnalytics"
               variant="contained"
               startIcon={<PlayIcon />}
               onClick={async () => {
@@ -544,7 +647,7 @@ export function GraphPage() {
               }}
             >
               Run Compute Job
-            </Button>
+            </TooltipButton>
           </Paper>
         </Box>
       )}
@@ -564,7 +667,8 @@ export function GraphPage() {
                   <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>{format.name}</Typography>
                   <Typography variant="body2" color="text.secondary">{format.desc}</Typography>
                 </Box>
-                <Button
+                <TooltipButton
+                  actionKey="exportGraph"
                   component="a"
                   href={`/api/graph/export?format=${format.id}`}
                   target="_blank"
@@ -573,7 +677,7 @@ export function GraphPage() {
                   startIcon={<DownloadIcon />}
                 >
                   Download
-                </Button>
+                </TooltipButton>
               </CardContent>
             </Card>
           ))}

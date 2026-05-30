@@ -110,12 +110,6 @@ const contentTypeRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
                     properties: { name: { type: "string" } },
                     required: ["name"],
                 },
-                response: {
-                    200: {
-                        type: "object",
-                        properties: { data: { type: "object" } },
-                    },
-                },
             },
         },
         async (request, reply) => {
@@ -156,12 +150,6 @@ const contentTypeRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
                         fields: { type: "array" },
                         settings: { type: "object" },
                         isComponent: { type: "boolean" },
-                    },
-                },
-                response: {
-                    200: {
-                        type: "object",
-                        properties: { data: { type: "object" } },
                     },
                 },
             },

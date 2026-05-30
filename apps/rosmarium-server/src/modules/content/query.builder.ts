@@ -68,11 +68,11 @@ function buildCondition(
     field: string,
     operator: FilterOperator,
     value: string,
-    contentType: ParsedContentType,
+    contentType?: ParsedContentType,
 ): SQL | null {
     const isSystem = SYSTEM_FIELDS.has(field);
 
-    if (!isSystem) {
+    if (!isSystem && contentType) {
         const knownField = contentType.fields.find((f) => f.name === field);
         if (!knownField) {
             throw new Error(`Unknown filter field: '${field}'`);
@@ -141,7 +141,7 @@ function isValidOperator(op: string): op is FilterOperator {
 /** Build an array of SQL WHERE conditions from parsed filter params. */
 export function buildWhereClause(
     filters: ParsedFilters,
-    contentType: ParsedContentType,
+    contentType?: ParsedContentType,
 ): SQL[] {
     const conditions: SQL[] = [];
 
@@ -163,8 +163,7 @@ export function buildWhereClause(
 /** Build Drizzle ORDER BY clauses from sort input. */
 export function buildOrderBy(
     sort: SortInput,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    contentType: ParsedContentType,
+    contentType?: ParsedContentType,
 ): SQL[] {
     return sort.map(({ field, direction }) => {
         const isSystem = SYSTEM_FIELDS.has(field);

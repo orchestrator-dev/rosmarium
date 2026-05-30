@@ -33,6 +33,15 @@ export interface FindManyOpts {
     status?: "draft" | "published" | "archived";
 }
 
+export interface FindManyUnifiedOpts {
+    contentTypeNames?: string[];
+    filters?: ParsedFilters;
+    sort?: SortInput;
+    pagination?: { limit: number; cursor?: string };
+    locale?: string;
+    status?: "draft" | "published" | "archived";
+}
+
 export interface FindOneOpts {
     contentTypeName: string;
     id: string;
@@ -107,6 +116,71 @@ export const contentCrudService = {
                             : undefined,
                     ),
                 ),
+        ]);
+
+        const hasMore = rows.length > limit;
+        const entries = hasMore ? rows.slice(0, limit) : rows;
+        const lastEntry = entries.at(-1);
+        const nextCursor =
+            hasMore && lastEntry ? encodeCursor(lastEntry.id) : null;
+
+        return {
+            entries,
+            nextCursor,
+            total: totalResult[0]?.value ?? 0,
+        };
+    },
+
+    async findManyUnified(opts: FindManyUnifiedOpts): Promise<{
+        entries: ContentEntry[];
+        nextCursor: string | null;
+        total: number;
+    }> {
+        const limit = opts.pagination?.limit ?? 20;
+        const { where: cursorWhere, limit: fetchLimit } = buildPagination(
+            opts.pagination?.cursor,
+            limit,
+        );
+
+        const conditions: any[] = [];
+        if (opts.contentTypeNames && opts.contentTypeNames.length > 0) {
+            const types = opts.contentTypeNames
+                .map(name => registry.get(name)?.id)
+                .filter(Boolean);
+            if (types.length > 0) {
+                conditions.push(sql`${contentEntries.contentTypeId} = ANY(ARRAY[${sql.join(types, sql`, `)}]::text[])`);
+            } else {
+                // If they filtered by types that don't exist, return empty
+                conditions.push(sql`1 = 0`);
+            }
+        }
+
+        if (opts.locale) conditions.push(eq(contentEntries.locale, opts.locale));
+        if (opts.status) conditions.push(eq(contentEntries.status, opts.status));
+        if (cursorWhere) conditions.push(cursorWhere);
+
+        if (opts.filters) {
+            // We pass undefined for contentType to allow generic JSON filtering
+            const filterClauses = buildWhereClause(opts.filters, undefined);
+            conditions.push(...filterClauses);
+        }
+
+        const orderBy =
+            opts.sort && opts.sort.length > 0
+                ? buildOrderBy(opts.sort, undefined)
+                : [sql`${contentEntries.createdAt} DESC`];
+
+        const [rows, totalResult] = await Promise.all([
+            db
+                .select()
+                .from(contentEntries)
+                .where(conditions.length > 0 ? and(...conditions) : undefined)
+                .orderBy(...orderBy)
+                .limit(fetchLimit),
+            db
+                .select({ value: count() })
+                .from(contentEntries)
+                .where(conditions.length > 0 ? and(...conditions) : undefined),
         ]);
 
         const hasMore = rows.length > limit;

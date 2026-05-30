@@ -3,7 +3,6 @@ import {
   Box, 
   Typography, 
   TextField, 
-  Button, 
   Slider, 
   Card, 
   CardContent, 
@@ -15,6 +14,7 @@ import {
   Paper,
   Skeleton
 } from '@mui/material';
+import { TooltipButton } from '../components/common/TooltipButton';
 
 export interface SearchResponse {
   data: Array<{
@@ -124,14 +124,15 @@ export function SearchPage() {
               </Paper>
             )}
           </Box>
-          <Button 
+          <TooltipButton 
+            actionKey="searchHybrid"
             variant="contained" 
             onClick={() => void handleSearch()} 
             disabled={loading}
             sx={{ px: 4 }}
           >
             {loading ? 'Searching...' : 'Search'}
-          </Button>
+          </TooltipButton>
         </Stack>
 
         <Box sx={{ p: 2, bgcolor: 'background.default', borderRadius: 2 }}>

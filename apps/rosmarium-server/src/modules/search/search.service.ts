@@ -126,7 +126,17 @@ export const searchService = {
         // --- 4. Run searches in parallel ---
         const candidateLimit = limit * RRF_OVERSCAN;
 
-        const [fulltextResults, vectorResults] = await Promise.all([
+        const vectorSearchPromises = embedding
+            ? contentTypeNames.map((ct) =>
+                  vectorSearch({
+                      embedding,
+                      contentType: ct,
+                      limit: candidateLimit,
+                  })
+              )
+            : [];
+
+        const [fulltextResults, ...vectorResultsArray] = await Promise.all([
             fulltextSearch({
                 query,
                 contentTypeId: contentTypeIds.length === 1 ? contentTypeIds[0] : undefined,
@@ -134,14 +144,10 @@ export const searchService = {
                 status,
                 limit: candidateLimit,
             }),
-            embedding && contentTypeNames.length > 0
-                ? vectorSearch({
-                      embedding,
-                      contentType: contentTypeNames[0] ?? "",
-                      limit: candidateLimit,
-                  })
-                : Promise.resolve([]),
+            ...vectorSearchPromises,
         ]);
+        
+        const vectorResults = vectorResultsArray.flat();
 
         // --- 5. Apply RBAC filter to fulltext results ---
         const allowedFulltextResults = fulltextResults.filter((entry) =>

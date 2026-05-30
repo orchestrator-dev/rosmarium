@@ -11,7 +11,7 @@ const baseField = z.object({
 });
 
 // Use z.lazy for recursive field schemas (group contains sub-fields)
-export const fieldSchema: z.ZodType<FieldDefinition> = z.lazy(() =>
+export const fieldSchema: z.ZodType<FieldDefinition, z.ZodTypeDef, unknown> = z.lazy(() =>
     z.discriminatedUnion("type", [
         baseField.extend({
             type: z.literal("text"),
@@ -94,7 +94,7 @@ export type FieldDefinition = z.infer<typeof baseField> &
           }
     );
 
-export const fieldsArraySchema: z.ZodType<FieldDefinition[]> = z.lazy(() =>
+export const fieldsArraySchema: z.ZodType<FieldDefinition[], z.ZodTypeDef, unknown> = z.lazy(() =>
     z.array(fieldSchema),
 );
 

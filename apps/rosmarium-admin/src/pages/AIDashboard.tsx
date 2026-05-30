@@ -7,7 +7,6 @@ import {
   CardHeader,
   Stack,
   TextField,
-  Button,
   Chip,
   
   Grid,
@@ -22,6 +21,7 @@ import {
   Close as CloseIcon,
   CheckCircle as CheckCircleIcon,
 } from '@mui/icons-material';
+import { TooltipButton } from '../components/common/TooltipButton';
 
 interface QueueStat {
   queueName: string
@@ -112,8 +112,8 @@ export function AIDashboardPage() {
         <Card variant="outlined" sx={{ height: '100%' }}>
           <CardHeader 
             avatar={<ChartIcon color="primary" />} 
-            title="Embedding Coverage" 
-            titleTypographyProps={{ variant: 'h2' }}
+            title="Embedding Coverage"
+            titleTypographyProps={{ variant: 'h2', sx: { fontSize: '1.25rem', fontWeight: 600 } }}
           />
           <Divider />
           <CardContent>
@@ -139,8 +139,8 @@ export function AIDashboardPage() {
         <Card variant="outlined" sx={{ height: '100%' }}>
           <CardHeader 
             avatar={<LabelIcon color="primary" />} 
-            title="Auto-tagging Taxonomy" 
-            titleTypographyProps={{ variant: 'h2' }}
+            title="Auto-tagging Taxonomy"
+            titleTypographyProps={{ variant: 'h2', sx: { fontSize: '1.25rem', fontWeight: 600 } }}
           />
           <Divider />
           <CardContent>
@@ -183,7 +183,7 @@ export function AIDashboardPage() {
                     onChange={e => setTagLabel(e.target.value)}
                     onKeyDown={e => { if (e.key === 'Enter') addLabel(); }}
                   />
-                  <Button variant="contained" onClick={addLabel}>Add</Button>
+                  <TooltipButton tooltipTitle="Add this new label to the taxonomy" variant="contained" onClick={addLabel}>Add</TooltipButton>
                 </Stack>
               </Grid>
             </Grid>
@@ -199,8 +199,8 @@ export function AIDashboardPage() {
         <Card variant="outlined" sx={{ height: '100%' }}>
           <CardHeader 
             avatar={<SearchIcon color="primary" />} 
-            title="Duplicate Detection" 
-            titleTypographyProps={{ variant: 'h2' }}
+            title="Duplicate Detection"
+            titleTypographyProps={{ variant: 'h2', sx: { fontSize: '1.25rem', fontWeight: 600 } }}
           />
           <Divider />
           <CardContent>
@@ -212,7 +212,8 @@ export function AIDashboardPage() {
                 value={dupContentType}
                 onChange={e => setDupContentType(e.target.value)}
               />
-              <Button 
+              <TooltipButton 
+                tooltipTitle="Scan for duplicate entries using semantic similarity"
                 variant="contained" 
                 onClick={() => void scanDuplicates()} 
                 disabled={dupLoading}
@@ -220,7 +221,7 @@ export function AIDashboardPage() {
                 sx={{ px: 3 }}
               >
                 {dupLoading ? 'Scanning…' : 'Scan'}
-              </Button>
+              </TooltipButton>
             </Stack>
 
             {dupError && (
@@ -272,8 +273,8 @@ export function AIDashboardPage() {
         <Card variant="outlined" sx={{ height: '100%' }}>
           <CardHeader 
             avatar={<BoltIcon color="primary" />} 
-            title="Intelligence Queue" 
-            titleTypographyProps={{ variant: 'h2' }}
+            title="Intelligence Queue"
+            titleTypographyProps={{ variant: 'h2', sx: { fontSize: '1.25rem', fontWeight: 600 } }}
             action={
               queueLoading ? <Typography variant="caption" color="primary">↻ Refreshing…</Typography> : null
             }

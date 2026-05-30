@@ -93,7 +93,7 @@ export const graphService = {
     },
 
     /** Get edges for an entry. */
-    async getEdgesForEntry(opts: GetEdgesInput): Promise<GraphEdge[]> {
+    async getEdgesForEntry(opts: GetEdgesInput): Promise<(GraphEdge & { fromEntryTitle?: string; toEntryTitle?: string })[]> {
         return graphRepository.getEdgesForEntry(opts);
     },
 
@@ -108,7 +108,7 @@ export const graphService = {
     },
 
     /** Get all pending edges across all content types. */
-    async getPendingEdges(limit = 50): Promise<GraphEdge[]> {
+    async getPendingEdges(limit = 50): Promise<{ edges: (GraphEdge & { fromEntryTitle?: string; toEntryTitle?: string })[], totalCount: number }> {
         return graphRepository.getPendingEdges(limit);
     },
 

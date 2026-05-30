@@ -26,6 +26,90 @@ function parseSortParam(sort: string | undefined): SortInput {
 }
 
 const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
+    // GET /api/content — unified list across all content types
+    app.get<{
+        Querystring: ListQuery & { contentTypes?: string };
+    }>(
+        "/api/content",
+        {
+            preHandler: requireAuth(),
+            schema: {
+                tags: ["Content Entries"],
+                summary: "List content entries across all types",
+                querystring: {
+                    type: "object",
+                    properties: {
+                        limit: { type: "string" },
+                        cursor: { type: "string" },
+                        locale: { type: "string" },
+                        status: { type: "string", enum: ["draft", "published", "archived"] },
+                        sort: { type: "string" },
+                        contentTypes: { type: "string" }, // Comma-separated content type names
+                    },
+                    additionalProperties: true,
+                },
+                response: {
+                    200: {
+                        type: "object",
+                        properties: {
+                            data: { type: "array" },
+                            meta: {
+                                type: "object",
+                                properties: {
+                                    pagination: {
+                                        type: "object",
+                                        properties: {
+                                            total: { type: "integer" },
+                                            limit: { type: "integer" },
+                                            nextCursor: { type: ["string", "null"] },
+                                        },
+                                    },
+                                },
+                            },
+                        },
+                    },
+                },
+            },
+        },
+        async (request, reply) => {
+            try {
+                const limit = Math.min(parseInt(request.query.limit ?? "20", 10) || 20, 100);
+                const contentTypeNames = request.query.contentTypes
+                    ? request.query.contentTypes.split(",").map(s => s.trim()).filter(Boolean)
+                    : undefined;
+
+                const result = await contentCrudService.findManyUnified({
+                    contentTypeNames,
+                    filters: request.query.filters as ParsedFilters | undefined,
+                    sort: parseSortParam(request.query.sort),
+                    pagination: { limit, cursor: request.query.cursor },
+                    locale: request.query.locale,
+                    status: request.query.status as "draft" | "published" | "archived" | undefined,
+                });
+
+                // Attach contentTypeName to each entry so the frontend knows what it is
+                const entriesWithTypeName = result.entries.map((entry) => {
+                    const ct = Array.from(registry.getAll()).find(c => c.id === entry.contentTypeId);
+                    return { ...entry, contentTypeName: ct?.name ?? "unknown" };
+                });
+
+                return {
+                    data: entriesWithTypeName,
+                    meta: {
+                        pagination: {
+                            total: result.total,
+                            limit,
+                            nextCursor: result.nextCursor,
+                        },
+                    },
+                };
+            } catch (err) {
+                const message = err instanceof Error ? err.message : "Unknown error";
+                return reply.status(400).send({ error: { code: "BAD_REQUEST", message } });
+            }
+        },
+    );
+
     // GET /api/content/:type — list entries
     app.get<{
         Params: { type: string };

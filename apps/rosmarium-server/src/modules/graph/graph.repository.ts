@@ -3,12 +3,13 @@
  * graph_entity_nodes, and entry_entity_mentions.
  */
 
-import { and, eq, gte, or, sql } from "drizzle-orm";
+import { and, eq, gte, or, sql, inArray } from "drizzle-orm";
 import { db } from "../../db/index.js";
 import {
     graphEdges,
     graphEntityNodes,
     entryEntityMentions,
+    contentEntries,
     type GraphEdge,
     type GraphEntityNode,
     type EntryEntityMention,
@@ -50,6 +51,32 @@ export interface UpsertEntityInput {
 
 export const graphRepository = {
     // ── Edges ───────────────────────────────────────────────────────────────
+
+    async _hydrateEdgeTitles(edges: GraphEdge[]): Promise<(GraphEdge & { fromEntryTitle?: string; toEntryTitle?: string })[]> {
+        if (edges.length === 0) return [];
+        
+        const entryIds = new Set<string>();
+        for (const e of edges) {
+            entryIds.add(e.fromEntryId);
+            entryIds.add(e.toEntryId);
+        }
+        
+        const entries = await db.select({ id: contentEntries.id, data: contentEntries.data })
+            .from(contentEntries)
+            .where(inArray(contentEntries.id, Array.from(entryIds)));
+            
+        const titleMap = new Map<string, string>();
+        for (const entry of entries) {
+            const data = entry.data as { title?: string; name?: string };
+            titleMap.set(entry.id, data.title || data.name || entry.id);
+        }
+        
+        return edges.map(e => ({
+            ...e,
+            fromEntryTitle: titleMap.get(e.fromEntryId),
+            toEntryTitle: titleMap.get(e.toEntryId),
+        }));
+    },
 
     /**
      * Create a new edge. If an edge with the same (from, to, type) already exists
@@ -116,7 +143,7 @@ export const graphRepository = {
     },
 
     /** Fetch edges for an entry, with optional filtering. */
-    async getEdgesForEntry(opts: GetEdgesInput): Promise<GraphEdge[]> {
+    async getEdgesForEntry(opts: GetEdgesInput): Promise<(GraphEdge & { fromEntryTitle?: string; toEntryTitle?: string })[]> {
         const {
             entryId,
             direction = "both",
@@ -153,12 +180,14 @@ export const graphRepository = {
             conditions.push(eq(graphEdges.isAccepted, status));
         }
 
-        return db
+        const edges = await db
             .select()
             .from(graphEdges)
             .where(and(...conditions))
             .limit(limit)
             .orderBy(graphEdges.weight);
+            
+        return this._hydrateEdgeTitles(edges);
     },
 
     /** Accept a pending edge. */
@@ -182,13 +211,23 @@ export const graphRepository = {
     },
 
     /** Get all pending edges (for human review). */
-    async getPendingEdges(limit = 50): Promise<GraphEdge[]> {
-        return db
+    async getPendingEdges(limit = 50): Promise<{ edges: (GraphEdge & { fromEntryTitle?: string; toEntryTitle?: string })[], totalCount: number }> {
+        const [countResult] = await db
+            .select({ count: sql<number>`count(*)::int` })
+            .from(graphEdges)
+            .where(eq(graphEdges.isAccepted, "pending"));
+
+        const edges = await db
             .select()
             .from(graphEdges)
             .where(eq(graphEdges.isAccepted, "pending"))
             .limit(limit)
             .orderBy(graphEdges.createdAt);
+            
+        return {
+            edges: await this._hydrateEdgeTitles(edges),
+            totalCount: countResult.count
+        };
     },
 
     // ── Entity nodes ─────────────────────────────────────────────────────────

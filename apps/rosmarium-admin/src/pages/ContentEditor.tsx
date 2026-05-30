@@ -7,7 +7,6 @@ import {
   Link,
   Tabs,
   Tab,
-  Button,
   Stack,
   Paper,
   Chip,
@@ -24,6 +23,7 @@ import {
 } from '@mui/icons-material';
 import type { ContentType } from '../components/content-type-builder/types';
 import { FieldRenderer } from '../components/editor/FieldRenderer';
+import { TooltipButton } from '../components/common/TooltipButton';
 
 interface ContentEntry {
   id: string;
@@ -63,6 +63,7 @@ export function ContentEditorPage() {
         const ctRes = await fetch(`/api/content-types/${type}`);
         if (!ctRes.ok) throw new Error('Failed to load content type');
         const ctJson = await ctRes.json() as { data: ContentType };
+        console.log("Loaded ContentType:", ctJson);
         if (!cancelled) setContentType(ctJson.data);
 
         // Fetch all content types (for component / blocks lookups)
@@ -245,7 +246,8 @@ export function ContentEditorPage() {
                 <Tab label="JSON" />
               </Tabs>
               <Stack direction="row" spacing={1}>
-                <Button
+                <TooltipButton
+                  actionKey="saveEntry"
                   variant="contained"
                   startIcon={<SaveIcon />}
                   onClick={() => void handleSave()}
@@ -253,15 +255,16 @@ export function ContentEditorPage() {
                   size="small"
                 >
                   {saving ? 'Saving…' : 'Save'}
-                </Button>
-                <Button
+                </TooltipButton>
+                <TooltipButton
+                  tooltipTitle="Cancel changes and go back"
                   variant="outlined"
                   startIcon={<CancelIcon />}
                   onClick={handleCancel}
                   size="small"
                 >
                   Cancel
-                </Button>
+                </TooltipButton>
               </Stack>
             </Box>
 
@@ -269,7 +272,7 @@ export function ContentEditorPage() {
             <Box sx={{ p: 3 }}>
               {activeTab === 0 && contentType && (
                 <Stack spacing={3}>
-                  {contentType.fields.map((field) => (
+                  {(Array.isArray(contentType.fields) ? contentType.fields : []).map((field) => (
                     <FieldRenderer
                       key={field.name}
                       field={field}
@@ -278,7 +281,7 @@ export function ContentEditorPage() {
                       contentTypes={allContentTypes}
                     />
                   ))}
-                  {contentType.fields.length === 0 && (
+                  {(!Array.isArray(contentType.fields) || contentType.fields.length === 0) && (
                     <Typography variant="body2" color="text.secondary" sx={{ py: 4, textAlign: 'center' }}>
                       This content type has no fields defined.
                     </Typography>
@@ -388,7 +391,8 @@ export function ContentEditorPage() {
               {!isNew && entry && (
                 <Stack spacing={1} sx={{ mt: 1 }}>
                   {entry.status !== 'published' ? (
-                    <Button
+                    <TooltipButton
+                      tooltipTitle="Publish this entry to make it visible to clients"
                       variant="contained"
                       color="success"
                       startIcon={<PublishIcon />}
@@ -397,9 +401,10 @@ export function ContentEditorPage() {
                       fullWidth
                     >
                       Publish
-                    </Button>
+                    </TooltipButton>
                   ) : (
-                    <Button
+                    <TooltipButton
+                      tooltipTitle="Unpublish to hide this entry from clients"
                       variant="outlined"
                       color="warning"
                       startIcon={<UnpublishIcon />}
@@ -408,7 +413,7 @@ export function ContentEditorPage() {
                       fullWidth
                     >
                       Unpublish
-                    </Button>
+                    </TooltipButton>
                   )}
                 </Stack>
               )}

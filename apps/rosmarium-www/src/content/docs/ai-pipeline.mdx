@@ -12,10 +12,14 @@ The Rosmarium AI Pipeline is driven by a separate Python background worker (`ros
 *(Screenshot: The Rosmarium AI Intelligence Dashboard)*
 
 ## 1. Vector Embeddings
-When content is created or updated, the system pushes a job to BullMQ. The worker:
-1. **Chunks** the text using `spaCy` sentencizer or HTML structure chunking.
-2. **Embeds** the text. By default, it uses a local `Ollama` instance running `nomic-embed-text`.
-3. **Upserts** to PostgreSQL via the `pgvector` extension.
+Vector embeddings are automatically generated in the background. For the pipeline to trigger:
+1. **Enable AI**: The Content Type must have AI Intelligence enabled in its settings (`aiIntelligence.enabled = true`).
+2. **Publish Content**: The content entry must be formally published (triggering the `content.published` event).
+
+When these conditions are met, the Node API pushes a job to BullMQ. The Python AI worker then:
+1. **Chunks** the text fields using `spaCy` sentencizer or HTML structure chunking.
+2. **Embeds** the chunks using a local `Ollama` instance running `nomic-embed-text`.
+3. **Upserts** the resulting vectors to PostgreSQL via the `pgvector` extension.
 
 ## 2. RAG (Retrieval-Augmented Generation)
 Rosmarium provides a native RAG integration powered by `LlamaIndex`. It supports:

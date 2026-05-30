@@ -12,6 +12,10 @@ const intelligenceQueue = new Queue("intelligence-jobs", {
     connection: { url: config.REDIS_URL },
 });
 
+const embeddingQueue = new Queue("embedding-jobs", {
+    connection: { url: config.REDIS_URL },
+});
+
 export interface IntelligenceJobOpts {
     contentEntryId: string;
     contentType: string;
@@ -31,6 +35,19 @@ export async function dispatchIntelligenceJob(opts: IntelligenceJobOpts): Promis
     const traceparent = span ? `00-${span.spanContext().traceId}-${span.spanContext().spanId}-01` : undefined;
 
     await intelligenceQueue.add("analyse-content", opts, {
+        attempts: 3,
+        backoff: { type: "exponential", delay: 2000 },
+        removeOnComplete: 100,
+        removeOnFail: 50,
+        ...(traceparent && { customJobOptions: { traceparent } }),
+    });
+}
+
+export async function dispatchEmbeddingJob(opts: Omit<IntelligenceJobOpts, 'candidateLabels' | 'operations'> & { triggeredBy: 'create' | 'update' | 'manual' }): Promise<void> {
+    const span = trace.getActiveSpan();
+    const traceparent = span ? `00-${span.spanContext().traceId}-${span.spanContext().spanId}-01` : undefined;
+
+    await embeddingQueue.add("embed-content", opts, {
         attempts: 3,
         backoff: { type: "exponential", delay: 2000 },
         removeOnComplete: 100,

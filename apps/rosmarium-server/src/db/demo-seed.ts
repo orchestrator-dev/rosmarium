@@ -41,10 +41,13 @@ function generateArticles() {
     }));
 }
 
+import { buildApp } from "../app.js";
+
 async function seedDemo() {
     console.log("🌱 Running Rosmarium Discovery Demo Database Seed...");
 
     await registry.load();
+    await buildApp();
 
     const adminRows = await db
         .select({ id: users.id })

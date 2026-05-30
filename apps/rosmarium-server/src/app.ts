@@ -8,7 +8,7 @@ import { rosmariumEvents } from "./lib/events.js";
 import { pubsub } from "./graphql/context.js";
 import { webhookService } from "./modules/webhooks/webhook.service.js";
 import graphqlPlugin from "./graphql/index.js";
-import { dispatchIntelligenceJob } from "./modules/jobs/intelligence.jobs.js";
+import { dispatchIntelligenceJob, dispatchEmbeddingJob } from "./modules/jobs/intelligence.jobs.js";
 import { tenantMiddleware, tenantStorageHook } from "./modules/tenants/tenant.middleware.js";
 
 export async function buildApp() {
@@ -104,6 +104,14 @@ export async function buildApp() {
         }
 
         if (fields.length === 0) return;
+
+        dispatchEmbeddingJob({
+            contentEntryId: entry.id,
+            contentType: ct.name,
+            fields,
+            locale: entry.locale,
+            triggeredBy: 'create',
+        }).catch(console.error);
 
         dispatchIntelligenceJob({
             contentEntryId: entry.id,

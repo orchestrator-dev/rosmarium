@@ -192,8 +192,8 @@ export default async function graphRoutes(app: FastifyInstance) {
                 200,
                 parseInt(String(request.query.limit ?? "50"), 10) || 50,
             );
-            const edges = await graphService.getPendingEdges(limit);
-            return reply.send({ data: edges, meta: { total: edges.length } });
+            const { edges, totalCount } = await graphService.getPendingEdges(limit);
+            return reply.send({ data: edges, meta: { total: totalCount } });
         },
     );
 
