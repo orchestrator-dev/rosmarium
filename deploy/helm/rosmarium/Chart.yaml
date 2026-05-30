@@ -1,6 +1,6 @@
 apiVersion: v2
 name: rosmarium
-description: A Helm chart for Kubernetes deployment of Rosmarium CMS
+description: A Helm chart for Kubernetes deployment of Rosmarium COS
 type: application
 version: 1.0.0
 appVersion: "1.0.0"

@@ -42,10 +42,10 @@ async function main() {
   // ── Step 2: Create 5 articles ──
   console.log("\n═══ Step 2: Create articles ═══");
   const articles = [
-    { title: "Introduction to PostgreSQL pgvector", body: "pgvector is a PostgreSQL extension for vector similarity search. It enables semantic search directly in your database. Alice Johnson at Rosmarium CMS uses it for production RAG pipelines." },
+    { title: "Introduction to PostgreSQL pgvector", body: "pgvector is a PostgreSQL extension for vector similarity search. It enables semantic search directly in your database. Alice Johnson at Rosmarium COS uses it for production RAG pipelines." },
     { title: "Building RAG Pipelines with LlamaIndex", body: "LlamaIndex provides tooling for retrieval augmented generation. When combined with PostgreSQL pgvector, you get a powerful knowledge base for AI applications." },
     { title: "Hybrid Search Architecture", body: "Combining BM25 full-text search with vector cosine similarity using Reciprocal Rank Fusion produces better results than either approach alone. PostgreSQL supports both natively." },
-    { title: "Rosmarium CMS Quick Start Guide", body: "This guide covers installing Rosmarium CMS, configuring the AI worker, and creating your first content type with semantic search enabled." },
+    { title: "Rosmarium COS Quick Start Guide", body: "This guide covers installing Rosmarium COS, configuring the AI worker, and creating your first content type with semantic search enabled." },
     { title: "Performance Tuning pgvector HNSW Indexes", body: "HNSW indexes in pgvector require careful tuning of m and ef_construction parameters. This guide covers production configuration for high-traffic deployments." },
   ];
   for (const a of articles) {

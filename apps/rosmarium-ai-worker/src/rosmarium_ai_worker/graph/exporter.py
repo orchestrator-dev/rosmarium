@@ -40,7 +40,7 @@ class KnowledgeGraphExporter:
             return {
                 "@context": {
                     "@vocab": "https://schema.org/",
-                    "rosmarium": "https://rosmarium-cms.dev/vocab#",
+                    "rosmarium": "https://rosmarium-cos.dev/vocab#",
                     "relatedTo": "rosmarium:relatedTo",
                     "references": "rosmarium:references",
                     "mentions": "rosmarium:mentions",
@@ -112,7 +112,7 @@ class KnowledgeGraphExporter:
         return {
             "@context": {
                 "@vocab": "https://schema.org/",
-                "rosmarium": "https://rosmarium-cms.dev/vocab#",
+                "rosmarium": "https://rosmarium-cos.dev/vocab#",
                 "relatedTo": "rosmarium:relatedTo",
                 "references": "rosmarium:references",
                 "mentions": "rosmarium:mentions",
@@ -132,7 +132,7 @@ class KnowledgeGraphExporter:
         
         # If no entries, return empty prefix string or basic turtle
         if not json_ld_data["@graph"]:
-            return "@prefix rosmarium: <https://rosmarium-cms.dev/vocab#> .\n@prefix schema: <https://schema.org/> .\n"
+            return "@prefix rosmarium: <https://rosmarium-cos.dev/vocab#> .\n@prefix schema: <https://schema.org/> .\n"
 
         # Parse JSON-LD into rdflib Graph
         g = Graph()

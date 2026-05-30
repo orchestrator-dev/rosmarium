@@ -1,6 +1,6 @@
-# Rosmarium CMS — AI Agent Context
+# Rosmarium COS — AI Agent Context
 
-Welcome! This file provides context and directives for AI agents working on the **Rosmarium CMS** project.
+Welcome! This file provides context and directives for AI agents working on the **Rosmarium COS** project.
 
 ## Overview
 Rosmarium is an open-source, AI-native headless content repository. It consists of:

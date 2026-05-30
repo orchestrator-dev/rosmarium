@@ -1,6 +1,6 @@
 # Rosmarium Discovery Demo Dataset
 
-The **Rosmarium Discovery** demo dataset provides a pre-configured environment packed with realistic data to showcase the full power of Rosmarium CMS. It demonstrates everything from foundational content management to advanced AI intelligence and graph capabilities out-of-the-box.
+The **Rosmarium Discovery** demo dataset provides a pre-configured environment packed with realistic data to showcase the full power of Rosmarium COS. It demonstrates everything from foundational content management to advanced AI intelligence and graph capabilities out-of-the-box.
 
 ## Features Showcased
 

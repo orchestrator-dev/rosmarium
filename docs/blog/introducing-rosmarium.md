@@ -1,15 +1,15 @@
 ---
-title: "Introducing Rosmarium CMS: The AI-Native Content Infrastructure"
+title: "Introducing Rosmarium COS: The AI-Native Content Infrastructure"
 description: "How we built a headless CMS that brings native RAG, vector search, and Auto-tagging to your frontend without the headache."
 author: "The Rosmarium Team"
 date: "2026-05-29"
 ---
 
-# Introducing Rosmarium CMS: The AI-Native Content Infrastructure
+# Introducing Rosmarium COS: The AI-Native Content Infrastructure
 
 For years, building an application that leverages AI has required juggling a disjointed stack: a relational database for your core data, a separate vector database for semantic search, an embedding pipeline built in Python, and a headless CMS to actually manage the editorial content. 
 
-Today, we are thrilled to introduce **Rosmarium CMS** — the open-source headless CMS that unifies these layers into a single, high-performance infrastructure.
+Today, we are thrilled to introduce **Rosmarium COS** — the open-source headless CMS that unifies these layers into a single, high-performance infrastructure.
 
 ## Why We Built Rosmarium
 

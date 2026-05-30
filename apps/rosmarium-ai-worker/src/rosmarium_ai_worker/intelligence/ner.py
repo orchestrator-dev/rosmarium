@@ -99,7 +99,7 @@ class NERExtractor:
     def to_dict(self, entities: list[Entity]) -> dict[str, list[str]]:
         """Group entities by label for compact storage.
 
-        Returns: {"PERSON": ["Alice", "Bob"], "ORG": ["Rosmarium CMS"], ...}
+        Returns: {"PERSON": ["Alice", "Bob"], "ORG": ["Rosmarium COS"], ...}
         """
         result: dict[str, list[str]] = {}
         for ent in entities:

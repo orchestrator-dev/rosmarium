@@ -1,6 +1,6 @@
-# Contributing to Rosmarium CMS
+# Contributing to Rosmarium COS
 
-Welcome to Rosmarium CMS! We're building a modern, extensible AI-first content management system and we are thrilled you're interested in contributing.
+Welcome to Rosmarium COS! We're building a modern, extensible AI-first content management system and we are thrilled you're interested in contributing.
 
 ## Before you start
 
@@ -31,11 +31,11 @@ pnpm db:seed
 ```
 
 **Running the services:**
-- **rosmarium-server**: `pnpm --filter @rosmarium-cms/server dev`
+- **rosmarium-server**: `pnpm --filter @rosmarium-cos/server dev`
 - **rosmarium-ai-worker**: `pnpm worker:dev`
 
 **Running tests:**
-- Server: `pnpm --filter @rosmarium-cms/server test`
+- Server: `pnpm --filter @rosmarium-cos/server test`
 - AI worker: `pnpm worker:test`
 
 ## Branch and commit conventions

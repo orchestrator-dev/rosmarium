@@ -53,7 +53,7 @@ Rosmarium consists of three core applications that you can run simultaneously.
 
 **1. Start the Node.js API Server**
 ```bash
-pnpm --filter @rosmarium-cms/server dev
+pnpm --filter @rosmarium-cos/server dev
 ```
 *Runs on `http://localhost:3000`*
 
@@ -66,7 +66,7 @@ uv run uvicorn rosmarium_ai_worker.main:app --app-dir src --port 8001 --reload
 
 **3. Start the Admin Dashboard**
 ```bash
-pnpm --filter @rosmarium-cms/admin dev
+pnpm --filter @rosmarium-cos/admin dev
 ```
 *Runs on `http://localhost:5173`*
 

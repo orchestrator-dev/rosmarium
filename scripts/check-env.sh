@@ -6,7 +6,7 @@ RED='\033[0;31m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-echo "Checking environment for Rosmarium CMS local stack..."
+echo "Checking environment for Rosmarium COS local stack..."
 
 # 1 & 2. Check podman or docker and their versions
 HAS_PODMAN=false

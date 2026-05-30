@@ -13,8 +13,8 @@ export default fp<FastifySwaggerOptions>(async (fastify: FastifyInstance) => {
     await fastify.register(swagger, {
         openapi: {
             info: {
-                title: "Rosmarium CMS API",
-                description: "OpenAPI documentation for Rosmarium CMS",
+                title: "Rosmarium COS API",
+                description: "OpenAPI documentation for Rosmarium COS",
                 version: pkg.version as string,
             },
         },

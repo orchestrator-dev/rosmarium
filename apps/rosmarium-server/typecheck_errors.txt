@@ -1,5 +1,5 @@
 
-> @rosmarium-cms/server@1.0.0 typecheck /home/manu/lab/rosmarium/apps/rosmarium-server
+> @rosmarium-cos/server@1.0.0 typecheck /home/manu/lab/rosmarium/apps/rosmarium-server
 > tsc --noEmit
 
 src/db/demo-seed.ts(58,21): error TS2532: Object is possibly 'undefined'.

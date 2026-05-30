@@ -77,7 +77,7 @@ export function getWebhookWorker(): Worker<WebhookJobData> {
                         "X-Rosmarium-Signature": `sha256=${signature}`,
                         "X-Rosmarium-Event": event,
                         "X-Rosmarium-Delivery": deliveryId,
-                        "User-Agent": "Rosmarium-CMS-Webhooks/1.0",
+                        "User-Agent": "Rosmarium-COS-Webhooks/1.0",
                     },
                     body,
                     signal: AbortSignal.timeout(10_000),

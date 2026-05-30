@@ -1,6 +1,6 @@
-# Rosmarium CMS: Multi-Tenancy Model
+# Rosmarium COS: Multi-Tenancy Model
 
-Rosmarium CMS v0.10.0 introduces PostgreSQL namespace-based multi-tenancy.
+Rosmarium COS v0.10.0 introduces PostgreSQL namespace-based multi-tenancy.
 
 ## Data Isolation Strategy
 

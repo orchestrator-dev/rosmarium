@@ -1,6 +1,6 @@
-# Rosmarium CMS: Kubernetes Deployment
+# Rosmarium COS: Kubernetes Deployment
 
-Rosmarium CMS is designed to be cloud-native and deployable on Kubernetes via Helm.
+Rosmarium COS is designed to be cloud-native and deployable on Kubernetes via Helm.
 
 ## Architecture
 
@@ -23,7 +23,7 @@ It expects external dependencies (PostgreSQL, Redis) to be provided via managed 
 2. Install the chart:
 
 ```bash
-helm install rosmarium ./deploy/helm/rosmarium -f values-prod.yaml -n rosmarium-cms --create-namespace
+helm install rosmarium ./deploy/helm/rosmarium -f values-prod.yaml -n rosmarium-cos --create-namespace
 ```
 
 ## Scaling

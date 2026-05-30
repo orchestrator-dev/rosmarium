@@ -1,4 +1,4 @@
-# Rosmarium CMS — Current Development Phase
+# Rosmarium COS — Current Development Phase
 
 ## Active Phase: Production Hardening & Ecosystem
 **Target release:** v1.0.1

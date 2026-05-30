@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/hero.svg" alt="Rosmarium CMS" width="100%" />
+  <img src="docs/hero.svg" alt="Rosmarium COS" width="100%" />
 </p>
 
 <p align="center">
@@ -47,9 +47,9 @@ pnpm db:migrate
 pnpm db:seed
 
 # Start the servers in separate terminals
-pnpm --filter @rosmarium-cms/server dev
+pnpm --filter @rosmarium-cos/server dev
 cd apps/rosmarium-ai-worker && uv run uvicorn rosmarium_ai_worker.main:app --app-dir src --port 8001
-pnpm --filter @rosmarium-cms/admin dev
+pnpm --filter @rosmarium-cos/admin dev
 ```
 
 ## Contributing & Licence

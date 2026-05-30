@@ -1,5 +1,5 @@
 {
-    "name": "@rosmarium-cms/server",
+    "name": "@rosmarium-cos/server",
     "version": "1.1.1",
     "private": true,
     "type": "module",
@@ -39,8 +39,8 @@
         "@pothos/plugin-relay": "^4.7.0",
         "@pothos/plugin-validation": "^4.2.0",
         "@pothos/plugin-with-input": "^4.1.4",
-        "@rosmarium-cms/config": "workspace:*",
-        "@rosmarium-cms/types": "workspace:*",
+        "@rosmarium-cos/config": "workspace:*",
+        "@rosmarium-cos/types": "workspace:*",
         "bullmq": "^5.71.0",
         "dataloader": "^2.2.3",
         "drizzle-orm": "^0.43.1",

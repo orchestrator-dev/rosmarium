@@ -1,3 +1,3 @@
-module github.com/rosmarium-cms/rosmarium-cli
+module github.com/rosmarium-cos/rosmarium-cli
 
 go 1.22.0
