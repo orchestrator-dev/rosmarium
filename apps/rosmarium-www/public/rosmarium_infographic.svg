@@ -115,10 +115,10 @@
   </g>
 
   <!-- Labels on Paths -->
-  <text x="140" y="600" font-family="system-ui, sans-serif" font-size="16" fill="#94A3B8">Read/Write</text>
-  <text x="700" y="580" font-family="system-ui, sans-serif" font-size="16" fill="#94A3B8">Cache/Events</text>
-  <text x="600" y="630" font-family="system-ui, sans-serif" font-size="16" fill="#94A3B8">Cache/Events</text>
-  <text x="980" y="610" font-family="system-ui, sans-serif" font-size="16" fill="#94A3B8">Embeddings</text>
+  <text x="110" y="570" font-family="system-ui, sans-serif" font-size="16" fill="#94A3B8">Read/Write</text>
+  <text x="710" y="570" font-family="system-ui, sans-serif" font-size="16" fill="#94A3B8">Cache/Events</text>
+  <text x="560" y="610" font-family="system-ui, sans-serif" font-size="16" fill="#94A3B8">Cache/Events</text>
+  <text x="880" y="590" font-family="system-ui, sans-serif" font-size="16" fill="#94A3B8">Embeddings</text>
 
   <!-- CORE BOX (Center) -->
   <g transform="translate(600, 360)">
@@ -138,11 +138,11 @@
       <text x="80" y="150" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="500" fill="#64748B" text-anchor="middle">284.15</text>
     </g>
 
-    <text x="-70" y="50" font-family="system-ui, sans-serif" font-size="12" fill="#CBD5E1" text-anchor="middle">Authentication</text>
-    <text x="-70" y="110" font-family="system-ui, sans-serif" font-size="12" fill="#CBD5E1" text-anchor="middle">API Gateway</text>
+    <text x="-65" y="45" font-family="system-ui, sans-serif" font-size="12" fill="#CBD5E1" text-anchor="middle">Authentication</text>
+    <text x="-65" y="95" font-family="system-ui, sans-serif" font-size="12" fill="#CBD5E1" text-anchor="middle">API Gateway</text>
     
-    <text x="70" y="50" font-family="system-ui, sans-serif" font-size="12" fill="#CBD5E1" text-anchor="middle">Management UI</text>
-    <text x="70" y="110" font-family="system-ui, sans-serif" font-size="12" fill="#CBD5E1" text-anchor="middle">Plugin System</text>
+    <text x="65" y="45" font-family="system-ui, sans-serif" font-size="12" fill="#CBD5E1" text-anchor="middle">Management UI</text>
+    <text x="65" y="95" font-family="system-ui, sans-serif" font-size="12" fill="#CBD5E1" text-anchor="middle">Plugin System</text>
   </g>
 
   <!-- CONTENT API BOX (Left) -->
