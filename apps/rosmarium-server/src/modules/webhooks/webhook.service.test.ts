@@ -62,7 +62,7 @@ describe("webhookService.trigger", () => {
             webhookId: "hook-1",
             event: "entry.created",
             contentType: "article",
-        }));
+        }), expect.anything());
     });
 
     it("skips inactive webhooks — DB only returns active ones (isActive filter applied in DB)", async () => {
