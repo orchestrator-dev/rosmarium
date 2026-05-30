@@ -44,11 +44,11 @@ jobs:
           PGPASSWORD=rosmarium psql -h localhost -U rosmarium -d rosmarium_test \
             -c "CREATE EXTENSION IF NOT EXISTS vector;"
       - name: Typecheck
-        run: pnpm --filter @rosmarium-cos/server typecheck
+        run: pnpm --filter @orchestrator.dev/server typecheck
       - name: Lint
-        run: pnpm --filter @rosmarium-cos/server lint
+        run: pnpm --filter @orchestrator.dev/server lint
       - name: Test
-        run: pnpm --filter @rosmarium-cos/server test
+        run: pnpm --filter @orchestrator.dev/server test
         env:
           DATABASE_URL: postgresql://rosmarium:rosmarium@localhost:5432/rosmarium_test
           REDIS_URL: redis://localhost:6379
@@ -125,10 +125,10 @@ jobs:
         with: { node-version: '22', cache: 'pnpm' }
       - run: pnpm install --frozen-lockfile
       - name: Typecheck
-        run: pnpm --filter @rosmarium-cos/admin typecheck
+        run: pnpm --filter @orchestrator.dev/admin typecheck
       - name: Lint
-        run: pnpm --filter @rosmarium-cos/admin lint
+        run: pnpm --filter @orchestrator.dev/admin lint
       - name: Test
-        run: pnpm --filter @rosmarium-cos/admin test
+        run: pnpm --filter @orchestrator.dev/admin test
       - name: Build
-        run: pnpm --filter @rosmarium-cos/admin build
+        run: pnpm --filter @orchestrator.dev/admin build

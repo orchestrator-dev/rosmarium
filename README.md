@@ -47,9 +47,9 @@ pnpm db:migrate
 pnpm db:seed
 
 # Start the servers in separate terminals
-pnpm --filter @rosmarium-cos/server dev
+pnpm --filter @orchestrator.dev/server dev
 cd apps/rosmarium-ai-worker && uv run uvicorn rosmarium_ai_worker.main:app --app-dir src --port 8001
-pnpm --filter @rosmarium-cos/admin dev
+pnpm --filter @orchestrator.dev/admin dev
 ```
 
 ## Contributing & Licence

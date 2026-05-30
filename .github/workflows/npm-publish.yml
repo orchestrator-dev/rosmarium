@@ -29,9 +29,9 @@ jobs:
         run: pnpm install --frozen-lockfile
         
       - name: Build SDK
-        run: pnpm --filter @rosmarium-cos/sdk build
+        run: pnpm --filter @orchestrator.dev/sdk build
         
       - name: Publish SDK to NPM
-        run: pnpm --filter @rosmarium-cos/sdk publish --no-git-checks
+        run: pnpm --filter @orchestrator.dev/sdk publish --no-git-checks
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

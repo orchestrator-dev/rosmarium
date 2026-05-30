@@ -16,7 +16,7 @@ COPY apps/rosmarium-server/ ./apps/rosmarium-server/
 RUN pnpm install --frozen-lockfile
 
 # Build the server and its dependencies
-RUN pnpm --filter @rosmarium-cos/server build
+RUN pnpm --filter @orchestrator.dev/server build
 
 # Production image
 FROM node:22-alpine AS runner

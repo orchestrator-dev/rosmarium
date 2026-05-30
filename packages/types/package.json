@@ -1,5 +1,5 @@
 {
-    "name": "@rosmarium-cos/types",
+    "name": "@orchestrator.dev/types",
     "version": "1.0.0",
     "private": true,
     "type": "module",

@@ -31,11 +31,11 @@ pnpm db:seed
 ```
 
 **Running the services:**
-- **rosmarium-server**: `pnpm --filter @rosmarium-cos/server dev`
+- **rosmarium-server**: `pnpm --filter @orchestrator.dev/server dev`
 - **rosmarium-ai-worker**: `pnpm worker:dev`
 
 **Running tests:**
-- Server: `pnpm --filter @rosmarium-cos/server test`
+- Server: `pnpm --filter @orchestrator.dev/server test`
 - AI worker: `pnpm worker:test`
 
 ## Branch and commit conventions

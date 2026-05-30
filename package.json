@@ -18,11 +18,11 @@
     "infra:status": "COMPOSE=$(command -v podman >/dev/null 2>&1 && echo 'podman compose' || echo 'docker compose') && $COMPOSE ps",
     "infra:psql": "COMPOSE=$(command -v podman >/dev/null 2>&1 && echo 'podman' || echo 'docker') && $COMPOSE exec -it rosmarium-postgres psql -U rosmarium -d rosmarium",
     "infra:redis": "COMPOSE=$(command -v podman >/dev/null 2>&1 && echo 'podman' || echo 'docker') && $COMPOSE exec -it rosmarium-redis redis-cli",
-    "db:generate": "pnpm --filter @rosmarium-cos/server db:generate",
-    "db:migrate": "pnpm --filter @rosmarium-cos/server db:migrate",
-    "db:studio": "pnpm --filter @rosmarium-cos/server db:studio",
-    "db:seed": "pnpm --filter @rosmarium-cos/server db:seed",
-    "demo:seed": "pnpm --filter @rosmarium-cos/server db:demo-seed",
+    "db:generate": "pnpm --filter @orchestrator.dev/server db:generate",
+    "db:migrate": "pnpm --filter @orchestrator.dev/server db:migrate",
+    "db:studio": "pnpm --filter @orchestrator.dev/server db:studio",
+    "db:seed": "pnpm --filter @orchestrator.dev/server db:seed",
+    "demo:seed": "pnpm --filter @orchestrator.dev/server db:demo-seed",
     "demo:reset": "pnpm infra:reset && pnpm infra:up && pnpm infra:init && pnpm db:migrate && pnpm db:seed && pnpm demo:seed"
   },
   "devDependencies": {
