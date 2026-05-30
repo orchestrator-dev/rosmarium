@@ -1,103 +1,265 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600" width="100%" height="100%">
-  <!-- Background -->
-  <rect width="1000" height="600" fill="#0F172A" rx="16" />
-  
-  <!-- Title -->
-  <text x="500" y="50" font-family="system-ui, -apple-system, sans-serif" font-size="28" font-weight="700" fill="#F8FAFC" text-anchor="middle">Rosmarium COS Architecture</text>
-  <text x="500" y="80" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="400" fill="#94A3B8" text-anchor="middle">AI-Native Split-Stack Infrastructure</text>
-
-  <!-- Arrow Definitions -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" width="100%" height="100%">
   <defs>
-    <marker id="arrow" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-      <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748B" />
-    </marker>
-    <marker id="arrow-green" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-      <path d="M 0 0 L 10 5 L 0 10 z" fill="#10B981" />
-    </marker>
-    <marker id="arrow-blue" viewBox="0 0 10 10" refX="10" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-      <path d="M 0 0 L 10 5 L 0 10 z" fill="#3B82F6" />
-    </marker>
-    <linearGradient id="grad-node" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#059669" />
-      <stop offset="100%" stop-color="#10B981" />
+    <!-- Background Gradient -->
+    <radialGradient id="bgGrad" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#141829" />
+      <stop offset="100%" stop-color="#0B0D17" />
+    </radialGradient>
+
+    <!-- Neon Gradients -->
+    <linearGradient id="cyanPurple" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22D3EE" />
+      <stop offset="100%" stop-color="#A855F7" />
     </linearGradient>
-    <linearGradient id="grad-python" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#2563EB" />
-      <stop offset="100%" stop-color="#3B82F6" />
+    <linearGradient id="purpleCyan" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#A855F7" />
+      <stop offset="100%" stop-color="#22D3EE" />
     </linearGradient>
-    <linearGradient id="grad-db" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#475569" />
-      <stop offset="100%" stop-color="#64748B" />
+    <linearGradient id="cyanOnly" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#22D3EE" />
+      <stop offset="100%" stop-color="#06B6D4" />
     </linearGradient>
+    <linearGradient id="purpleOnly" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#C084FC" />
+      <stop offset="100%" stop-color="#9333EA" />
+    </linearGradient>
+
+    <!-- Glow Filters -->
+    <filter id="glowCyan" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComponentTransfer in="blur" result="glow">
+        <feFuncA type="linear" slope="1.5"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="glowPurple" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComponentTransfer in="blur" result="glow">
+        <feFuncA type="linear" slope="1.5"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    
+    <filter id="glowIntense" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="12" result="blur" />
+      <feComponentTransfer in="blur" result="glow">
+        <feFuncA type="linear" slope="2"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+
+    <!-- Arrowheads -->
+    <marker id="arrowCyan" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#22D3EE" filter="url(#glowCyan)"/>
+    </marker>
+    <marker id="arrowPurple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#A855F7" filter="url(#glowPurple)"/>
+    </marker>
   </defs>
 
-  <!-- Clients -->
-  <g transform="translate(40, 200)">
-    <rect width="140" height="80" rx="8" fill="#1E293B" stroke="#334155" stroke-width="2"/>
-    <text x="70" y="35" font-family="system-ui" font-size="16" font-weight="600" fill="#E2E8F0" text-anchor="middle">Clients</text>
-    <text x="70" y="55" font-family="system-ui" font-size="12" fill="#94A3B8" text-anchor="middle">Admin UI / API</text>
-  </g>
-
-  <!-- Node.js Server -->
-  <g transform="translate(280, 140)">
-    <rect width="220" height="200" rx="12" fill="url(#grad-node)" fill-opacity="0.1" stroke="#10B981" stroke-width="2"/>
-    <rect width="220" height="40" rx="12" fill="url(#grad-node)"/>
-    <text x="110" y="25" font-family="system-ui" font-size="16" font-weight="600" fill="#FFFFFF" text-anchor="middle">rosmarium-server</text>
-    <text x="110" y="70" font-family="system-ui" font-size="14" font-weight="600" fill="#10B981" text-anchor="middle">Node.js / Fastify</text>
-    
-    <text x="30" y="105" font-family="system-ui" font-size="13" fill="#E2E8F0">• Content API (REST/GQL)</text>
-    <text x="30" y="130" font-family="system-ui" font-size="13" fill="#E2E8F0">• Auth &amp; RBAC</text>
-    <text x="30" y="155" font-family="system-ui" font-size="13" fill="#E2E8F0">• Webhooks Delivery</text>
-    <text x="30" y="180" font-family="system-ui" font-size="13" fill="#E2E8F0">• Job Dispatch</text>
-  </g>
-
-  <!-- Python Worker -->
-  <g transform="translate(700, 140)">
-    <rect width="220" height="200" rx="12" fill="url(#grad-python)" fill-opacity="0.1" stroke="#3B82F6" stroke-width="2"/>
-    <rect width="220" height="40" rx="12" fill="url(#grad-python)"/>
-    <text x="110" y="25" font-family="system-ui" font-size="16" font-weight="600" fill="#FFFFFF" text-anchor="middle">rosmarium-ai-worker</text>
-    <text x="110" y="70" font-family="system-ui" font-size="14" font-weight="600" fill="#3B82F6" text-anchor="middle">Python / FastAPI</text>
-    
-    <text x="30" y="105" font-family="system-ui" font-size="13" fill="#E2E8F0">• Embedding Engine (Ollama)</text>
-    <text x="30" y="130" font-family="system-ui" font-size="13" fill="#E2E8F0">• Knowledge Graph Extraction</text>
-    <text x="30" y="155" font-family="system-ui" font-size="13" fill="#E2E8F0">• NLP / NER (spaCy)</text>
-    <text x="30" y="180" font-family="system-ui" font-size="13" fill="#E2E8F0">• Advanced RAG Pipeline</text>
-  </g>
-
-  <!-- Redis -->
-  <g transform="translate(530, 190)">
-    <rect width="140" height="100" rx="8" fill="#1E293B" stroke="#EF4444" stroke-width="2"/>
-    <text x="70" y="35" font-family="system-ui" font-size="16" font-weight="600" fill="#EF4444" text-anchor="middle">Redis (BullMQ)</text>
-    <text x="70" y="60" font-family="system-ui" font-size="12" fill="#94A3B8" text-anchor="middle">Job Queue &amp;</text>
-    <text x="70" y="80" font-family="system-ui" font-size="12" fill="#94A3B8" text-anchor="middle">Message Broker</text>
-  </g>
-
-  <!-- PostgreSQL -->
-  <g transform="translate(430, 420)">
-    <rect width="340" height="120" rx="12" fill="url(#grad-db)" fill-opacity="0.1" stroke="#64748B" stroke-width="2"/>
-    <rect width="340" height="40" rx="12" fill="url(#grad-db)"/>
-    <text x="170" y="25" font-family="system-ui" font-size="16" font-weight="600" fill="#FFFFFF" text-anchor="middle">PostgreSQL 16</text>
-    
-    <rect x="30" y="60" width="130" height="40" rx="4" fill="#334155"/>
-    <text x="95" y="85" font-family="system-ui" font-size="13" font-weight="500" fill="#E2E8F0" text-anchor="middle">JSONB Content</text>
-    
-    <rect x="180" y="60" width="130" height="40" rx="4" fill="#334155"/>
-    <text x="245" y="85" font-family="system-ui" font-size="13" font-weight="500" fill="#E2E8F0" text-anchor="middle">pgvector Store</text>
-  </g>
-
-  <!-- Connectors -->
-  <!-- Client to Node -->
-  <path d="M 180 240 L 270 240" fill="none" stroke="#64748B" stroke-width="2" marker-end="url(#arrow)"/>
+  <!-- Background -->
+  <rect width="1200" height="900" fill="url(#bgGrad)" />
   
-  <!-- Node to Redis -->
-  <path d="M 500 240 L 520 240" fill="none" stroke="#10B981" stroke-width="2" marker-end="url(#arrow-green)"/>
-  
-  <!-- Redis to Python -->
-  <path d="M 670 240 L 690 240" fill="none" stroke="#3B82F6" stroke-width="2" marker-end="url(#arrow-blue)"/>
-  
-  <!-- Node to Postgres -->
-  <path d="M 390 340 L 390 390 L 460 390 L 460 410" fill="none" stroke="#10B981" stroke-width="2" marker-end="url(#arrow-green)"/>
-  
-  <!-- Python to Postgres -->
-  <path d="M 810 340 L 810 390 L 740 390 L 740 410" fill="none" stroke="#3B82F6" stroke-width="2" marker-end="url(#arrow-blue)"/>
+  <!-- Subtle Grid -->
+  <g stroke="#ffffff" stroke-opacity="0.03" stroke-width="1">
+    <path d="M 0 150 L 1200 150 M 0 300 L 1200 300 M 0 450 L 1200 450 M 0 600 L 1200 600 M 0 750 L 1200 750" />
+    <path d="M 200 0 L 200 900 M 400 0 L 400 900 M 600 0 L 600 900 M 800 0 L 800 900 M 1000 0 L 1000 900" />
+  </g>
+
+  <!-- Title -->
+  <g transform="translate(600, 80)" text-anchor="middle">
+    <text y="0" font-family="system-ui, sans-serif" font-size="48" font-weight="800" fill="url(#cyanPurple)" letter-spacing="2" filter="url(#glowIntense)">
+      ROSMARIUM COS ARCHITECTURE
+    </text>
+    <text y="40" font-family="system-ui, sans-serif" font-size="22" font-weight="400" fill="#94A3B8" letter-spacing="1">
+      High-Performance, AI-Integrated Content Orchestration System
+    </text>
+  </g>
+
+  <!-- Glowing Paths (Connectors) -->
+  <g fill="none" stroke-width="3">
+    <!-- Core to Content API (Left) -->
+    <path d="M 450 350 L 370 350" stroke="#22D3EE" filter="url(#glowCyan)" marker-end="url(#arrowCyan)"/>
+    <path d="M 450 380 L 370 380" stroke="#A855F7" filter="url(#glowPurple)" marker-start="url(#arrowPurple)"/>
+    
+    <!-- Core to AI Worker (Right) -->
+    <path d="M 750 350 L 830 350" stroke="#22D3EE" filter="url(#glowCyan)" marker-end="url(#arrowCyan)"/>
+    <path d="M 750 380 L 830 380" stroke="#A855F7" filter="url(#glowPurple)" marker-start="url(#arrowPurple)"/>
+    
+    <!-- Top routing from Core to Content API / AI Worker -->
+    <path d="M 600 200 L 600 150 L 210 150 L 210 220" stroke="#22D3EE" filter="url(#glowCyan)" marker-end="url(#arrowCyan)"/>
+    <path d="M 600 200 L 600 150 L 990 150 L 990 220" stroke="#22D3EE" filter="url(#glowCyan)" marker-end="url(#arrowCyan)"/>
+
+    <!-- Core to Postgres -->
+    <path d="M 520 540 L 520 620 L 450 620 L 450 650" stroke="#22D3EE" filter="url(#glowCyan)" marker-end="url(#arrowCyan)"/>
+    <path d="M 490 520 L 410 520 L 410 650" stroke="#A855F7" filter="url(#glowPurple)" marker-end="url(#arrowPurple)"/>
+    
+    <!-- Content API to Postgres -->
+    <path d="M 210 540 L 210 620 L 350 620 L 350 650" stroke="#22D3EE" filter="url(#glowCyan)" marker-end="url(#arrowCyan)"/>
+
+    <!-- Core to Redis -->
+    <path d="M 680 540 L 680 620 L 750 620 L 750 650" stroke="#A855F7" filter="url(#glowPurple)" marker-end="url(#arrowPurple)"/>
+    
+    <!-- AI Worker to Redis (Embeddings loop) -->
+    <path d="M 990 540 L 990 620 L 850 620 L 850 650" stroke="#A855F7" filter="url(#glowPurple)" marker-start="url(#arrowPurple)"/>
+  </g>
+
+  <!-- Labels on Paths -->
+  <text x="140" y="600" font-family="system-ui, sans-serif" font-size="16" fill="#94A3B8">Read/Write</text>
+  <text x="700" y="580" font-family="system-ui, sans-serif" font-size="16" fill="#94A3B8">Cache/Events</text>
+  <text x="600" y="630" font-family="system-ui, sans-serif" font-size="16" fill="#94A3B8">Cache/Events</text>
+  <text x="980" y="610" font-family="system-ui, sans-serif" font-size="16" fill="#94A3B8">Embeddings</text>
+
+  <!-- CORE BOX (Center) -->
+  <g transform="translate(600, 360)">
+    <!-- Hexagon Background -->
+    <polygon points="0,-160 140,-80 140,80 0,160 -140,80 -140,-80" fill="#0B132B" stroke="url(#cyanPurple)" stroke-width="4" filter="url(#glowIntense)"/>
+    <polygon points="0,-145 125,-70 125,70 0,145 -125,70 -125,-70" fill="none" stroke="#334155" stroke-width="1"/>
+    
+    <text y="-105" font-family="system-ui, sans-serif" font-size="20" font-weight="700" fill="#E2E8F0" text-anchor="middle">ROSMARIUM COS</text>
+    <text y="-85" font-family="system-ui, sans-serif" font-size="20" font-weight="700" fill="#E2E8F0" text-anchor="middle">CORE</text>
+
+    <!-- Baked-in Logo -->
+    <g transform="translate(-40, -60) scale(0.5)">
+      <rect x="0" y="0" width="160" height="160" rx="20" fill="#020617" stroke="url(#cyanPurple)" stroke-width="8" filter="url(#glowPurple)"/>
+      <text x="20" y="35" font-family="system-ui, monospace, sans-serif" font-size="24" font-weight="700" fill="#94A3B8">42</text>
+      <text x="80" y="105" font-family="system-ui, -apple-system, sans-serif" font-size="80" font-weight="800" fill="url(#cyanPurple)" text-anchor="middle" letter-spacing="-2">Ro</text>
+      <text x="80" y="132" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="700" fill="#E2E8F0" text-anchor="middle" letter-spacing="1">Rosmarium</text>
+      <text x="80" y="150" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="500" fill="#64748B" text-anchor="middle">284.15</text>
+    </g>
+
+    <text x="-70" y="50" font-family="system-ui, sans-serif" font-size="12" fill="#CBD5E1" text-anchor="middle">Authentication</text>
+    <text x="-70" y="110" font-family="system-ui, sans-serif" font-size="12" fill="#CBD5E1" text-anchor="middle">API Gateway</text>
+    
+    <text x="70" y="50" font-family="system-ui, sans-serif" font-size="12" fill="#CBD5E1" text-anchor="middle">Management UI</text>
+    <text x="70" y="110" font-family="system-ui, sans-serif" font-size="12" fill="#CBD5E1" text-anchor="middle">Plugin System</text>
+  </g>
+
+  <!-- CONTENT API BOX (Left) -->
+  <g transform="translate(60, 240)">
+    <rect width="300" height="300" rx="16" fill="#0F172A" fill-opacity="0.8" stroke="#22D3EE" stroke-width="3" filter="url(#glowCyan)"/>
+    
+    <!-- Code Icon -->
+    <g transform="translate(115, 30)">
+      <rect width="70" height="50" rx="6" fill="none" stroke="#22D3EE" stroke-width="2"/>
+      <circle cx="15" cy="12" r="2" fill="#22D3EE"/>
+      <circle cx="25" cy="12" r="2" fill="#22D3EE"/>
+      <circle cx="35" cy="12" r="2" fill="#22D3EE"/>
+      <path d="M 20 30 L 30 20 L 20 40 M 50 30 L 40 20 L 50 40" stroke="#22D3EE" stroke-width="2" fill="none"/>
+    </g>
+    
+    <text x="150" y="120" font-family="system-ui, sans-serif" font-size="24" font-weight="700" fill="#F8FAFC" text-anchor="middle">CONTENT API</text>
+    <text x="150" y="145" font-family="system-ui, sans-serif" font-size="18" fill="#94A3B8" text-anchor="middle">(TypeScript/Fastify)</text>
+    
+    <g font-family="system-ui, sans-serif" font-size="16" fill="#E2E8F0" transform="translate(20, 190)">
+      <circle cx="0" cy="-5" r="3" fill="#22D3EE"/>
+      <text x="15" y="0">High-Speed Content Delivery</text>
+      
+      <circle cx="0" cy="25" r="3" fill="#22D3EE"/>
+      <text x="15" y="30">GraphQL/REST Endpoints</text>
+      
+      <circle cx="0" cy="55" r="3" fill="#22D3EE"/>
+      <text x="15" y="60">TypeScript Runtime</text>
+      
+      <circle cx="0" cy="85" r="3" fill="#22D3EE"/>
+      <text x="15" y="90">Fastify Framework</text>
+    </g>
+  </g>
+
+  <!-- AI WORKER BOX (Right) -->
+  <g transform="translate(840, 240)">
+    <rect width="300" height="300" rx="16" fill="#0F172A" fill-opacity="0.8" stroke="#A855F7" stroke-width="3" filter="url(#glowPurple)"/>
+    
+    <!-- AI Icon -->
+    <g transform="translate(115, 30)">
+      <rect width="70" height="50" rx="6" fill="none" stroke="#A855F7" stroke-width="2"/>
+      <path d="M 35 15 L 35 45 M 20 25 L 50 25" stroke="#A855F7" stroke-width="2"/>
+      <text x="35" y="35" font-family="system-ui" font-size="18" font-weight="700" fill="#A855F7" text-anchor="middle">AI</text>
+    </g>
+    
+    <text x="150" y="120" font-family="system-ui, sans-serif" font-size="24" font-weight="700" fill="#F8FAFC" text-anchor="middle">AI WORKER</text>
+    <text x="150" y="145" font-family="system-ui, sans-serif" font-size="18" fill="#94A3B8" text-anchor="middle">(Python/FastAPI)</text>
+    
+    <g font-family="system-ui, sans-serif" font-size="16" fill="#E2E8F0" transform="translate(20, 190)">
+      <circle cx="0" cy="-5" r="3" fill="#A855F7"/>
+      <text x="15" y="0">RAG Pipeline</text>
+      
+      <circle cx="0" cy="25" r="3" fill="#A855F7"/>
+      <text x="15" y="30">Vector Search &amp; Embeddings</text>
+      
+      <circle cx="0" cy="55" r="3" fill="#A855F7"/>
+      <text x="15" y="60">Knowledge Graph Analytics</text>
+      
+      <circle cx="0" cy="85" r="3" fill="#A855F7"/>
+      <text x="15" y="90">Python Runtime</text>
+    </g>
+  </g>
+
+  <!-- POSTGRESQL BOX (Bottom Left) -->
+  <g transform="translate(180, 650)">
+    <rect width="360" height="200" rx="16" fill="#0F172A" fill-opacity="0.8" stroke="#22D3EE" stroke-width="3" filter="url(#glowCyan)"/>
+    
+    <text x="180" y="40" font-family="system-ui, sans-serif" font-size="22" font-weight="700" fill="#22D3EE" text-anchor="middle">POSTGRESQL + PGVECTOR</text>
+    <path d="M 20 60 L 340 60" stroke="#334155" stroke-width="1"/>
+    
+    <g font-family="system-ui, sans-serif" font-size="16" fill="#E2E8F0" transform="translate(30, 95)">
+      <circle cx="0" cy="-5" r="3" fill="#22D3EE"/>
+      <text x="15" y="0">Main Database</text>
+      
+      <circle cx="0" cy="25" r="3" fill="#22D3EE"/>
+      <text x="15" y="30">Relational Data (JSONB)</text>
+      
+      <circle cx="0" cy="55" r="3" fill="#22D3EE"/>
+      <text x="15" y="60">Vector Storage</text>
+      
+      <circle cx="0" cy="85" r="3" fill="#22D3EE"/>
+      <text x="15" y="90">Semantic Indexing</text>
+    </g>
+
+    <!-- Elephant/DB Icon -->
+    <g transform="translate(250, 100)" fill="none" stroke="#22D3EE" stroke-width="2">
+      <ellipse cx="40" cy="20" rx="30" ry="10"/>
+      <path d="M 10 20 L 10 60 A 30 10 0 0 0 70 60 L 70 20"/>
+      <path d="M 10 40 A 30 10 0 0 0 70 40"/>
+    </g>
+  </g>
+
+  <!-- REDIS BOX (Bottom Right) -->
+  <g transform="translate(660, 650)">
+    <rect width="360" height="200" rx="16" fill="#0F172A" fill-opacity="0.8" stroke="#A855F7" stroke-width="3" filter="url(#glowPurple)"/>
+    
+    <text x="180" y="40" font-family="system-ui, sans-serif" font-size="22" font-weight="700" fill="#A855F7" text-anchor="middle">REDIS</text>
+    <path d="M 20 60 L 340 60" stroke="#334155" stroke-width="1"/>
+    
+    <g font-family="system-ui, sans-serif" font-size="16" fill="#E2E8F0" transform="translate(30, 95)">
+      <circle cx="0" cy="-5" r="3" fill="#A855F7"/>
+      <text x="15" y="0">Message Queuing (BullMQ)</text>
+      
+      <circle cx="0" cy="25" r="3" fill="#A855F7"/>
+      <text x="15" y="30">High-speed Caching</text>
+      
+      <circle cx="0" cy="55" r="3" fill="#A855F7"/>
+      <text x="15" y="60">Session Data</text>
+      
+      <circle cx="0" cy="85" r="3" fill="#A855F7"/>
+      <text x="15" y="90">Real-time Operations</text>
+    </g>
+
+    <!-- Layers Icon -->
+    <g transform="translate(250, 100)" fill="none" stroke="#A855F7" stroke-width="2">
+      <polygon points="40,10 70,25 40,40 10,25"/>
+      <polygon points="10,40 40,55 70,40"/>
+      <polygon points="10,55 40,70 70,55"/>
+    </g>
+  </g>
 </svg>
