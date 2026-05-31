@@ -120,6 +120,13 @@
       "when": 1780254472438,
       "tag": "0017_sour_goblin_queen",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1780258085654,
+      "tag": "0018_woozy_nightshade",
+      "breakpoints": true
     }
   ]
 }

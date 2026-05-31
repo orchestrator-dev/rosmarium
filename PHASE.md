@@ -71,6 +71,17 @@
   - [x] `apps/rosmarium-server/src/modules/content/dataloader.ts` DataLoader for batched relation resolution
   - [x] `apps/rosmarium-server/src/modules/content/cache.service.ts` Redis caching layer
 
+## V2 Phase 6 Checklist (In Progress)
+
+### Month 15: SSO & Advanced Auth (G22)
+- [x] **Task 15.1: SSO/OAuth/OIDC Integration**
+  - [x] OAuth 2.0 authorization code flow with PKCE
+  - [x] OIDC discovery
+  - [x] SAML 2.0 SP-initiated flow
+  - [x] Auto-provision users from SSO claims
+  - [x] Role mapping from SSO groups/claims
+  - [x] Admin UI: SSO provider configuration
+
 ## Notes
 Phase 4 (AI-Native Content Intelligence) is officially completed.
 Phase 5 (Edge Delivery & Scale) is fully completed in v1.13.0.

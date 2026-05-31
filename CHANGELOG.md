@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.14.0] - 2026-05-31
+
+### Added
+- **rosmarium-server**: SSO Provider database schema for storing OAuth2, OIDC, and SAML configurations.
+- **rosmarium-server**: `oauth.service.ts` for handling OAuth2/OIDC discovery, PKCE state validation, and id_token decoding via `arctic`.
+- **rosmarium-server**: `saml.service.ts` for managing SAML 2.0 SP-initiated login and callback validation via `@node-saml/node-saml`.
+- **rosmarium-server**: `sso.service.ts` to orchestrate login flows, auto-provision users if they don't exist, and perform dynamic role mapping based on claims/groups.
+- **rosmarium-server**: Fastify routes `/api/auth/sso/providers`, `/api/auth/sso/login/:providerId`, and `/api/auth/sso/callback/:providerId`.
+- **rosmarium-admin**: Dynamic Admin UI login page that fetches active SSO providers and renders direct sign-in buttons for Enterprise Auth.
+
 ## [1.12.0] - 2026-05-31
 
 ### Added

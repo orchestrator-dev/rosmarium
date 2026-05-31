@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Box,
   Typography,
@@ -6,6 +6,7 @@ import {
   Button,
   Paper,
   Stack,
+  Divider,
 } from '@mui/material';
 
 export function LoginPage() {
@@ -13,6 +14,16 @@ export function LoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [ssoProviders, setSsoProviders] = useState<{ id: string; name: string; providerId: string; type: string }[]>([]);
+
+  useEffect(() => {
+    fetch('/api/auth/sso/providers')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data)) setSsoProviders(data);
+      })
+      .catch(console.error);
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -85,6 +96,25 @@ export function LoginPage() {
             </Button>
           </Stack>
         </form>
+
+        {ssoProviders.length > 0 && (
+          <>
+            <Divider sx={{ my: 3 }}>OR</Divider>
+            <Stack spacing={1.5}>
+              {ssoProviders.map(provider => (
+                <Button
+                  key={provider.id}
+                  variant="outlined"
+                  size="large"
+                  fullWidth
+                  href={`/api/auth/sso/login/${provider.id}`}
+                >
+                  Sign in with {provider.name}
+                </Button>
+              ))}
+            </Stack>
+          </>
+        )}
       </Paper>
     </Box>
   );
