@@ -3,14 +3,10 @@ import { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
 import { Type } from "@sinclair/typebox";
 import { workflowService } from "./workflow.service.js";
 
-declare module "fastify" {
-    interface FastifyInstance {
-        requirePermission(permission: string): any;
-    }
-}
+import { requirePermission } from "../rbac/rbac.middleware.js";
 
 export const workflowRoutes: FastifyPluginAsyncTypebox = async (fastify: any) => {
-    fastify.addHook("onRequest", fastify.requirePermission("workflow:read:any"));
+    fastify.addHook("onRequest", requirePermission("workflow:read:any"));
 
     const WorkflowDef = Type.Object({
         id: Type.String(),
@@ -52,7 +48,7 @@ export const workflowRoutes: FastifyPluginAsyncTypebox = async (fastify: any) =>
     });
 
     fastify.post("/", {
-        preHandler: fastify.requirePermission("workflow:create:any"),
+        preHandler: requirePermission("workflow:create:any"),
         schema: {
             body: Type.Object({
                 name: Type.String(),
@@ -66,7 +62,7 @@ export const workflowRoutes: FastifyPluginAsyncTypebox = async (fastify: any) =>
     });
 
     fastify.put("/:id", {
-        preHandler: fastify.requirePermission("workflow:update:any"),
+        preHandler: requirePermission("workflow:update:any"),
         schema: {
             params: Type.Object({ id: Type.String() }),
             body: Type.Object({
@@ -81,7 +77,7 @@ export const workflowRoutes: FastifyPluginAsyncTypebox = async (fastify: any) =>
     });
 
     fastify.delete("/:id", {
-        preHandler: fastify.requirePermission("workflow:delete:any"),
+        preHandler: requirePermission("workflow:delete:any"),
         schema: {
             params: Type.Object({ id: Type.String() })
         }

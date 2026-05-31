@@ -11,6 +11,7 @@ export const contentEntries = pgTable(
             .notNull()
             .references(() => contentTypes.id, { onDelete: "cascade" }),
         locale: text("locale").notNull().default("en"),
+        localizationGroupId: text("localization_group_id"),
         status: text("status", {
             enum: ["draft", "published", "archived"],
         })
@@ -37,6 +38,7 @@ export const contentEntries = pgTable(
         contentTypeIdx: index("content_entries_type_idx").on(table.contentTypeId),
         statusIdx: index("content_entries_status_idx").on(table.status),
         localeIdx: index("content_entries_locale_idx").on(table.locale),
+        localizationGroupIdx: index("content_entries_loc_group_idx").on(table.localizationGroupId),
         createdAtIdx: index("content_entries_created_at_idx").on(table.createdAt),
     })
 );

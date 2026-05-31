@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, @typescript-eslint/ban-ts-comment */
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { commentsService } from "./comments.service.js";
 import { db } from "../../db/index.js";

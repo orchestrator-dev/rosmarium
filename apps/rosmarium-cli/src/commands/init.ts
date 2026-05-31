@@ -1,7 +1,6 @@
 import { Command } from "commander";
 import inquirer from "inquirer";
 import chalk from "chalk";
-import fs from "fs/promises";
 import path from "path";
 
 export function registerInitCommand(program: Command) {

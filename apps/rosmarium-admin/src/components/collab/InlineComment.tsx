@@ -10,6 +10,7 @@ export interface InlineCommentProps {
     onResolve: (commentId: string) => void;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const InlineComment: React.FC<InlineCommentProps> = ({ fieldId, comments, onAddComment, onResolve }) => {
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 

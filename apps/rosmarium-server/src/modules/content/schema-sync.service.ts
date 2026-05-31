@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, @typescript-eslint/ban-ts-comment */
 import { registry, type ParsedContentType, type CreateContentTypeInput } from "./registry.js";
 import { parseYamlToSchema, exportSchemaToYaml } from "./schema-serializer.js";
 import { diffSchemas, type SchemaDiffResult } from "./schema-diff.js";

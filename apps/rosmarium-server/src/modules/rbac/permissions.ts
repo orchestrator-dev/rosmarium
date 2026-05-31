@@ -32,6 +32,12 @@ export const PERMISSIONS = {
     // System
     WEBHOOK_MANAGE: "webhook:create:any",
     SETTINGS_UPDATE: "settings:update:any",
+
+    // Workflow
+    WORKFLOW_READ: "workflow:read:any",
+    WORKFLOW_CREATE: "workflow:create:any",
+    WORKFLOW_UPDATE: "workflow:update:any",
+    WORKFLOW_DELETE: "workflow:delete:any",
 } as const;
 
 export type Permission = (typeof PERMISSIONS)[keyof typeof PERMISSIONS];
@@ -54,6 +60,10 @@ export const ROLE_PERMISSIONS: Record<UserRole, Permission[]> = {
         PERMISSIONS.USER_CREATE,
         PERMISSIONS.USER_UPDATE_ANY,
         PERMISSIONS.WEBHOOK_MANAGE,
+        PERMISSIONS.WORKFLOW_READ,
+        PERMISSIONS.WORKFLOW_CREATE,
+        PERMISSIONS.WORKFLOW_UPDATE,
+        PERMISSIONS.WORKFLOW_DELETE,
     ],
 
     editor: [

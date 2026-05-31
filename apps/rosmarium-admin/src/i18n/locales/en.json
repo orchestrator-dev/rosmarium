@@ -1,0 +1,9 @@
+{
+  "editor": {
+    "locale": "Locale",
+    "switchLocale": "Switch Locale",
+    "translations": "Translations",
+    "translationStatus": "Translation Status",
+    "createTranslation": "Create Translation"
+  }
+}

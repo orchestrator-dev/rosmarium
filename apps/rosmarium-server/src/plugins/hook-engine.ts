@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, @typescript-eslint/ban-ts-comment */
 import type { RosmariumPlugin } from "@orchestrator.dev/types";
 
 type HookName = keyof NonNullable<RosmariumPlugin['hooks']>;

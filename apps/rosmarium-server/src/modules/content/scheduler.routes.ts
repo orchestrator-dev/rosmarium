@@ -3,15 +3,11 @@ import { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
 import { Type } from "@sinclair/typebox";
 import { schedulerService } from "./scheduler.service.js";
 
-declare module "fastify" {
-    interface FastifyInstance {
-        requirePermission(permission: string): any;
-    }
-}
+import { requirePermission } from "../rbac/rbac.middleware.js";
 
 export const schedulerRoutes: FastifyPluginAsyncTypebox = async (fastify: any) => {
     fastify.post("/:type/:id/schedule", {
-        preHandler: fastify.requirePermission("content:update:any"), // Reusing content update permission
+        preHandler: requirePermission("content:update:any"), // Reusing content update permission
         schema: {
             params: Type.Object({ type: Type.String(), id: Type.String() }),
             body: Type.Object({
@@ -31,7 +27,7 @@ export const schedulerRoutes: FastifyPluginAsyncTypebox = async (fastify: any) =
     });
 
     fastify.delete("/:type/:id/schedule", {
-        preHandler: fastify.requirePermission("content:update:any"),
+        preHandler: requirePermission("content:update:any"),
         schema: {
             params: Type.Object({ type: Type.String(), id: Type.String() }),
             querystring: Type.Object({
@@ -44,7 +40,7 @@ export const schedulerRoutes: FastifyPluginAsyncTypebox = async (fastify: any) =
     });
 
     fastify.get("/:type/:id/schedule", {
-        preHandler: fastify.requirePermission("content:read:any"),
+        preHandler: requirePermission("content:read:any"),
         schema: {
             params: Type.Object({ type: Type.String(), id: Type.String() })
         }

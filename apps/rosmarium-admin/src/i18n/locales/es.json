@@ -1,0 +1,9 @@
+{
+  "editor": {
+    "locale": "Idioma",
+    "switchLocale": "Cambiar idioma",
+    "translations": "Traducciones",
+    "translationStatus": "Estado de traducción",
+    "createTranslation": "Crear traducción"
+  }
+}

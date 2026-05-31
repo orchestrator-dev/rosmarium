@@ -35,6 +35,7 @@ export interface FindManyOpts {
     sort?: SortInput;
     pagination?: { limit: number; cursor?: string };
     locale?: string;
+    localeFallbackChain?: string[];
     status?: "draft" | "published" | "archived";
 }
 
@@ -44,7 +45,9 @@ export interface FindManyUnifiedOpts {
     sort?: SortInput;
     pagination?: { limit: number; cursor?: string };
     locale?: string;
+    localeFallbackChain?: string[];
     status?: "draft" | "published" | "archived";
+    localizationGroupId?: string;
 }
 
 export interface FindOneOpts {
@@ -86,7 +89,11 @@ export const contentCrudService = {
             eq(contentEntries.contentTypeId, contentType.id),
         ];
 
-        if (opts.locale) conditions.push(eq(contentEntries.locale, opts.locale));
+        if (opts.localeFallbackChain && opts.localeFallbackChain.length > 0) {
+            conditions.push(sql`${contentEntries.locale} = ANY(ARRAY[${sql.join(opts.localeFallbackChain, sql`, `)}]::text[])`);
+        } else if (opts.locale) {
+            conditions.push(eq(contentEntries.locale, opts.locale));
+        }
         if (opts.status) conditions.push(eq(contentEntries.status, opts.status));
         if (cursorWhere) conditions.push(cursorWhere);
 
@@ -114,7 +121,9 @@ export const contentCrudService = {
                 .where(
                     and(
                         eq(contentEntries.contentTypeId, contentType.id),
-                        opts.locale ? eq(contentEntries.locale, opts.locale) : undefined,
+                        opts.localeFallbackChain && opts.localeFallbackChain.length > 0
+                            ? sql`${contentEntries.locale} = ANY(ARRAY[${sql.join(opts.localeFallbackChain, sql`, `)}]::text[])`
+                            : opts.locale ? eq(contentEntries.locale, opts.locale) : undefined,
                         opts.status ? eq(contentEntries.status, opts.status) : undefined,
                         opts.filters
                             ? and(...buildWhereClause(opts.filters, contentType))
@@ -123,8 +132,28 @@ export const contentCrudService = {
                 ),
         ]);
 
-        const hasMore = rows.length > limit;
-        let entries = hasMore ? rows.slice(0, limit) : rows;
+        let resolvedRows = rows;
+        if (opts.localeFallbackChain && opts.localeFallbackChain.length > 1) {
+            const groupMap = new Map<string, ContentEntry>();
+            for (const row of rows) {
+                const groupId = row.localizationGroupId || row.id;
+                const existing = groupMap.get(groupId);
+                if (!existing) {
+                    groupMap.set(groupId, row);
+                } else {
+                    const existingIdx = opts.localeFallbackChain.indexOf(existing.locale);
+                    const currentIdx = opts.localeFallbackChain.indexOf(row.locale);
+                    if (currentIdx !== -1 && (existingIdx === -1 || currentIdx < existingIdx)) {
+                        groupMap.set(groupId, row);
+                    }
+                }
+            }
+            resolvedRows = Array.from(groupMap.values());
+            resolvedRows.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+        }
+
+        const hasMore = resolvedRows.length > limit;
+        let entries = hasMore ? resolvedRows.slice(0, limit) : resolvedRows;
         const lastEntry = entries.at(-1);
         const nextCursor =
             hasMore && lastEntry ? encodeCursor(lastEntry.id) : null;
@@ -179,7 +208,11 @@ export const contentCrudService = {
             }
         }
 
-        if (opts.locale) conditions.push(eq(contentEntries.locale, opts.locale));
+        if (opts.localeFallbackChain && opts.localeFallbackChain.length > 0) {
+            conditions.push(sql`${contentEntries.locale} = ANY(ARRAY[${sql.join(opts.localeFallbackChain, sql`, `)}]::text[])`);
+        } else if (opts.locale) {
+            conditions.push(eq(contentEntries.locale, opts.locale));
+        }
         if (opts.status) conditions.push(eq(contentEntries.status, opts.status));
         if (cursorWhere) conditions.push(cursorWhere);
 
@@ -207,8 +240,28 @@ export const contentCrudService = {
                 .where(conditions.length > 0 ? and(...conditions) : undefined),
         ]);
 
-        const hasMore = rows.length > limit;
-        let entries = hasMore ? rows.slice(0, limit) : rows;
+        let resolvedRows = rows;
+        if (opts.localeFallbackChain && opts.localeFallbackChain.length > 1) {
+            const groupMap = new Map<string, ContentEntry>();
+            for (const row of rows) {
+                const groupId = row.localizationGroupId || row.id;
+                const existing = groupMap.get(groupId);
+                if (!existing) {
+                    groupMap.set(groupId, row);
+                } else {
+                    const existingIdx = opts.localeFallbackChain.indexOf(existing.locale);
+                    const currentIdx = opts.localeFallbackChain.indexOf(row.locale);
+                    if (currentIdx !== -1 && (existingIdx === -1 || currentIdx < existingIdx)) {
+                        groupMap.set(groupId, row);
+                    }
+                }
+            }
+            resolvedRows = Array.from(groupMap.values());
+            resolvedRows.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+        }
+
+        const hasMore = resolvedRows.length > limit;
+        let entries = hasMore ? resolvedRows.slice(0, limit) : resolvedRows;
         const lastEntry = entries.at(-1);
         const nextCursor =
             hasMore && lastEntry ? encodeCursor(lastEntry.id) : null;
@@ -294,6 +347,7 @@ export const contentCrudService = {
         contentTypeName: string;
         data: Record<string, unknown>;
         locale?: string;
+        localizationGroupId?: string;
         createdBy: string;
     }): Promise<ContentEntry> {
         const contentType = registry.get(opts.contentTypeName);
@@ -350,6 +404,7 @@ export const contentCrudService = {
                 id: newId,
                 contentTypeId: contentType.id,
                 locale: opts.locale ?? "en",
+                localizationGroupId: opts.localizationGroupId ?? createId(),
                 status,
                 data,
                 metadata: {},
@@ -368,6 +423,7 @@ export const contentCrudService = {
             .values({
                 contentTypeId: contentType.id,
                 locale: opts.locale ?? "en",
+                localizationGroupId: opts.localizationGroupId ?? createId(),
                 status: status as "draft" | "published" | "archived",
                 data,
                 createdBy: opts.createdBy,

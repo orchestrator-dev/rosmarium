@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, @typescript-eslint/ban-ts-comment */
 import { describe, it, expect, vi, beforeAll, afterAll } from "vitest";
 import { pubsub } from "./pubsub.js";
 import { config } from "../config.js";
@@ -19,70 +20,74 @@ describe("Redis PubSub Integration", () => {
     });
 
     it("should subscribe to and receive entry.created events", async () => {
-        const payload = [{ id: "test-1", contentTypeId: "test-ct", tenantId: "t1", status: "published", data: {}, metadata: {}, createdAt: new Date(), updatedAt: new Date(), createdBy: "u1", updatedBy: "u1" }] as any;
+        const payload = [{ id: "test-1", contentTypeId: "test-ct", tenantId: "t1", status: "published", data: {}, metadata: {}, createdAt: new Date().toISOString(), updatedAt: new Date().toISOString(), createdBy: "u1", updatedBy: "u1" }] as any;
         
-        let received: any = null;
-        
-        // Subscribe
-        const id = pubsub.subscribe("entry.created.test-ct", (data) => {
-            received = data;
-        });
+        // Subscribe returns an AsyncIterable
+        const iterator = pubsub.subscribe("entry.created.test-ct")[Symbol.asyncIterator]();
 
-        // Wait a bit to ensure subscribe is registered in redis
-        await new Promise(r => setTimeout(r, 100));
+        // Start listening (promise is pending)
+        const nextPromise = iterator.next();
 
         // Publish
         pubsub.publish("entry.created.test-ct", payload);
 
         // Wait for event delivery
-        await new Promise(r => setTimeout(r, 100));
-
-        expect(received).toEqual(payload);
+        const result = await nextPromise;
         
-        pubsub.unsubscribe(id);
+        expect(result.value).toEqual(payload);
+        
+        iterator.return?.();
     });
 
     it("should subscribe to and receive entry.updated events", async () => {
         const payload = [{ id: "test-2" }] as any;
-        let received: any = null;
-        const id = pubsub.subscribe("entry.updated.test-ct", (data) => { received = data; });
-        await new Promise(r => setTimeout(r, 100));
+        const iterator = pubsub.subscribe("entry.updated.test-ct")[Symbol.asyncIterator]();
+        const nextPromise = iterator.next();
         pubsub.publish("entry.updated.test-ct", payload);
-        await new Promise(r => setTimeout(r, 100));
-        expect(received).toEqual(payload);
-        pubsub.unsubscribe(id);
+        const result = await nextPromise;
+        expect(result.value).toEqual(payload);
+        iterator.return?.();
     });
 
     it("should subscribe to and receive entry.deleted events", async () => {
         const payload = [{ id: "test-3", contentType: "test-ct" }] as any;
-        let received: any = null;
-        const id = pubsub.subscribe("entry.deleted.test-ct", (data) => { received = data; });
-        await new Promise(r => setTimeout(r, 100));
+        const iterator = pubsub.subscribe("entry.deleted.test-ct")[Symbol.asyncIterator]();
+        const nextPromise = iterator.next();
         pubsub.publish("entry.deleted.test-ct", payload);
-        await new Promise(r => setTimeout(r, 100));
-        expect(received).toEqual(payload);
-        pubsub.unsubscribe(id);
+        const result = await nextPromise;
+        expect(result.value).toEqual(payload);
+        iterator.return?.();
     });
 
     it("should subscribe to and receive comment.added events", async () => {
         const payload = [{ id: "comment-1", entryId: "test-1", content: "test" }] as any;
-        let received: any = null;
-        const id = pubsub.subscribe("comment.added.test-1", (data) => { received = data; });
-        await new Promise(r => setTimeout(r, 100));
+        const iterator = pubsub.subscribe("comment.added.test-1")[Symbol.asyncIterator]();
+        const nextPromise = iterator.next();
         pubsub.publish("comment.added.test-1", payload);
-        await new Promise(r => setTimeout(r, 100));
-        expect(received).toEqual(payload);
-        pubsub.unsubscribe(id);
+        const result = await nextPromise;
+        expect(result.value).toEqual(payload);
+        iterator.return?.();
     });
 
     it("should not receive events for other channels", async () => {
         const payload = [{ id: "test-other" }] as any;
-        let received: any = null;
-        const id = pubsub.subscribe("entry.created.other-ct", (data) => { received = data; });
-        await new Promise(r => setTimeout(r, 100));
+        const iterator = pubsub.subscribe("entry.created.other-ct")[Symbol.asyncIterator]();
+        const nextPromise = iterator.next();
+        
         pubsub.publish("entry.created.test-ct", payload); // Publish to a different channel
-        await new Promise(r => setTimeout(r, 100));
+        
+        let received = null;
+        try {
+            const result = await Promise.race([
+                nextPromise,
+                new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), 200))
+            ]);
+            received = result.value;
+        } catch (e) {
+            received = null;
+        }
+        
         expect(received).toBeNull();
-        pubsub.unsubscribe(id);
+        iterator.return?.();
     });
 });

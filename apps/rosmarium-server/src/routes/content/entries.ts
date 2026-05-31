@@ -84,7 +84,8 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
                     filters: request.query.filters as ParsedFilters | undefined,
                     sort: parseSortParam(request.query.sort),
                     pagination: { limit, cursor: request.query.cursor },
-                    locale: request.query.locale,
+                    locale: request.query.locale ?? request.locale,
+                    localeFallbackChain: request.localeFallbackChain,
                     status: request.query.status as "draft" | "published" | "archived" | undefined,
                 });
 
@@ -177,7 +178,8 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
                     filters: request.query.filters as ParsedFilters | undefined,
                     sort: parseSortParam(request.query.sort),
                     pagination: { limit, cursor: request.query.cursor },
-                    locale: request.query.locale,
+                    locale: request.query.locale ?? request.locale,
+                    localeFallbackChain: request.localeFallbackChain,
                     status: request.query.status as "draft" | "published" | "archived" | undefined,
                 });
                 return {
@@ -237,7 +239,7 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
                 const entry = await contentCrudService.create({
                     contentTypeName: request.params.type,
                     data: request.body.data,
-                    locale: request.body.locale,
+                    locale: request.body.locale ?? request.locale,
                     createdBy: request.user?.id ?? request.body.createdBy ?? "anonymous",
                 });
                 return reply.status(201).send({ data: entry });
@@ -297,7 +299,7 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
                 const entry = await contentCrudService.create({
                     contentTypeName: request.params.type,
                     data: template.templateData,
-                    locale: request.body?.locale,
+                    locale: request.body?.locale ?? request.locale,
                     createdBy: request.user?.id ?? request.body?.createdBy ?? "anonymous",
                 });
                 return reply.status(201).send({ data: entry });
@@ -338,7 +340,7 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
             const entry = await contentCrudService.findOne({
                 contentTypeName: request.params.type,
                 id: request.params.id,
-                locale: request.query.locale,
+                locale: request.query.locale ?? request.locale,
             });
             if (!entry) {
                 return reply.status(404).send({

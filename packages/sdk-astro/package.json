@@ -1,0 +1,25 @@
+{
+  "name": "@orchestrator.dev/rosmarium-sdk-astro",
+  "version": "1.2.1",
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
+  "main": "./src/index.ts",
+  "scripts": {
+    "lint": "eslint \"src/**/*.ts\"",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@orchestrator.dev/rosmarium-sdk": "workspace:*"
+  },
+  "peerDependencies": {
+    "astro": "^4.0.0 || ^5.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "eslint": "^8.57.0",
+    "astro": "^4.5.0"
+  }
+}

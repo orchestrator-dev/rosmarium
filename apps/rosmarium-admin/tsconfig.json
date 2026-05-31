@@ -4,6 +4,7 @@
         "outDir": "./dist",
         "rootDir": "./src",
         "jsx": "react-jsx",
+        "resolveJsonModule": true,
         "lib": [
             "DOM",
             "DOM.Iterable",
@@ -11,7 +12,8 @@
         ]
     },
     "include": [
-        "src/**/*"
+        "src/**/*",
+        "src/**/*.json"
     ],
     "exclude": [
         "node_modules",

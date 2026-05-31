@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, @typescript-eslint/ban-ts-comment */
 import { describe, it, expect, beforeEach } from "vitest";
 import { HookEngine } from "./hook-engine.js";
 

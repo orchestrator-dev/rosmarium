@@ -1,0 +1,26 @@
+{
+  "name": "@orchestrator.dev/rosmarium-sdk-react",
+  "version": "1.2.1",
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
+  "main": "./src/index.ts",
+  "scripts": {
+    "lint": "eslint \"src/**/*.ts\"",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@orchestrator.dev/rosmarium-sdk": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "eslint": "^8.57.0",
+    "react": "^19.0.0",
+    "@types/react": "^19.0.0"
+  }
+}

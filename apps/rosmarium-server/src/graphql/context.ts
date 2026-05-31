@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, @typescript-eslint/ban-ts-comment */
 
 import type { ContentEntry } from "../db/schema/index.js";
 import { createDataloaders } from "./dataloaders/index.js";

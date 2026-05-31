@@ -68,8 +68,8 @@ async function readLocalSchemas() {
                 files.push({ filename: dirent.name, content });
             }
         }
-    } catch (err: any) {
-        if (err.code === "ENOENT") {
+    } catch (err: unknown) {
+        if (err && typeof err === 'object' && 'code' in err && err.code === "ENOENT") {
             console.log(chalk.yellow("No local schemas directory found."));
             return [];
         }
@@ -78,6 +78,7 @@ async function readLocalSchemas() {
     return files;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function printDiff(diff: any) {
     if (diff.added.length === 0 && diff.removed.length === 0 && diff.updated.length === 0) {
         console.log(chalk.gray("No changes detected."));
@@ -86,16 +87,19 @@ function printDiff(diff: any) {
 
     if (diff.added.length > 0) {
         console.log(chalk.green.bold("\nAdded:"));
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         diff.added.forEach((a: any) => console.log(chalk.green(`  + ${a.name}`)));
     }
 
     if (diff.removed.length > 0) {
         console.log(chalk.red.bold("\nRemoved:"));
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         diff.removed.forEach((r: any) => console.log(chalk.red(`  - ${r.name}`)));
     }
 
     if (diff.updated.length > 0) {
         console.log(chalk.yellow.bold("\nUpdated:"));
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         diff.updated.forEach((u: any) => {
             console.log(chalk.yellow(`  ~ ${u.incoming.name}`));
             u.changes.forEach((c: string) => console.log(chalk.gray(`      ${c}`)));

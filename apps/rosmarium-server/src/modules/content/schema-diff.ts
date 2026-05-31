@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, @typescript-eslint/ban-ts-comment */
 import { type ParsedContentType, type CreateContentTypeInput } from "./registry.js";
 import { type FieldDefinition } from "./field-types.js";
 

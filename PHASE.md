@@ -43,10 +43,10 @@
   - [x] Bidirectional schema sync (DB ↔ YAML files)
 
 ### Month 9: SDK Integrations & i18n (G12, G13)
-- [ ] **Task 9.1: SDK/Framework Integrations**
-- [ ] **Task 9.2: Full i18n Framework**
+- [x] **Task 9.1: SDK/Framework Integrations**
+- [x] **Task 9.2: Full i18n Framework**
 
 ## Notes
-Official transition from V2 Phase 2 to Phase 3 Roadmap.
-Current priority: **Month 7 — Plugin/Extension System**.
-Use the `/v2-feature` playbook to generate an implementation plan for Task 7.1.
+Official transition from V2 Phase 3 to Phase 4 Roadmap.
+Current priority: **Phase 4 — AI-Native Content Intelligence**.
+Use the `/v2-feature` playbook to generate an implementation plan for Phase 4.

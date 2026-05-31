@@ -3,12 +3,14 @@ import React, { createContext, useContext, useState } from 'react';
 export interface AdminPage {
     name: string;
     path: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     component: React.ComponentType<any>;
     icon?: string;
 }
 
 export interface DashboardWidget {
     name: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     component: React.ComponentType<any>;
     gridSize?: number;
 }
@@ -16,6 +18,7 @@ export interface DashboardWidget {
 export interface AdminUIExtension {
     pages?: AdminPage[];
     widgets?: DashboardWidget[];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     fieldEditors?: Record<string, React.ComponentType<any>>;
 }
 

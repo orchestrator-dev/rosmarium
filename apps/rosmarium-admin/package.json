@@ -33,8 +33,11 @@
     "@xyflow/react": "^12.10.2",
     "cytoscape": "^3.33.4",
     "date-fns": "^4.4.0",
+    "i18next": "^26.3.0",
+    "i18next-browser-languagedetector": "^8.2.1",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-i18next": "^17.0.8",
     "react-router-dom": "^7.15.1"
   },
   "devDependencies": {

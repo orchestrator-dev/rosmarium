@@ -4,6 +4,7 @@ export * from "./sessions";
 export * from "./api-keys";
 export * from "./webhooks";
 export * from "./audit-log";
+export * from "./locales";
 export * from "./content-types";
 export * from "./content-entries";
 export * from "./graph";

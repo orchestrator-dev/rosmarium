@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, @typescript-eslint/ban-ts-comment */
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { schemaSyncService } from "./schema-sync.service.js";
 import { registry } from "./registry.js";

@@ -12,6 +12,7 @@ import graphqlPlugin from "./graphql/index.js";
 import { dispatchIntelligenceJob, dispatchEmbeddingJob } from "./modules/jobs/intelligence.jobs.js";
 import { tenantMiddleware, tenantStorageHook } from "./modules/tenants/tenant.middleware.js";
 import { branchStorageHook } from "./modules/branches/branch.middleware.js";
+import { i18nMiddleware } from "./modules/i18n/i18n.middleware.js";
 import { loadPlugins } from "./plugins/plugin-loader.js";
 import { pluginRegistry } from "./plugins/plugin-registry.js";
 
@@ -38,6 +39,7 @@ export async function buildApp() {
     app.addHook("onRequest", tenantMiddleware);
     app.addHook("onRequest", tenantStorageHook);
     app.addHook("onRequest", branchStorageHook);
+    app.addHook("onRequest", i18nMiddleware);
 
     await registerPlugins(app);
 

@@ -78,6 +78,7 @@ export interface RosmariumPlugin {
     };
 
     // Custom REST routes (FastifyInstance type is complex, using any here to avoid coupling types package to Fastify)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     routes?: (fastify: any) => void;
 
     // Custom field types
@@ -85,8 +86,11 @@ export interface RosmariumPlugin {
 
     // Custom GraphQL extensions (using any for Pothos builder)
     graphql?: {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         types?: (builder: any) => void;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         queries?: (builder: any) => void;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         mutations?: (builder: any) => void;
     };
 

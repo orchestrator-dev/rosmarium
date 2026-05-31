@@ -35,6 +35,8 @@ import { FieldRenderer } from '../components/editor/FieldRenderer';
 import { TooltipButton } from '../components/common/TooltipButton';
 import { ScheduleDialog } from '../components/content/ScheduleDialog';
 import { WorkflowTimeline } from '../components/workflow/WorkflowTimeline';
+import { LocaleSwitcher } from '../components/i18n/LocaleSwitcher';
+import { TranslationStatus } from '../components/i18n/TranslationStatus';
 interface ContentEntry {
   id: string;
   contentType: string;
@@ -60,6 +62,9 @@ export function ContentEditorPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [jsonError, setJsonError] = useState('');
+
+  const [currentLocale, setCurrentLocale] = useState('en');
+  const [availableLocales] = useState(['en', 'fr', 'es']);
 
   const [templateDialogOpen, setTemplateDialogOpen] = useState(false);
   const [templateName, setTemplateName] = useState('');
@@ -94,7 +99,7 @@ export function ContentEditorPage() {
 
         // Fetch existing entry if editing
         if (!isNew) {
-          const entryRes = await fetch(`/api/content/${type}/${id}`);
+          const entryRes = await fetch(`/api/content/${type}/${id}?locale=${currentLocale}`);
           if (!entryRes.ok) throw new Error('Failed to load entry');
           const entryJson = await entryRes.json() as { data: ContentEntry };
           if (!cancelled) {
@@ -119,7 +124,7 @@ export function ContentEditorPage() {
 
     if (type) void load();
     return () => { cancelled = true; };
-  }, [type, id, isNew]);
+  }, [type, id, isNew, currentLocale]);
 
   const handleFieldChange = useCallback((fieldName: string, value: unknown) => {
     setFormData((prev) => ({ ...prev, [fieldName]: value }));
@@ -166,7 +171,7 @@ export function ContentEditorPage() {
       const res = await fetch(url, {
         method,
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ data: dataToSave }),
+        body: JSON.stringify({ data: dataToSave, locale: currentLocale }),
       });
 
       if (!res.ok) {
@@ -304,6 +309,14 @@ export function ContentEditorPage() {
         </Typography>
       </Breadcrumbs>
 
+      <Box sx={{ mb: 2, display: 'flex', justifyContent: 'flex-end' }}>
+        <LocaleSwitcher
+          currentLocale={currentLocale}
+          availableLocales={availableLocales}
+          onChange={setCurrentLocale}
+        />
+      </Box>
+
       {error && (
         <Alert severity="error" sx={{ mb: 2 }}>
           {error}
@@ -426,6 +439,13 @@ export function ContentEditorPage() {
             <Typography variant="h3" sx={{ mb: 2 }}>
               Entry Info
             </Typography>
+
+            {!isNew && entry && (
+              <TranslationStatus
+                existingLocales={[entry.locale ?? 'en']}
+                missingLocales={availableLocales.filter(l => l !== (entry.locale ?? 'en'))}
+              />
+            )}
 
             <Stack spacing={2}>
               {/* Status */}

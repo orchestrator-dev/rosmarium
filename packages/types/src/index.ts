@@ -3,3 +3,4 @@ export * from "./block-document.js";
 export * from "./field-conditions.js";
 export * from "./workflow.js";
 export * from "./plugin.js";
+export * from "./i18n.js";

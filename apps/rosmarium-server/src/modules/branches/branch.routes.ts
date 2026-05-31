@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
 import { FastifyInstance } from "fastify";
-import { z } from "zod";
+import { Type } from "@sinclair/typebox";
 import { branchService } from "./branch.service.js";
 import { mergeService } from "./merge.service.js";
 
@@ -9,9 +9,9 @@ export async function branchRoutes(fastify: FastifyInstance) {
         "/",
         {
             schema: {
-                body: z.object({
-                    name: z.string(),
-                    baseBranchId: z.string().optional()
+                body: Type.Object({
+                    name: Type.String(),
+                    baseBranchId: Type.Optional(Type.String())
                 }),
             },
         },
@@ -44,8 +44,8 @@ export async function branchRoutes(fastify: FastifyInstance) {
         "/:id/merge",
         {
             schema: {
-                body: z.object({
-                    resolvedData: z.record(z.string(), z.record(z.string(), z.unknown())).optional()
+                body: Type.Object({
+                    resolvedData: Type.Optional(Type.Record(Type.String(), Type.Record(Type.String(), Type.Unknown())))
                 })
             }
         },
