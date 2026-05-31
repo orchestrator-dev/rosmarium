@@ -10,6 +10,7 @@ import "./scalars.js";
 import "./types/common.js";
 import "./types/content-type.js";
 import "./types/content-entry.js";
+import "./types/comment.js";
 import "./types/pagination.js";
 import "./queries/content-types.js";
 import "./queries/content-entries.js";

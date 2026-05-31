@@ -1,5 +1,7 @@
 import { builder } from "../builder.js";
 import type { ContentEntry } from "../../db/schema/index.js";
+import type { ContentComment } from "../../db/schema/comments.js";
+import { commentType } from "../types/comment.js";
 
 builder.subscriptionField("onEntryCreated", (t) =>
     t.field({
@@ -38,5 +40,16 @@ builder.subscriptionField("onEntryDeleted", (t) =>
         subscribe: (_, { contentType }, ctx) =>
             ctx.pubsub.subscribe(`entry.deleted.${contentType}`) as AsyncGenerator<{ id: string; contentType: string }>,
         resolve: (payload: { id: string; contentType: string }) => payload,
+    }),
+);
+
+builder.subscriptionField("onCommentAdded", (t) =>
+    t.field({
+        type: commentType,
+        description: "Subscribe to new comments for an entry",
+        args: { entryId: t.arg.string({ required: true }) },
+        subscribe: (_, { entryId }, ctx) =>
+            ctx.pubsub.subscribe(`comment.added.${entryId}`) as AsyncGenerator<ContentComment>,
+        resolve: (payload: ContentComment) => payload,
     }),
 );

@@ -1,4 +1,4 @@
-import { createPubSub } from "graphql-yoga";
+
 import type { ContentEntry } from "../db/schema/index.js";
 import { createDataloaders } from "./dataloaders/index.js";
 import { lucia } from "../modules/auth/lucia.js";
@@ -6,14 +6,8 @@ import { authService } from "../modules/auth/auth.service.js";
 import { apiKeyService } from "../modules/auth/api-key.service.js";
 import type { AuthenticatedUser } from "../modules/auth/auth.service.js";
 
-export type { AuthenticatedUser };
-
-// In-process PubSub — upgraded to Redis pub/sub in Phase 4
-export const pubsub = createPubSub<{
-    [key: `entry.created.${string}`]: [ContentEntry];
-    [key: `entry.updated.${string}`]: [ContentEntry];
-    [key: `entry.deleted.${string}`]: [{ id: string; contentType: string }];
-}>();
+import { pubsub } from "./pubsub.js";
+export { pubsub };
 
 export type GraphQLContext = {
     user: AuthenticatedUser | null;

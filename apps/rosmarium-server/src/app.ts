@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Fastify, { FastifyRequest } from "fastify";
+import websocket from "@fastify/websocket";
 import { logger } from "./lib/logger.js";
 import { registerPlugins } from "./plugins/index.js";
 import { registerRoutes } from "./routes/index.js";
@@ -47,6 +48,8 @@ export async function buildApp() {
 
     // Register GraphQL plugin (Yoga + schema)
     await app.register(graphqlPlugin);
+
+    await app.register(websocket);
 
     await registerRoutes(app);
 
