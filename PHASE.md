@@ -49,6 +49,17 @@
 - [x] **Task 9.1: SDK/Framework Integrations**
 - [x] **Task 9.2: Full i18n Framework**
 
+## V2 Phase 5 Checklist (In Progress)
+
+### Month 12: Edge Delivery Network (G18)
+- [x] **Task 12.1: Edge Content API**
+  - [x] `apps/rosmarium-edge/` Edge worker application
+  - [x] `apps/rosmarium-edge/src/worker.ts` Cloudflare Worker entry point
+  - [x] `apps/rosmarium-edge/src/cache.ts` Tiered cache (edge KV → origin)
+  - [x] `apps/rosmarium-edge/src/router.ts` Edge API routing
+  - [x] `apps/rosmarium-server/src/modules/cache/invalidation.service.ts` Cache invalidation via webhooks
+
 ## Notes
 Phase 4 (AI-Native Content Intelligence) is officially completed.
+Phase 5 Task 12.1 (Edge Delivery Network) is completed.
 Current priority: **Phase 3 — Developer Experience & Extensibility** (Resume Tasks 7.2).

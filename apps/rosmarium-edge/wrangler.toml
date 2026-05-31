@@ -1,0 +1,12 @@
+name = "rosmarium-edge"
+main = "src/worker.ts"
+compatibility_date = "2024-04-05"
+
+# KV namespace for edge caching
+kv_namespaces = [
+  { binding = "CONTENT_CACHE", id = "PREVIEW_ID", preview_id = "PREVIEW_ID" }
+]
+
+[vars]
+ORIGIN_URL = "http://localhost:3000"
+INVALIDATION_SECRET = "super-secret-key"

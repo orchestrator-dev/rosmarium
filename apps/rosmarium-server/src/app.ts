@@ -15,6 +15,7 @@ import { branchStorageHook } from "./modules/branches/branch.middleware.js";
 import { i18nMiddleware } from "./modules/i18n/i18n.middleware.js";
 import { loadPlugins } from "./plugins/plugin-loader.js";
 import { pluginRegistry } from "./plugins/plugin-registry.js";
+import { invalidationService } from "./modules/cache/invalidation.service.js";
 
 export async function buildApp() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -140,6 +141,9 @@ export async function buildApp() {
             operations: aiSettings.operations ?? ["tag", "ner", "deduplicate"],
         }).catch(console.error);
     });
+
+    // ─── Bridge rosmariumEvents → Edge Cache ──────────────────────────────────
+    invalidationService.init();
 
     return app;
 }
