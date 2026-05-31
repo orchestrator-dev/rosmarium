@@ -226,7 +226,7 @@ export const graphRepository = {
             
         return {
             edges: await this._hydrateEdgeTitles(edges),
-            totalCount: countResult.count
+            totalCount: countResult?.count ?? 0
         };
     },
 

@@ -163,7 +163,6 @@ export function buildWhereClause(
 /** Build Drizzle ORDER BY clauses from sort input. */
 export function buildOrderBy(
     sort: SortInput,
-    contentType?: ParsedContentType,
 ): SQL[] {
     return sort.map(({ field, direction }) => {
         const isSystem = SYSTEM_FIELDS.has(field);

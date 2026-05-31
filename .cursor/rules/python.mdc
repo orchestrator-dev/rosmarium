@@ -1,0 +1,11 @@
+---
+description: Python standards for Rosmarium AI worker
+globs: ["apps/rosmarium-ai-worker/**/*.py"]
+alwaysApply: false
+---
+- Python 3.12, FastAPI, Pydantic v2, asyncpg, structlog
+- Type hints on all functions. mypy strict mode.
+- Ruff for linting (line-length 100, target py312)
+- Pydantic Settings for config. Never raw dicts for responses.
+- BullMQ payloads use camelCase fields for wire compat.
+- async/await throughout. Never mix sync/async.

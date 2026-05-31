@@ -671,7 +671,7 @@ export function GraphPage() {
                   actionKey="exportGraph"
                   component="a"
                   href={`/api/graph/export?format=${format.id}`}
-                  target="_blank"
+                  // @ts-expect-error - TS doesn't infer intrinsic 'a' attributes
                   download={`rosmarium-knowledge-graph.${format.id === 'rdf' ? 'ttl' : format.id === 'graphml' ? 'graphml' : 'json'}`}
                   variant="outlined"
                   startIcon={<DownloadIcon />}

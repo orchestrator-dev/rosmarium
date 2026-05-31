@@ -1,35 +1,66 @@
 # Rosmarium COS — AI Agent Context
 
-Welcome! This file provides context and directives for AI agents working on the **Rosmarium COS** project.
-
 ## Overview
-Rosmarium is an open-source, AI-native headless content repository. It consists of:
-1. **`rosmarium-server` (Node.js)**: The core API server using Fastify, Mercurius (GraphQL), and Drizzle ORM (PostgreSQL). Handles the primary CRUD operations, authentication, RBAC, and webhooks.
-2. **`rosmarium-admin` (React/Vite)**: The admin dashboard interface built with TanStack Router and MUI v6.
-3. **`rosmarium-ai-worker` (Python/FastAPI)**: The background asynchronous worker that handles vector embeddings, text chunking, graph analytics, and AI intelligence tagging.
+Rosmarium is an open-source, AI-native headless **Content Orchestration System (COS)**.
+Apache 2.0 license. Monorepo managed with pnpm workspaces + Turborepo.
 
-## Technology Stack
-- **Monorepo**: pnpm workspaces + Turborepo
-- **Database**: PostgreSQL with `pgvector`. Schema managed by Drizzle ORM (`apps/rosmarium-server/src/db/schema`).
-- **Cache & Queue**: Redis with BullMQ (for asynchronous tasks like embedding and webhooks).
-- **Storage**: S3-compatible blob storage (MinIO for local dev).
-- **AI Models**: Designed to support OpenAI, Ollama, Cohere, and Hugging Face cross-encoders.
+## Architecture
+| App | Stack | Port | Purpose |
+|-----|-------|------|---------|
+| `apps/rosmarium-server` | TypeScript / Node.js 22 / Fastify 4 | 3000 | Core API (REST + GraphQL), auth, RBAC, webhooks |
+| `apps/rosmarium-admin` | TypeScript / React 19 / Vite / MUI v9 | 5173 | Admin dashboard |
+| `apps/rosmarium-ai-worker` | Python 3.12 / FastAPI | 8001 | AI pipeline (embeddings, RAG, NER, graph analytics) |
 
-## Important Directories & Scripts
-- `apps/rosmarium-server/`: Node.js Fastify API. Run `pnpm dev` here.
-- `apps/rosmarium-admin/`: React frontend. Run `pnpm dev` here.
-- `apps/rosmarium-ai-worker/`: Python FastAPI worker. Handled via `uv`.
-- `PHASE.md`: Tracks the high-level roadmap and completion status of project phases.
-- `package.json` scripts: Use `pnpm infra:up`, `pnpm db:migrate`, and `pnpm db:seed` for infrastructure and database management.
+| Package | Name | Purpose |
+|---------|------|---------|
+| `packages/types` | `@orchestrator.dev/types` | Shared TypeScript types |
+| `packages/sdk` | `@orchestrator.dev/rosmarium-sdk` | API client SDK |
+| `packages/config` | `@orchestrator.dev/config` | Shared configuration |
+
+## Infrastructure
+- **Database**: PostgreSQL 16 + pgvector (primary + vector store)
+- **Cache/Queue**: Redis 7 + BullMQ (3 queues: embedding-jobs, intelligence-jobs, webhook-deliveries)
+- **Storage**: S3-compatible (MinIO for dev)
+- **Observability**: OpenTelemetry + Prometheus + Grafana
+
+## Service Communication
+- Server → AI Worker: BullMQ Redis queues (async) + HTTP on port 8001 (sync search/RAG)
+- Both services share the same PostgreSQL and Redis instances
+- GraphQL subscriptions via graphql-ws WebSocket
+
+## Development Commands
+```bash
+pnpm infra:up          # Start PostgreSQL, Redis, MinIO via Docker/Podman
+pnpm infra:init        # Initialize pgvector extension + MinIO bucket (first run)
+pnpm db:migrate        # Run Drizzle migrations
+pnpm db:seed           # Seed initial data
+pnpm demo:seed         # Seed demo dataset ("Rosmarium Discovery")
+pnpm dev               # Start all apps (Turborepo)
+pnpm typecheck         # TypeScript type checking (all workspaces)
+pnpm lint              # ESLint (TS) + Ruff (Python)
+pnpm test              # Run all tests
+pnpm db:generate       # Generate Drizzle migration after schema change
+```
+
+## Key Conventions
+- **TypeScript imports**: Always use `.js` extensions for ESM (`from "./config.js"`)
+- **IDs**: `@paralleldrive/cuid2` via `createId()` — all tables use `text("id")`
+- **Column naming**: camelCase in TypeScript ↔ snake_case in SQL
+- **Services**: Object literal pattern (`export const fooService = { async method() {} }`)
+- **Config validation**: Zod (TypeScript) / Pydantic Settings (Python)
+- **Auth**: Lucia v3 session cookies + Bearer API key auth
+- **GraphQL**: graphql-yoga v5 + Pothos v4 schema builder (NOT Mercurius)
+- **Admin UI**: React 19, MUI v9 (`size={{ xs: 12 }}` for Grid), react-router-dom v7
+- **Multi-tenancy**: `X-Tenant-Id` header → AsyncLocalStorage → PostgreSQL `search_path`
 
 ## Guidelines for AI Agents
-1. **Code Standards**: 
-   - **TypeScript**: Use strict typing. Prefer `.ts` and `.tsx` files. Use explicit imports with `.js` extensions for Node.js ES modules.
-   - **Python**: Use strict typing, `mypy`, and `ruff` for linting.
-   - **React**: Use functional components, hooks, and MUI v6. Note: MUI v6 `Grid` uses `size={{ xs: 12 }}` instead of `xs={12}`.
-2. **Database Changes**: Always update the Drizzle schema in `apps/rosmarium-server/src/db/schema/` and generate migrations using `pnpm db:generate`.
-3. **Agent Skills**: Custom, project-specific agent instructions and operational scripts (e.g., custom prompts or workflow instructions) are located in the `.agent/skills/` directory.
-4. **Documentation & Screenshots**: Whenever there are functional or API changes, the documentation located in `apps/rosmarium-www/src/content/docs/` must be refreshed and amended accordingly. **CRITICAL RULE**: Documentation shall use screenshots taken ONLY using `chrome-devtools` MCP. No synthetic generations or placeholders are allowed. Ensure `README.md` is updated if necessary.
+1. **Read `PHASE.md`** before starting any task — know the current phase.
+2. **Read `roadmapV2.md`** for V2 planned features and architecture.
+3. **Database changes**: Update Drizzle schema in `apps/rosmarium-server/src/db/schema/`, then `pnpm db:generate`. Show migration diff before applying.
+4. **Check `.agent/skills/`** for domain-specific patterns before modifying database, GraphQL, search, graph, or AI pipeline code.
+5. **Testing**: Co-locate tests as `*.test.ts` (Vitest) or `test_*.py` (pytest). Run `pnpm typecheck && pnpm lint && pnpm test` before committing.
+6. **Documentation**: Update docs in `apps/rosmarium-www/src/content/docs/` for API changes. Screenshots via Chrome DevTools MCP only — no synthetic images.
+7. **Verify after every change**: `pnpm typecheck && pnpm lint && pnpm test`
 
 ## Custom Agent Skills
-To further extend AI agent capabilities for this project, check the `.agent/skills/` directory. When working on specific architectural domains (e.g., the Graph Database layer, Vector Embeddings, or Webhooks), please consult the relevant skill markdown files stored there if they exist.
+Check `.agent/skills/` for detailed patterns on: content-engine, drizzle-schema, pothos-graphql, pgvector-search, rag-pipeline, knowledge-graph, fastify-server, admin-ui, ai-intelligence, block-editor, workflow-engine, plugin-system.

@@ -1,0 +1,116 @@
+.BlockEditor-container {
+  border: 1px solid rgba(255, 255, 255, 0.23); /* MUI default outlined border */
+  border-radius: 4px;
+  background-color: transparent;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: border-color 0.2s;
+}
+
+.BlockEditor-container:focus-within {
+  border-color: #90caf9; /* primary main for dark mode */
+}
+
+.BlockEditor-content {
+  padding: 1rem;
+  min-height: 200px;
+  cursor: text;
+}
+
+.BlockEditor-content .ProseMirror {
+  outline: none;
+}
+
+.BlockEditor-content .ProseMirror > * + * {
+  margin-top: 0.75em;
+}
+
+.BlockEditor-content .ProseMirror ul,
+.BlockEditor-content .ProseMirror ol {
+  padding: 0 1rem;
+}
+
+.BlockEditor-content .ProseMirror h1,
+.BlockEditor-content .ProseMirror h2,
+.BlockEditor-content .ProseMirror h3,
+.BlockEditor-content .ProseMirror h4,
+.BlockEditor-content .ProseMirror h5,
+.BlockEditor-content .ProseMirror h6 {
+  line-height: 1.1;
+  margin-top: 1.5rem;
+}
+
+.BlockEditor-content .ProseMirror code {
+  background-color: rgba(97, 97, 97, 0.2);
+  color: #f8bbd0;
+  border-radius: 3px;
+  padding: 0.2em 0.4em;
+  font-family: monospace;
+}
+
+.BlockEditor-content .ProseMirror pre {
+  background: #1e1e1e;
+  color: #fff;
+  font-family: 'JetBrainsMono', 'Courier New', Courier, monospace;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+}
+
+.BlockEditor-content .ProseMirror pre code {
+  color: inherit;
+  padding: 0;
+  background: none;
+  font-size: 0.8rem;
+}
+
+.BlockEditor-content .ProseMirror img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+
+.BlockEditor-content .ProseMirror blockquote {
+  border-left: 3px solid rgba(255, 255, 255, 0.3);
+  padding-left: 1rem;
+  margin-left: 0;
+  font-style: italic;
+}
+
+.BlockEditor-content .ProseMirror hr {
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  margin: 2rem 0;
+}
+
+.BlockEditor-content .ProseMirror table {
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: 100%;
+  margin: 0;
+  overflow: hidden;
+}
+
+.BlockEditor-content .ProseMirror table td,
+.BlockEditor-content .ProseMirror table th {
+  min-width: 1em;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 3px 5px;
+  vertical-align: top;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.BlockEditor-content .ProseMirror table th {
+  font-weight: bold;
+  text-align: left;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.BlockEditor-content .ProseMirror p.is-editor-empty:first-of-type::before {
+  color: #aaa;
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+}

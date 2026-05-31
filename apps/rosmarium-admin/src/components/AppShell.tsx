@@ -2,7 +2,6 @@ import React from 'react';
 import {
   AppBar,
   Box,
-  Collapse,
   CssBaseline,
   Divider,
   Drawer,
@@ -20,15 +19,11 @@ import {
   Search as SearchIcon,
   AutoAwesome as AIIcon,
   Hub as GraphIcon,
-
   Dashboard as DashboardIcon,
   PhotoLibrary as MediaIcon,
   Webhook as WebhookIcon,
   Security as SecurityIcon,
   Schema as SchemaIcon,
-  ExpandLess,
-  ExpandMore,
-  Article as ArticleIcon,
 } from '@mui/icons-material';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 
@@ -59,8 +54,6 @@ const settingsItems = [
 
 export function AppShell() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
-  const [contentOpen, setContentOpen] = React.useState(true);
-  const [contentTypes, setContentTypes] = React.useState<ContentType[]>([]);
   const navigate = useNavigate();
   const location = useLocation();
 

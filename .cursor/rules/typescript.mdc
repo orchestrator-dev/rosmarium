@@ -1,0 +1,13 @@
+---
+description: TypeScript standards for Rosmarium server and packages
+globs: ["apps/rosmarium-server/**/*.ts", "packages/**/*.ts"]
+alwaysApply: true
+---
+- ESM with `.js` import extensions: `import { x } from "./module.js"`
+- Strict mode, `noUncheckedIndexedAccess: true`
+- No `any` — use `unknown` + type guards
+- Services as object literals: `export const fooService = { async method() {} }`
+- Zod for runtime validation. Custom error classes with `code` property.
+- IDs: `text("id").primaryKey().$defaultFn(() => createId())` (cuid2)
+- DB columns: camelCase in TS ↔ snake_case in SQL
+- Tests: Vitest, co-located `*.test.ts`, `vi.hoisted()` + `vi.mock()`

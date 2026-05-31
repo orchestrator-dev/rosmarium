@@ -133,16 +133,14 @@ describe("query.builder", () => {
 
     it("buildOrderBy produces SQL for system fields", () => {
         const clauses = buildOrderBy(
-            [{ field: "createdAt", direction: "desc" }],
-            testContentType,
+            [{ field: "createdAt", direction: "desc" }]
         );
         expect(clauses).toHaveLength(1);
     });
 
     it("buildOrderBy produces SQL for jsonb data fields", () => {
         const clauses = buildOrderBy(
-            [{ field: "title", direction: "asc" }],
-            testContentType,
+            [{ field: "title", direction: "asc" }]
         );
         expect(clauses).toHaveLength(1);
     });

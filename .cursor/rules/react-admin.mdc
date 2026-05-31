@@ -1,0 +1,10 @@
+---
+description: React and MUI v9 patterns for Rosmarium admin
+globs: ["apps/rosmarium-admin/**/*.tsx", "apps/rosmarium-admin/**/*.ts"]
+alwaysApply: false
+---
+- React 19, functional components only, named exports
+- MUI v9: Grid uses `size={{ xs: 12, md: 6 }}` NOT `xs={12} md={6}`
+- react-router-dom v7: BrowserRouter, Routes, Route, useNavigate
+- Plain fetch() for API calls — no axios
+- Theme: dark mode, Inter font, indigo primary, cyan secondary

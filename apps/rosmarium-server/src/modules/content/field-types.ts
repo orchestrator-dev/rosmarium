@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { blockDocumentSchema } from "@orchestrator.dev/types";
 
 const baseField = z.object({
     name: z.string().regex(/^[a-z][a-zA-Z0-9]*$/, {
@@ -136,10 +137,13 @@ export function validateFieldValue(
             }
             return null;
         }
-        case "richText":
-            return typeof value === "string"
+        case "richText": {
+            if (typeof value === "string") return null;
+            const result = blockDocumentSchema.safeParse(value);
+            return result.success
                 ? null
-                : `Field '${field.name}' must be a string`;
+                : `Field '${field.name}' must be a string or a valid BlockDocument JSON`;
+        }
         case "number": {
             if (typeof value !== "number")
                 return `Field '${field.name}' must be a number`;

@@ -93,7 +93,7 @@ export const contentCrudService = {
 
         const orderBy =
             opts.sort && opts.sort.length > 0
-                ? buildOrderBy(opts.sort, contentType)
+                ? buildOrderBy(opts.sort)
                 : [sql`${contentEntries.createdAt} DESC`];
 
         const [rows, totalResult] = await Promise.all([
@@ -142,7 +142,7 @@ export const contentCrudService = {
             limit,
         );
 
-        const conditions: any[] = [];
+        const conditions: import('drizzle-orm').SQL[] = [];
         if (opts.contentTypeNames && opts.contentTypeNames.length > 0) {
             const types = opts.contentTypeNames
                 .map(name => registry.get(name)?.id)
@@ -167,7 +167,7 @@ export const contentCrudService = {
 
         const orderBy =
             opts.sort && opts.sort.length > 0
-                ? buildOrderBy(opts.sort, undefined)
+                ? buildOrderBy(opts.sort)
                 : [sql`${contentEntries.createdAt} DESC`];
 
         const [rows, totalResult] = await Promise.all([

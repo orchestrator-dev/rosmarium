@@ -64,7 +64,7 @@ export function ContentListPage() {
     fetch('/api/content-types')
       .then(r => r.json())
       .then(json => {
-        const types = ((json as any).data || []).filter((t: any) => !t.settings?.isComponent);
+        const types = ((json as { data: (ContentType & { settings?: { isComponent?: boolean } })[] }).data || []).filter(t => !t.settings?.isComponent);
         setContentTypes(types);
       })
       .catch(e => console.error(e));
@@ -98,7 +98,6 @@ export function ContentListPage() {
 
   useEffect(() => {
     void fetchEntries();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTypes, selectedStatus, sortBy]);
 
   const handleDelete = async (id: string, typeName: string) => {
@@ -259,7 +258,7 @@ export function ContentListPage() {
                 <TableRow key={entry.id}>
                   <TableCell>
                     <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-                      {String((entry.data as Record<string, unknown>)?.title || (entry.data as Record<string, unknown>)?.name || 'Untitled')}
+                      {String(entry.data?.title || entry.data?.name || 'Untitled')}
                     </Typography>
                     <Typography variant="caption" sx={{ fontFamily: 'monospace', color: 'text.secondary' }}>
                       {entry.id}

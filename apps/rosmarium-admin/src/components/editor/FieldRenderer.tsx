@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   TextField,
   MenuItem,
@@ -23,6 +23,7 @@ import {
 } from '@mui/icons-material';
 import type { FieldDefinition, ContentType } from '../content-type-builder/types';
 import { BlocksEditor } from './BlocksEditor';
+import { BlockEditor } from './BlockEditor';
 
 export interface FieldRendererProps {
   field: FieldDefinition;
@@ -39,9 +40,7 @@ function slugify(text: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
-export function FieldRenderer({ field, value, onChange, contentTypes }: FieldRendererProps) {
-  const [componentPickerOpen, setComponentPickerOpen] = useState(false);
-
+export const FieldRenderer: React.FC<FieldRendererProps> = ({ field, value, onChange, contentTypes }) => {
   const label = `${field.label}${field.required ? ' *' : ''}`;
 
   switch (field.type) {
@@ -68,13 +67,10 @@ export function FieldRenderer({ field, value, onChange, contentTypes }: FieldRen
 
     case 'richText': {
       return (
-        <TextField
-          fullWidth
+        <BlockEditor
           label={label}
-          value={(value as string) ?? ''}
-          onChange={(e) => onChange(field.name, e.target.value)}
-          multiline
-          rows={8}
+          value={value}
+          onChange={(val) => onChange(field.name, val)}
         />
       );
     }

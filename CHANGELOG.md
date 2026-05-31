@@ -5,6 +5,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-05-31
+
+### Added
+- **rosmarium-admin**: Tiptap/ProseMirror block editor integration.
+- **rosmarium-admin**: New `@orchestrator.dev/types` package defining the structured `BlockDocument` format.
+- **rosmarium-admin**: Slash command menu and formatting toolbar for block editor.
+- **rosmarium-server**: Serialization support for structured `BlockDocument` to HTML, Markdown, and Plaintext.
+- **rosmarium-server**: Unified `richText` validation supporting both legacy string format and modern BlockDocument schema.
+
 ## [1.1.0] - 2026-05-29
 
 ### Added

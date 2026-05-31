@@ -1,0 +1,11 @@
+---
+description: Security rules for all Rosmarium code
+globs: ["**/*"]
+alwaysApply: true
+---
+- Never commit .env files, API keys, or secrets
+- Never log passwords, tokens, or PII
+- All endpoints require authentication — no unauthenticated writes
+- Zod (TS) or Pydantic (Python) for ALL user input validation
+- Show DB migration diffs before applying — never auto-run destructive ops
+- API keys stored as SHA-256 hashes, never plaintext
