@@ -22,6 +22,7 @@ export function ContentTypeWizard({ existingType, onClose, onSave }: ContentType
   const [displayName, setDisplayName] = useState('');
   const [description, setDescription] = useState('');
   const [isComponent, setIsComponent] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState('');
 
   // Fields
   const [fields, setFields] = useState<FieldDefinition[]>([]);
@@ -58,6 +59,9 @@ export function ContentTypeWizard({ existingType, onClose, onSave }: ContentType
         setAutoInferSimilarity(existingType.settings.graph.autoInferSimilarity || false);
         setSimilarityThreshold(existingType.settings.graph.similarityThreshold || 0.8);
       }
+      if (existingType.settings?.previewUrl) {
+        setPreviewUrl(existingType.settings.previewUrl);
+      }
     }
   }, [existingType]);
 
@@ -72,7 +76,8 @@ export function ContentTypeWizard({ existingType, onClose, onSave }: ContentType
     isComponent,
     settings: {
       ai: { enabled: aiEnabled, operations: aiOperations, taxonomy: taxonomyTags },
-      graph: { enabled: graphEnabled, edgeTypes, autoInferNer, autoInferSimilarity, similarityThreshold }
+      graph: { enabled: graphEnabled, edgeTypes, autoInferNer, autoInferSimilarity, similarityThreshold },
+      previewUrl: previewUrl || undefined
     }
   });
 
@@ -102,6 +107,7 @@ export function ContentTypeWizard({ existingType, onClose, onSave }: ContentType
             name={name} setName={setName}
             description={description} setDescription={setDescription}
             isComponent={isComponent} onIsComponentChange={setIsComponent}
+            previewUrl={previewUrl} setPreviewUrl={setPreviewUrl}
           />
         )}
 

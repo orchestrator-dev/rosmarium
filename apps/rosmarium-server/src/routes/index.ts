@@ -9,6 +9,7 @@ import intelligenceRoutes from "./intelligence.js";
 import adminRoutes from "./admin.js";
 import graphRoutes from "./graph.js";
 import userRoutes from "./users.js";
+import { previewRoutes } from "../modules/preview/preview.routes.js";
 
 export const registerRoutes = async (app: FastifyInstance) => {
     await app.register(healthRoutes);
@@ -21,5 +22,6 @@ export const registerRoutes = async (app: FastifyInstance) => {
     await app.register(adminRoutes);
     await app.register(graphRoutes);
     await app.register(userRoutes);
+    await app.register(previewRoutes);
 };
 

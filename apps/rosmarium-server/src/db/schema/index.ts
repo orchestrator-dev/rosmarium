@@ -8,3 +8,4 @@ export * from "./content-entries";
 export * from "./audit-log";
 export * from "./webhooks";
 export * from "./graph";
+export * from "./templates";

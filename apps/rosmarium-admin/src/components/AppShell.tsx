@@ -27,16 +27,6 @@ import {
 } from '@mui/icons-material';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 
-interface ContentType {
-  id: string;
-  name: string;
-  displayName: string;
-  description: string | null;
-  fields: unknown[];
-  settings: Record<string, unknown>;
-  isSystem: boolean;
-}
-
 const drawerWidth = 240;
 
 const menuItems = [
@@ -57,23 +47,6 @@ export function AppShell() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Fetch content types for dynamic sidebar
-  React.useEffect(() => {
-    const fetchContentTypes = async () => {
-      try {
-        const res = await fetch('/api/content-types');
-        if (res.ok) {
-          const json = (await res.json()) as { data: ContentType[] };
-          setContentTypes(
-            (json.data || []).filter((t) => !t.settings?.isComponent)
-          );
-        }
-      } catch (err) {
-        console.error('Failed to fetch content types for sidebar', err);
-      }
-    };
-    void fetchContentTypes();
-  }, []);
 
   React.useEffect(() => {
     fetch('/api/auth/me').then(res => {

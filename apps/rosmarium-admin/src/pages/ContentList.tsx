@@ -21,14 +21,27 @@ import {
   SelectChangeEvent,
   Menu,
   TableSortLabel,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  List,
+  ListItemButton,
+  ListItemText,
 } from '@mui/material';
 import {
   Add as AddIcon,
   Edit as EditIcon,
   Delete as DeleteIcon,
   FilterList as FilterIcon,
+  Bookmark as BookmarkIcon,
 } from '@mui/icons-material';
 import { TooltipButton, TooltipIconButton } from '../components/common/TooltipButton';
+import { BulkActionBar } from '../components/content/BulkActionBar';
+import { ContentTreePage } from './ContentTree';
+import { ToggleButtonGroup, ToggleButton, Checkbox } from '@mui/material';
+import { ViewList as ViewListIcon, AccountTree as TreeIcon } from '@mui/icons-material';
 
 interface ContentEntry {
   id: string;
@@ -46,6 +59,14 @@ interface ContentType {
   displayName: string;
 }
 
+interface Template {
+  id: string;
+  name: string;
+  description: string | null;
+  contentTypeId: string | null;
+  isGlobal: boolean;
+}
+
 export function ContentListPage() {
   const navigate = useNavigate();
   const [entries, setEntries] = useState<ContentEntry[]>([]);
@@ -57,7 +78,15 @@ export function ContentListPage() {
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [sortBy, setSortBy] = useState<string>('createdAt:desc');
   
+  const [viewMode, setViewMode] = useState<'list' | 'tree'>('list');
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  
   const [anchorElNew, setAnchorElNew] = useState<null | HTMLElement>(null);
+  
+  const [templatePickerOpen, setTemplatePickerOpen] = useState(false);
+  const [templates, setTemplates] = useState<Template[]>([]);
+  const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
+  const [selectedContentTypeForGlobal, setSelectedContentTypeForGlobal] = useState<string>('');
 
   useEffect(() => {
     // Fetch available content types for filter dropdown
@@ -97,8 +126,24 @@ export function ContentListPage() {
   };
 
   useEffect(() => {
-    void fetchEntries();
-  }, [selectedTypes, selectedStatus, sortBy]);
+    if (viewMode === 'list') {
+      void fetchEntries();
+    }
+  }, [selectedTypes, selectedStatus, sortBy, viewMode]);
+
+  const toggleSelection = (id: string) => {
+    setSelectedIds(prev => 
+      prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]
+    );
+  };
+
+  const toggleAll = () => {
+    if (selectedIds.length === entries.length) {
+      setSelectedIds([]);
+    } else {
+      setSelectedIds(entries.map(e => e.id));
+    }
+  };
 
   const handleDelete = async (id: string, typeName: string) => {
     if (!window.confirm('Are you sure you want to delete this entry?')) return;
@@ -109,6 +154,53 @@ export function ContentListPage() {
       }
     } catch (err) {
       console.error('Failed to delete entry', err);
+    }
+  };
+
+  const handleOpenTemplatePicker = async () => {
+    try {
+      const res = await fetch('/api/templates');
+      if (res.ok) {
+        const json = await res.json() as { data: Template[] };
+        setTemplates(json.data || []);
+        setTemplatePickerOpen(true);
+        setSelectedTemplate(null);
+        setSelectedContentTypeForGlobal('');
+      }
+    } catch (err) {
+      console.error('Failed to load templates', err);
+    }
+  };
+
+  const handleCreateFromTemplate = async () => {
+    if (!selectedTemplate) return;
+    
+    let ctName = '';
+    if (selectedTemplate.isGlobal) {
+      const ct = contentTypes.find(c => c.id === selectedContentTypeForGlobal);
+      if (!ct) return;
+      ctName = ct.name;
+    } else {
+      const ct = contentTypes.find(c => c.id === selectedTemplate.contentTypeId);
+      if (!ct) return;
+      ctName = ct.name;
+    }
+
+    try {
+      const res = await fetch(`/api/content/${ctName}/from-template/${selectedTemplate.id}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      });
+      if (res.ok) {
+        const json = await res.json() as { data: { id: string } };
+        setTemplatePickerOpen(false);
+        navigate(`/content/${ctName}/${json.data.id}/edit`);
+      } else {
+        console.error('Failed to create from template');
+      }
+    } catch (err) {
+      console.error('Failed to create from template', err);
     }
   };
 
@@ -137,8 +229,23 @@ export function ContentListPage() {
             Manage your content entries across all types.
           </Typography>
         </Box>
-        <Box>
-          <TooltipButton 
+        <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <ToggleButtonGroup
+            value={viewMode}
+            exclusive
+            onChange={(e, newMode) => { if (newMode) setViewMode(newMode as 'list' | 'tree'); }}
+            size="small"
+            color="primary"
+          >
+            <ToggleButton value="list">
+              <ViewListIcon fontSize="small" sx={{ mr: 1 }} /> List
+            </ToggleButton>
+            <ToggleButton value="tree">
+              <TreeIcon fontSize="small" sx={{ mr: 1 }} /> Tree
+            </ToggleButton>
+          </ToggleButtonGroup>
+          <Box>
+            <TooltipButton 
             actionKey="createEntry"
             variant="contained" 
             startIcon={<AddIcon />} 
@@ -161,10 +268,25 @@ export function ContentListPage() {
               </MenuItem>
             ))}
           </Menu>
+          <TooltipButton
+            tooltipTitle="Create an entry from a saved template"
+            variant="outlined"
+            startIcon={<BookmarkIcon />}
+            onClick={() => void handleOpenTemplatePicker()}
+            disabled={contentTypes.length === 0}
+            sx={{ ml: 2 }}
+          >
+            Create from Template
+          </TooltipButton>
+          </Box>
         </Box>
       </Stack>
 
-      {/* Expandable Filter Bar */}
+      {viewMode === 'tree' ? (
+        <ContentTreePage />
+      ) : (
+        <>
+          {/* Expandable Filter Bar */}
       <Paper variant="outlined" sx={{ p: 2, mb: 3, display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
         <Box sx={{ display: 'flex', alignItems: 'center', color: 'text.secondary', mr: 2 }}>
           <FilterIcon sx={{ mr: 1 }} />
@@ -216,6 +338,13 @@ export function ContentListPage() {
         <Table>
           <TableHead>
             <TableRow>
+              <TableCell padding="checkbox">
+                <Checkbox
+                  indeterminate={selectedIds.length > 0 && selectedIds.length < entries.length}
+                  checked={entries.length > 0 && selectedIds.length === entries.length}
+                  onChange={toggleAll}
+                />
+              </TableCell>
               <TableCell>Title / ID</TableCell>
               <TableCell>Type</TableCell>
               <TableCell>Status</TableCell>
@@ -255,7 +384,13 @@ export function ContentListPage() {
               </TableRow>
             ) : (
               entries.map(entry => (
-                <TableRow key={entry.id}>
+                <TableRow key={entry.id} selected={selectedIds.includes(entry.id)}>
+                  <TableCell padding="checkbox">
+                    <Checkbox
+                      checked={selectedIds.includes(entry.id)}
+                      onChange={() => toggleSelection(entry.id)}
+                    />
+                  </TableCell>
                   <TableCell>
                     <Typography variant="body2" sx={{ fontWeight: "bold" }}>
                       {String(entry.data?.title || entry.data?.name || 'Untitled')}
@@ -294,6 +429,74 @@ export function ContentListPage() {
           </TableBody>
         </Table>
       </TableContainer>
+
+      <BulkActionBar 
+        selectedIds={selectedIds} 
+        onClearSelection={() => setSelectedIds([])} 
+        onActionComplete={() => { setSelectedIds([]); void fetchEntries(); }} 
+      />
+        </>
+      )}
+
+      <Dialog open={templatePickerOpen} onClose={() => setTemplatePickerOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>Create from Template</DialogTitle>
+        <DialogContent dividers>
+          {templates.length === 0 ? (
+            <Typography color="text.secondary">No templates available. You can save an entry as a template from the content editor.</Typography>
+          ) : (
+            <Stack spacing={3}>
+              <Typography variant="subtitle2" color="text.secondary">Select a Template</Typography>
+              <Paper variant="outlined" sx={{ maxHeight: 300, overflow: 'auto' }}>
+                <List disablePadding>
+                  {templates.map(t => (
+                    <ListItemButton 
+                      key={t.id} 
+                      selected={selectedTemplate?.id === t.id}
+                      onClick={() => setSelectedTemplate(t)}
+                    >
+                      <ListItemText 
+                        primary={
+                          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                            {t.name}
+                            {t.isGlobal && <Chip label="Global" size="small" color="primary" variant="outlined" />}
+                          </Box>
+                        }
+                        secondary={t.description || (t.isGlobal ? 'Available for all content types' : `For: ${contentTypes.find(ct => ct.id === t.contentTypeId)?.displayName}`)} 
+                      />
+                    </ListItemButton>
+                  ))}
+                </List>
+              </Paper>
+
+              {selectedTemplate?.isGlobal && (
+                <FormControl fullWidth required>
+                  <InputLabel id="global-ct-label">Target Content Type</InputLabel>
+                  <Select
+                    labelId="global-ct-label"
+                    value={selectedContentTypeForGlobal}
+                    label="Target Content Type"
+                    onChange={(e) => setSelectedContentTypeForGlobal(e.target.value)}
+                  >
+                    {contentTypes.map((ct) => (
+                      <MenuItem key={ct.id} value={ct.id}>{ct.displayName}</MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              )}
+            </Stack>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setTemplatePickerOpen(false)}>Cancel</Button>
+          <Button 
+            onClick={() => void handleCreateFromTemplate()} 
+            variant="contained" 
+            disabled={!selectedTemplate || (selectedTemplate.isGlobal && !selectedContentTypeForGlobal)}
+          >
+            Create
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

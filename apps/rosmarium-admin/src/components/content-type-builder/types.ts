@@ -5,6 +5,7 @@ export interface FieldDefinition {
   required: boolean;
   unique?: boolean;
   localised?: boolean;
+  conditions?: unknown[];
   // Type specific
   minLength?: number;
   maxLength?: number;
@@ -35,6 +36,7 @@ export interface ContentTypeSettings {
     autoInferSimilarity: boolean;
     similarityThreshold: number;
   };
+  previewUrl?: string;
 }
 
 export interface ContentType {

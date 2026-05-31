@@ -5,6 +5,20 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0] - 2026-05-31
+
+### Added
+- **rosmarium-admin**: Content Tree View with drag-and-drop hierarchy management (`@dnd-kit/core`).
+- **rosmarium-admin**: Bulk Operations Action Bar to publish, unpublish, archive, tag, summarize, and delete multiple entries simultaneously.
+- **rosmarium-server**: Hierarchy Service to query and mutate `parent_of` edges for content nodes.
+- **rosmarium-server**: Transactional Bulk Operations API endpoints supporting integrated intelligence pipelines.
+
+## [1.4.0] - 2026-05-31
+- **rosmarium-admin**: Live Preview Engine providing real-time content preview in the admin UI without saving.
+- **rosmarium-server**: Secure token-based access via `postMessage` protocol between the CMS iframe and the external frontend for live previews.
+- **rosmarium-admin**: Conditional Fields logic allowing fields to be dynamically shown or hidden.
+- **rosmarium-server**: Server-side validation now automatically skips conditionally hidden fields.
+
 ## [1.2.0] - 2026-05-31
 
 ### Added

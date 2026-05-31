@@ -24,12 +24,14 @@ import {
 import type { FieldDefinition, ContentType } from '../content-type-builder/types';
 import { BlocksEditor } from './BlocksEditor';
 import { BlockEditor } from './BlockEditor';
+import { ConditionalField } from './ConditionalField';
 
 export interface FieldRendererProps {
   field: FieldDefinition;
   value: unknown;
   onChange: (fieldName: string, value: unknown) => void;
   contentTypes?: ContentType[];
+  formData?: Record<string, unknown>;
 }
 
 function slugify(text: string): string {
@@ -40,10 +42,11 @@ function slugify(text: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
-export const FieldRenderer: React.FC<FieldRendererProps> = ({ field, value, onChange, contentTypes }) => {
+export const FieldRenderer: React.FC<FieldRendererProps> = ({ field, value, onChange, contentTypes, formData }) => {
   const label = `${field.label}${field.required ? ' *' : ''}`;
 
-  switch (field.type) {
+  const renderField = () => {
+    switch (field.type) {
     case 'text': {
       const helperParts: string[] = [];
       if (field.minLength !== undefined) helperParts.push(`Min: ${field.minLength}`);
@@ -295,6 +298,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field, value, onCh
                   onChange(field.name, { ...groupValue, [subName]: subVal });
                 }}
                 contentTypes={contentTypes}
+                formData={formData}
               />
             ))}
           </Stack>
@@ -368,6 +372,7 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field, value, onCh
                   onChange(field.name, { ...compValue, [subName]: subVal });
                 }}
                 contentTypes={contentTypes}
+                formData={formData}
               />
             ))}
           </Stack>
@@ -397,5 +402,13 @@ export const FieldRenderer: React.FC<FieldRendererProps> = ({ field, value, onCh
         />
       );
     }
-  }
+    }
+  };
+
+  // The condition comes from field schema
+  return (
+    <ConditionalField conditions={field.conditions} formData={formData}>
+      {renderField()}
+    </ConditionalField>
+  );
 }

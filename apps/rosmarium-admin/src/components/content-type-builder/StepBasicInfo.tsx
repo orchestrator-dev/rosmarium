@@ -1,6 +1,8 @@
 import React from 'react';
 import { Stack, TextField, FormControlLabel, Switch, Typography } from '@mui/material';
 
+import { PreviewSettings } from '../preview/PreviewSettings';
+
 export interface StepBasicInfoProps {
   displayName: string;
   setDisplayName: (val: string) => void;
@@ -10,11 +12,13 @@ export interface StepBasicInfoProps {
   setDescription: (val: string) => void;
   isComponent?: boolean;
   onIsComponentChange?: (val: boolean) => void;
+  previewUrl?: string;
+  setPreviewUrl?: (val: string) => void;
 }
 
 export function StepBasicInfo({
   displayName, setDisplayName, name, setName, description, setDescription,
-  isComponent, onIsComponentChange,
+  isComponent, onIsComponentChange, previewUrl, setPreviewUrl,
 }: StepBasicInfoProps) {
   
   const handleDisplayNameChange = (val: string) => {
@@ -66,6 +70,12 @@ export function StepBasicInfo({
             Component types can be embedded inside other content types via Component or Blocks fields.
           </Typography>
         </div>
+      )}
+      {setPreviewUrl && (
+        <PreviewSettings
+          settings={{ previewUrl }}
+          onChange={(settings) => setPreviewUrl(settings.previewUrl || '')}
+        />
       )}
     </Stack>
   );

@@ -64,6 +64,13 @@
       "when": 1780144090576,
       "tag": "0009_nappy_gunslinger",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1780213279985,
+      "tag": "0010_lean_master_mold",
+      "breakpoints": true
     }
   ]
 }

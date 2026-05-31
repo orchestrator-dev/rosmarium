@@ -14,13 +14,22 @@ import {
   Alert,
   TextField,
   Grid,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+  FormControlLabel,
+  Checkbox,
 } from '@mui/material';
 import {
   Save as SaveIcon,
   Close as CancelIcon,
   Publish as PublishIcon,
   Unpublished as UnpublishIcon,
+  BookmarkAdd as BookmarkAddIcon,
 } from '@mui/icons-material';
+import { PreviewPanel } from '../components/preview/PreviewPanel';
 import type { ContentType } from '../components/content-type-builder/types';
 import { FieldRenderer } from '../components/editor/FieldRenderer';
 import { TooltipButton } from '../components/common/TooltipButton';
@@ -50,6 +59,12 @@ export function ContentEditorPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   const [jsonError, setJsonError] = useState('');
+
+  const [templateDialogOpen, setTemplateDialogOpen] = useState(false);
+  const [templateName, setTemplateName] = useState('');
+  const [templateDescription, setTemplateDescription] = useState('');
+  const [templateIsGlobal, setTemplateIsGlobal] = useState(false);
+  const [savingTemplate, setSavingTemplate] = useState(false);
 
   // Fetch content type definition + entry (if editing) + all content types (for component lookup)
   useEffect(() => {
@@ -197,6 +212,47 @@ export function ContentEditorPage() {
     navigate(`/content/${type}`);
   };
 
+  const handleSaveAsTemplate = async () => {
+    if (!templateName.trim()) return;
+    setSavingTemplate(true);
+    setError('');
+    try {
+      let dataToSave = formData;
+      if (activeTab === 1) {
+        try {
+          dataToSave = JSON.parse(jsonStr) as Record<string, unknown>;
+        } catch {
+          setError('Invalid JSON');
+          setSavingTemplate(false);
+          return;
+        }
+      }
+
+      const res = await fetch('/api/templates', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: templateName,
+          description: templateDescription,
+          contentTypeId: templateIsGlobal ? undefined : contentType?.id,
+          templateData: dataToSave,
+          isGlobal: templateIsGlobal,
+        }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error((errData as { error?: { message?: string } })?.error?.message || 'Failed to save template');
+      }
+
+      setTemplateDialogOpen(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Save template failed');
+    } finally {
+      setSavingTemplate(false);
+    }
+  };
+
   if (loading) {
     return (
       <Box sx={{ display: 'flex', justifyContent: 'center', py: 8 }}>
@@ -233,9 +289,9 @@ export function ContentEditorPage() {
         </Alert>
       )}
 
-      <Grid container spacing={3}>
+      <Grid container spacing={3} sx={{ flexWrap: 'nowrap' }}>
         {/* Main Editor Area */}
-        <Grid size={{ xs: 12, md: 8 }}>
+        <Grid size={{ xs: 12, md: contentType?.settings?.previewUrl ? 6 : 8 }}>
           <Paper variant="outlined" sx={{ borderRadius: 2 }}>
             {/* Toolbar */}
             <Box
@@ -265,6 +321,22 @@ export function ContentEditorPage() {
                 >
                   Cancel
                 </TooltipButton>
+                {!isNew && (
+                  <TooltipButton
+                    tooltipTitle="Save this entry's data as a reusable template"
+                    variant="outlined"
+                    startIcon={<BookmarkAddIcon />}
+                    onClick={() => {
+                      setTemplateName('');
+                      setTemplateDescription('');
+                      setTemplateIsGlobal(false);
+                      setTemplateDialogOpen(true);
+                    }}
+                    size="small"
+                  >
+                    Save as Template
+                  </TooltipButton>
+                )}
               </Stack>
             </Box>
 
@@ -279,6 +351,7 @@ export function ContentEditorPage() {
                       value={formData[field.name]}
                       onChange={handleFieldChange}
                       contentTypes={allContentTypes}
+                      formData={formData}
                     />
                   ))}
                   {(!Array.isArray(contentType.fields) || contentType.fields.length === 0) && (
@@ -315,8 +388,19 @@ export function ContentEditorPage() {
           </Paper>
         </Grid>
 
+        {contentType?.settings?.previewUrl && entry && (
+          <Grid size={{ xs: 12, md: 6 }}>
+            <PreviewPanel
+              previewUrlTemplate={contentType.settings.previewUrl}
+              entryId={entry.id}
+              contentTypeId={contentType.id}
+              formData={formData}
+            />
+          </Grid>
+        )}
+
         {/* Sidebar */}
-        <Grid size={{ xs: 12, md: 4 }}>
+        <Grid size={{ xs: 12, md: contentType?.settings?.previewUrl ? 12 : 4 }} sx={{ display: contentType?.settings?.previewUrl ? 'none' : 'block' }}>
           <Paper variant="outlined" sx={{ p: 3, borderRadius: 2 }}>
             <Typography variant="h3" sx={{ mb: 2 }}>
               Entry Info
@@ -421,6 +505,50 @@ export function ContentEditorPage() {
           </Paper>
         </Grid>
       </Grid>
+
+      <Dialog open={templateDialogOpen} onClose={() => !savingTemplate && setTemplateDialogOpen(false)} maxWidth="sm" fullWidth>
+        <DialogTitle>Save as Template</DialogTitle>
+        <DialogContent dividers>
+          <Stack spacing={3}>
+            <TextField
+              label="Template Name"
+              value={templateName}
+              onChange={(e) => setTemplateName(e.target.value)}
+              fullWidth
+              autoFocus
+              required
+            />
+            <TextField
+              label="Description (Optional)"
+              value={templateDescription}
+              onChange={(e) => setTemplateDescription(e.target.value)}
+              fullWidth
+              multiline
+              rows={2}
+            />
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={templateIsGlobal}
+                  onChange={(e) => setTemplateIsGlobal(e.target.checked)}
+                />
+              }
+              label="Global Template (available to all content types)"
+            />
+            {templateIsGlobal && (
+              <Alert severity="info">
+                Global templates can be applied to any content type. Ensure the data structure is generic enough.
+              </Alert>
+            )}
+          </Stack>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setTemplateDialogOpen(false)} disabled={savingTemplate}>Cancel</Button>
+          <Button onClick={() => void handleSaveAsTemplate()} variant="contained" disabled={savingTemplate || !templateName.trim()}>
+            {savingTemplate ? 'Saving…' : 'Save Template'}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

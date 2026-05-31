@@ -28,7 +28,7 @@ RUN corepack enable && corepack prepare pnpm@9.0.0 --activate
 ENV NODE_ENV=production
 
 # Copy built artifacts and necessary files from builder
-COPY --from=builder /app/package.json /app/pnpm-workspace.yaml ./
+COPY --from=builder /app/package.json /app/pnpm-workspace.yaml /app/pnpm-lock.yaml ./
 COPY --from=builder /app/packages/ ./packages/
 COPY --from=builder /app/apps/rosmarium-server/package.json ./apps/rosmarium-server/
 COPY --from=builder /app/apps/rosmarium-server/dist/ ./apps/rosmarium-server/dist/

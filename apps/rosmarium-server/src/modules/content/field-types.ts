@@ -9,6 +9,12 @@ const baseField = z.object({
     required: z.boolean().default(false),
     unique: z.boolean().default(false),
     localised: z.boolean().default(false),
+    conditions: z.array(z.object({
+        field: z.string(),
+        operator: z.enum(['eq', 'neq', 'contains', 'gt', 'lt', 'exists', 'empty']),
+        value: z.unknown().optional(),
+        logic: z.enum(['and', 'or']).optional(),
+    })).optional(),
 });
 
 // Use z.lazy for recursive field schemas (group contains sub-fields)

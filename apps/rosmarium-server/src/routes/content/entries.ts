@@ -1,6 +1,7 @@
 import type { FastifyInstance, FastifyPluginAsync } from "fastify";
 import fp from "fastify-plugin";
 import { contentCrudService } from "../../modules/content/crud.service.js";
+import { templatesService } from "../../modules/content/templates.service.js";
 import { registry } from "../../modules/content/registry.js";
 import type { ParsedFilters, SortInput } from "../../modules/content/query.builder.js";
 import { requireAuth, requirePermission } from "../../modules/rbac/rbac.middleware.js";
@@ -238,6 +239,66 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
                     data: request.body.data,
                     locale: request.body.locale,
                     createdBy: request.user?.id ?? request.body.createdBy ?? "anonymous",
+                });
+                return reply.status(201).send({ data: entry });
+            } catch (err) {
+                const message = err instanceof Error ? err.message : "Unknown error";
+                return reply.status(422).send({ error: { code: "VALIDATION_ERROR", message } });
+            }
+        },
+    );
+
+    // POST /api/content/:type/from-template/:templateId
+    app.post<{
+        Params: { type: string; templateId: string };
+        Body: { locale?: string; createdBy?: string };
+    }>(
+        "/api/content/:type/from-template/:templateId",
+        {
+            preHandler: requirePermission(PERMISSIONS.CONTENT_CREATE),
+            schema: {
+                tags: ["Content Entries"],
+                summary: "Create a content entry from a template",
+                params: {
+                    type: "object",
+                    properties: { 
+                        type: { type: "string" },
+                        templateId: { type: "string" }
+                    },
+                    required: ["type", "templateId"],
+                },
+                body: {
+                    type: "object",
+                    properties: {
+                        locale: { type: "string" },
+                        createdBy: { type: "string" },
+                    },
+                },
+                response: {
+                    201: { type: "object", properties: { data: { type: "object", additionalProperties: true } } },
+                },
+            },
+        },
+        async (request, reply) => {
+            if (!registry.get(request.params.type)) {
+                return reply.status(404).send({
+                    error: { code: "NOT_FOUND", message: `Content type '${request.params.type}' not found` },
+                });
+            }
+
+            const template = await templatesService.getById(request.params.templateId);
+            if (!template) {
+                return reply.status(404).send({
+                    error: { code: "NOT_FOUND", message: `Template '${request.params.templateId}' not found` },
+                });
+            }
+
+            try {
+                const entry = await contentCrudService.create({
+                    contentTypeName: request.params.type,
+                    data: template.templateData,
+                    locale: request.body?.locale,
+                    createdBy: request.user?.id ?? request.body?.createdBy ?? "anonymous",
                 });
                 return reply.status(201).send({ data: entry });
             } catch (err) {
