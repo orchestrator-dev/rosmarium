@@ -106,6 +106,20 @@
       "when": 1780252251004,
       "tag": "0015_new_junta",
       "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1780254318768,
+      "tag": "0016_great_firelord",
+      "breakpoints": true
+    },
+    {
+      "idx": 17,
+      "version": "7",
+      "when": 1780254472438,
+      "tag": "0017_sour_goblin_queen",
+      "breakpoints": true
     }
   ]
 }

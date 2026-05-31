@@ -21,6 +21,7 @@
   - Month 6: Real-Time Collaboration Foundation (G06, G26)
 - ✅ V2 Phase 4 — AI-Native Content Intelligence (Month 10)
   - Month 10: Generative AI Content Studio (G15)
+  - Month 10: AI Governance Framework & Smart Search (G16, G17)
 
 ## V2 Phase 3 Checklist (In Progress)
 

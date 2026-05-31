@@ -12,3 +12,5 @@ export * from "./templates";
 export * from "./workflows";
 export * from "./branches";
 export * from "./comments";
+export * from "./ai-audit";
+export * from "./saved-searches";

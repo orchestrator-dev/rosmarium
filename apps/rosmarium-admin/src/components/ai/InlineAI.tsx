@@ -28,26 +28,34 @@ export const InlineAI: React.FC<InlineAIProps> = ({ anchorEl, open, onClose, sel
             if (!reader) throw new Error("No readable stream");
             const decoder = new TextDecoder();
             let fullText = "";
-            
-            while (true) {
+            let isDone = false;
+            while (!isDone) {
                 const { done, value } = await reader.read();
-                if (done) break;
+                if (done) {
+                    isDone = true;
+                    break;
+                }
                 const chunk = decoder.decode(value);
                 const lines = chunk.split("\n").filter(line => line.startsWith("data: "));
                 for (const line of lines) {
                     const dataStr = line.replace("data: ", "");
-                    if (dataStr === "[DONE]") break;
+                    if (dataStr === "[DONE]") {
+                        isDone = true;
+                        break;
+                    }
                     try {
                         const data = JSON.parse(dataStr);
                         if (data.chunk) {
                             fullText += data.chunk;
                         }
-                    } catch (e) {}
+                    } catch {
+                        // ignore parsing error
+                    }
                 }
             }
             onReplace(fullText);
             onClose();
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("AI rewrite error", err);
         } finally {
             setLoading(false);

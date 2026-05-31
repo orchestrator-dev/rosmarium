@@ -25,8 +25,8 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({ onGenerate }) => {
             const data = await res.json();
             onGenerate(data.result);
             setPrompt("");
-        } catch (err: any) {
-            setError(err.message);
+        } catch (err: unknown) {
+            setError((err as Error).message);
         } finally {
             setLoading(false);
         }

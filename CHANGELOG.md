@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.12.0] - 2026-05-31
+
+### Added
+- **rosmarium-server**: AI Operations Log schema and tracking API.
+- **rosmarium-server**: Fastify routes for AI Governance dashboard metrics.
+- **rosmarium-server**: Faceted Search service for filtering and aggregation.
+- **rosmarium-server**: Related Content Recommendations based on vector similarity and graph proximity.
+- **rosmarium-server**: Saved Searches service.
+- **rosmarium-admin**: AI Governance Dashboard UI showing token usage, limits, and metrics.
+
 ## [1.11.0] - 2026-05-31
 
 ### Added

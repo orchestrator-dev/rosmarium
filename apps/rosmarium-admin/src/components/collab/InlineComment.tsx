@@ -11,7 +11,7 @@ export interface InlineCommentProps {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const InlineComment: React.FC<InlineCommentProps> = ({ fieldId, comments, onAddComment, onResolve }) => {
+export const InlineComment: React.FC<InlineCommentProps> = ({ comments, onAddComment, onResolve }) => {
     const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
 
     const handleClick = (event: React.MouseEvent<HTMLElement>) => {

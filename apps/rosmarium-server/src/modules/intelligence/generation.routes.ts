@@ -24,9 +24,11 @@ const altTextBodySchema = z.object({
 });
 
 export async function generationRoutes(fastify: FastifyInstance) {
+    const { aiGovernanceService } = await import("./ai-governance.service.js");
     
     // Helper to proxy to python worker
-    async function proxyToWorker(path: string, body: unknown, reply: any) {
+    async function proxyToWorker(path: string, body: unknown, reply: any, opType: string, request: any) {
+        const startTime = Date.now();
         const res = await fetch(`${config.AI_WORKER_URL}${path}`, {
             method: "POST",
             headers: {
@@ -36,10 +38,31 @@ export async function generationRoutes(fastify: FastifyInstance) {
             body: JSON.stringify(body)
         });
         
+        const tenantId = (request as any).tenant;
+        const userId = (request as any).user?.id;
+        
         if (!res.ok) {
+            await aiGovernanceService.logOperation({
+                operationType: opType,
+                tenantId,
+                userId,
+                status: "error",
+                latencyMs: Date.now() - startTime,
+            }).catch(console.error);
             reply.code(res.status).send(await res.text());
             return;
         }
+
+        await aiGovernanceService.logOperation({
+            operationType: opType,
+            tenantId,
+            userId,
+            status: "success",
+            latencyMs: Date.now() - startTime,
+            modelProvider: "internal",
+            inputTokens: 0,
+            outputTokens: 0,
+        }).catch(console.error);
 
         const isSSE = res.headers.get("content-type")?.includes("text/event-stream");
         if (isSSE && res.body) {
@@ -54,21 +77,21 @@ export async function generationRoutes(fastify: FastifyInstance) {
 
     fastify.post("/generate", async (request, reply) => {
         const body = generationBodySchema.parse(request.body);
-        return proxyToWorker("/generation/generate", body, reply);
+        return proxyToWorker("/generation/generate", body, reply, "generate", request);
     });
 
     fastify.post("/rewrite", async (request, reply) => {
         const body = rewriteBodySchema.parse(request.body);
-        return proxyToWorker("/generation/rewrite", body, reply);
+        return proxyToWorker("/generation/rewrite", body, reply, "rewrite", request);
     });
 
     fastify.post("/seo-optimize", async (request, reply) => {
         const body = seoBodySchema.parse(request.body);
-        return proxyToWorker("/generation/seo-optimize", body, reply);
+        return proxyToWorker("/generation/seo-optimize", body, reply, "seo-optimize", request);
     });
 
     fastify.post("/alt-text", async (request, reply) => {
         const body = altTextBodySchema.parse(request.body);
-        return proxyToWorker("/generation/alt-text", body, reply);
+        return proxyToWorker("/generation/alt-text", body, reply, "alt-text", request);
     });
 }
