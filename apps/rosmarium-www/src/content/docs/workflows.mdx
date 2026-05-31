@@ -1,0 +1,38 @@
+---
+title: Workflows & Scheduling
+description: Build custom approval processes, track state transitions, and schedule delayed publishing in Rosmarium COS.
+order: 5
+---
+
+# Workflows & Scheduling
+
+Rosmarium COS provides a robust workflow automation engine designed to support complex editorial approval processes and delayed publication.
+
+## Workflow State Machine
+
+Workflows in Rosmarium are powered by a state machine that allows you to define custom approval chains tailored to your team's needs.
+Each Content Type can be assigned a default Workflow. 
+
+- **States**: Define logical stages for your content (e.g., `Draft`, `In Review`, `Approved`, `Published`).
+- **Transitions**: Define how content moves between states. 
+- **Validations**: Transitions can be guarded by role-based access control or conditional rules to ensure that only authorized personnel can approve content.
+
+### Visual Workflow Builder
+
+The Admin Dashboard provides an intuitive, drag-and-drop ReactFlow-powered **Workflow Builder**. You can visually map out states and transitions, making it easy to design complex editorial processes without writing code.
+
+![Workflow Builder](/docs/admin_workflow_builder.png)
+
+### Workflow Timeline
+
+Every transition is tracked in the database, creating a comprehensive audit log. The **Workflow Timeline** in the Content Editor displays exactly who made a transition, when it happened, and any comments they left during the review.
+
+## Scheduled Publishing
+
+Editorial teams often need to embargo content until a specific date and time. 
+
+Rosmarium integrates with **BullMQ** (powered by Redis) to offer delayed publishing capabilities directly within the Content Editor.
+- **Schedule to Publish**: Pick a future date and time for content to automatically become visible.
+- **Schedule to Unpublish**: Automatically archive seasonal or time-sensitive content.
+
+The system handles everything in the background reliably, ensuring your content is delivered precisely when intended.

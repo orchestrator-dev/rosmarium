@@ -41,7 +41,7 @@ import Layout from '../layouts/Layout.astro';
         <p class="text-zinc-400">Everything you need to build next-generation AI content applications.</p>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {/* Feature 1 */}
         <div class="p-8 rounded-2xl bg-dark-surface border border-dark-border hover:border-neon-cyan/50 transition-colors group">
           <div class="w-12 h-12 rounded-lg bg-neon-cyan/10 flex items-center justify-center mb-6 group-hover:bg-neon-cyan/20 transition-colors">
@@ -91,6 +91,32 @@ import Layout from '../layouts/Layout.astro';
           <h3 class="text-xl font-bold text-white mb-3">High-Speed Content Delivery</h3>
           <p class="text-zinc-400 leading-relaxed">
             Optimized for performance with Edge-compatible delivery endpoints. Advanced caching and robust asset engines ensure your content is served globally with sub-millisecond latency.
+          </p>
+        </div>
+
+        {/* Feature 5 */}
+        <div class="p-8 rounded-2xl bg-dark-surface border border-dark-border hover:border-neon-cyan/50 transition-colors group">
+          <div class="w-12 h-12 rounded-lg bg-neon-cyan/10 flex items-center justify-center mb-6 group-hover:bg-neon-cyan/20 transition-colors">
+            <svg class="w-6 h-6 text-neon-cyan" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-white mb-3">Workflow Engine & Scheduling</h3>
+          <p class="text-zinc-400 leading-relaxed">
+            Create custom approval processes with visual state transitions and role-based validations. Schedule entries to publish or unpublish automatically using robust delayed jobs via BullMQ.
+          </p>
+        </div>
+
+        {/* Feature 6 */}
+        <div class="p-8 rounded-2xl bg-dark-surface border border-dark-border hover:border-neon-purple/50 transition-colors group">
+          <div class="w-12 h-12 rounded-lg bg-neon-purple/10 flex items-center justify-center mb-6 group-hover:bg-neon-purple/20 transition-colors">
+            <svg class="w-6 h-6 text-neon-purple" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+            </svg>
+          </div>
+          <h3 class="text-xl font-bold text-white mb-3">Rich Content Hierarchy</h3>
+          <p class="text-zinc-400 leading-relaxed">
+            Model sophisticated relationships with Groups, Components, and dynamic Block structures. Build page builders and modular layouts directly inside the Admin Dashboard.
           </p>
         </div>
       </div>
