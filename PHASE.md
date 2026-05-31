@@ -1,8 +1,8 @@
 # Rosmarium COS — Current Development Phase
 
-## Active Phase: V2 Phase 1 — Content Authoring Revolution
-**Target release:** v2.0.0-alpha
-**Duration:** Month 1 - 3
+## Active Phase: V2 Phase 3 — Developer Experience & Extensibility
+**Target release:** v2.0.0-beta
+**Duration:** Month 7 - 9
 
 ## Completed V1 Phases
 - ✅ V1 Phase 1 — CMS Foundation
@@ -10,41 +10,43 @@
 - ✅ V1 Phase 3 — API Layer & Graph
 - ✅ V1 Phase 4 — Expansion & Scalability (v1.0.1 released)
 
-## V2 Phase 1 Checklist (In Progress)
+## Completed V2 Phases
+- ✅ V2 Phase 1 — Content Authoring Revolution (Months 1-3)
+  - Month 1: Structured Rich Text Engine (G01, G03)
+  - Month 2: Live Preview Engine (G02, G04)
+  - Month 3: Admin UI Polish & Content Hierarchy
+- ✅ V2 Phase 2 — Workflow & Collaboration Engine (Months 4-6)
+  - Month 4: Workflow Automation Engine (G05)
+  - Month 5: Content Branching & Environments (G07)
+  - Month 6: Real-Time Collaboration Foundation (G06, G26)
 
-### Month 1: Structured Rich Text Engine (G01, G03)
-- [ ] **Task 1.1: Block-Based Document Model**
-  - [ ] `BlockDocument` schema in `packages/types`
-  - [ ] Update `richText` field validation
-  - [ ] Block serializers (HTML, Markdown, Plain Text)
-- [ ] **Task 1.2: Tiptap/ProseMirror Editor Integration**
-  - [ ] Add `@tiptap/react` and extensions to admin
-  - [ ] `BlockEditor.tsx` main component
-  - [ ] Slash command menu (`/`)
-- [ ] **Task 1.3: Content Templates System**
-  - [ ] `content_templates` DB table
-  - [ ] Templates service and REST API
-  - [ ] Admin UI "Save as Template" / template picker
+## V2 Phase 3 Checklist (In Progress)
 
-### Month 2: Live Preview Engine (G02, G04)
-- [ ] **Task 2.1: Preview API & Token System**
-  - [ ] JWT preview tokens (1hr TTL)
-  - [ ] Live draft resolution API
-  - [ ] Admin UI side-by-side preview panel
-- [ ] **Task 2.2: Conditional Fields**
-  - [ ] Condition schema definitions
-  - [ ] Admin UI dynamic show/hide fields
-  - [ ] Server-side conditional validation
+### Month 7: Plugin/Extension System (G09)
+- [x] **Task 7.1: Plugin Architecture**
+  - [x] `packages/types/src/plugin.ts` Plugin interface definitions
+  - [x] Plugin registry, discovery, loading, and validation
+  - [x] Hook engine execution with priority ordering
+  - [x] Admin UI plugin loader
+- [ ] **Task 7.2: Custom Field Types & Routes**
+  - [ ] Allow plugins to register custom REST routes
+  - [ ] Allow plugins to register custom field types
+  - [ ] Allow plugins to extend GraphQL schema
 
-### Month 3: Admin UI Polish & Content Hierarchy
-- [ ] **Task 3.1: Content Tree View**
-  - [ ] Recursive tree UI using graph edges
-  - [ ] Drag-and-drop reordering
-- [ ] **Task 3.2: Bulk Operations**
-  - [ ] Multi-select floating action bar
-  - [ ] Transactional batch publish, delete, AI tag
+### Month 8: CLI & Config-as-Code (G10, G11)
+- [ ] **Task 8.1: CLI Implementation**
+  - [ ] Rewrite CLI in TypeScript with Commander.js
+  - [ ] `rosmarium init`, `dev`, `migrate` commands
+  - [ ] `rosmarium content export/import` commands
+- [ ] **Task 8.2: Config-as-Code System**
+  - [ ] `rosmarium schema pull/push/diff` commands
+  - [ ] Bidirectional schema sync (DB ↔ YAML files)
+
+### Month 9: SDK Integrations & i18n (G12, G13)
+- [ ] **Task 9.1: SDK/Framework Integrations**
+- [ ] **Task 9.2: Full i18n Framework**
 
 ## Notes
-Official transition from V1.0.1 to V2 Roadmap.
-Current priority: **Month 1 — Structured Rich Text Engine**.
-Use the `/v2-feature` playbook to generate an implementation plan for Task 1.1.
+Official transition from V2 Phase 2 to Phase 3 Roadmap.
+Current priority: **Month 7 — Plugin/Extension System**.
+Use the `/v2-feature` playbook to generate an implementation plan for Task 7.1.

@@ -45,14 +45,18 @@ vi.mock("../../modules/content/registry.js", () => ({
     },
 }));
 
-vi.mock("ioredis", () => ({
-    Redis: vi.fn().mockImplementation(() => ({
+vi.mock("ioredis", () => {
+    const RedisMock = vi.fn().mockImplementation(() => ({
         connect: vi.fn().mockResolvedValue(undefined),
         ping: vi.fn().mockResolvedValue("PONG"),
         disconnect: vi.fn(),
         defineCommand: vi.fn(),
-    })),
-}));
+    }));
+    return {
+        default: RedisMock,
+        Redis: RedisMock,
+    };
+});
 
 vi.mock("../auth/auth.service.js", () => ({
     authService: {

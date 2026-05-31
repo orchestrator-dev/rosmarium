@@ -12,6 +12,8 @@ import graphqlPlugin from "./graphql/index.js";
 import { dispatchIntelligenceJob, dispatchEmbeddingJob } from "./modules/jobs/intelligence.jobs.js";
 import { tenantMiddleware, tenantStorageHook } from "./modules/tenants/tenant.middleware.js";
 import { branchStorageHook } from "./modules/branches/branch.middleware.js";
+import { loadPlugins } from "./plugins/plugin-loader.js";
+import { pluginRegistry } from "./plugins/plugin-registry.js";
 
 export async function buildApp() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -39,6 +41,8 @@ export async function buildApp() {
 
     await registerPlugins(app);
 
+    await loadPlugins();
+
     // Load content type registry before routes
     await registry.load();
 
@@ -52,6 +56,13 @@ export async function buildApp() {
     await app.register(websocket);
 
     await registerRoutes(app);
+
+    // Register plugin custom routes
+    for (const plugin of pluginRegistry.getAll()) {
+        if (plugin.routes) {
+            plugin.routes(app);
+        }
+    }
 
     // ─── Bridge rosmariumEvents → GraphQL PubSub ──────────────────────────────
     rosmariumEvents.on("content.created", (entry) => {

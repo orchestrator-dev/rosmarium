@@ -19,6 +19,7 @@ import { rosmariumEvents } from "../../lib/events.js";
 import { branchStorage } from "../../db/index.js";
 import { branchService } from "../branches/branch.service.js";
 import { createId } from "@paralleldrive/cuid2";
+import { hookEngine } from "../../plugins/hook-engine.js";
 
 export interface ContentVersion {
     id: string;
@@ -334,6 +335,13 @@ export const contentCrudService = {
             // Workflow module not loaded or similar
         }
 
+        await hookEngine.execute('content:beforeCreate', {
+            entry: data,
+            contentType: opts.contentTypeName,
+            action: 'create',
+            user: opts.createdBy
+        });
+
         const branchId = branchStorage.getStore();
         if (branchId) {
             const newId = createId();
@@ -378,6 +386,13 @@ export const contentCrudService = {
             metadata: { contentTypeName: opts.contentTypeName },
         });
 
+        await hookEngine.execute('content:afterCreate', {
+            entry: entry.data as Record<string, unknown>,
+            contentType: opts.contentTypeName,
+            action: 'create',
+            user: opts.createdBy
+        });
+
         rosmariumEvents.emit("content.created", entry);
         return entry;
     },
@@ -407,6 +422,13 @@ export const contentCrudService = {
             throw new Error(`Validation failed: ${messages}`);
         }
 
+        await hookEngine.execute('content:beforeUpdate', {
+            entry: mergedData,
+            contentType: opts.contentTypeName,
+            action: 'update',
+            user: opts.updatedBy
+        });
+
         // Snapshot before update
         await this.createVersion(opts.id);
 
@@ -433,11 +455,36 @@ export const contentCrudService = {
             resourceType: opts.contentTypeName,
         });
 
+        await hookEngine.execute('content:afterUpdate', {
+            entry: entry.data as Record<string, unknown>,
+            contentType: opts.contentTypeName,
+            action: 'update',
+            user: opts.updatedBy
+        });
+
         rosmariumEvents.emit("content.updated", entry);
         return entry;
     },
 
     async publish(id: string, updatedBy: string): Promise<ContentEntry> {
+        const [existing] = await db.select().from(contentEntries).where(eq(contentEntries.id, id)).limit(1);
+        if (!existing) throw new Error(`Entry '${id}' not found`);
+
+        let contentTypeName = "unknown";
+        for (const ct of registry.getAll()) {
+            if (ct.id === existing.contentTypeId) {
+                contentTypeName = ct.name;
+                break;
+            }
+        }
+
+        await hookEngine.execute('content:beforePublish', {
+            entry: existing.data as Record<string, unknown>,
+            contentType: contentTypeName,
+            action: 'publish',
+            user: updatedBy
+        });
+
         const [entry] = await db
             .update(contentEntries)
             .set({ status: "published", publishedAt: new Date(), updatedBy, updatedAt: new Date() })
@@ -451,6 +498,13 @@ export const contentCrudService = {
             action: "content.published",
             resourceId: entry.id,
             resourceType: "content_entry",
+        });
+
+        await hookEngine.execute('content:afterPublish', {
+            entry: entry.data as Record<string, unknown>,
+            contentType: contentTypeName,
+            action: 'publish',
+            user: updatedBy
         });
 
         rosmariumEvents.emit("content.published", entry);
@@ -482,10 +536,19 @@ export const contentCrudService = {
         contentTypeName: string,
         deletedBy: string,
     ): Promise<void> {
+        const existingEntry = await this.findOne({ contentTypeName, id });
+        if (existingEntry) {
+            await hookEngine.execute('content:beforeDelete', {
+                entry: existingEntry.data as Record<string, unknown>,
+                contentType: contentTypeName,
+                action: 'delete',
+                user: deletedBy
+            });
+        }
+
         const branchId = branchStorage.getStore();
         if (branchId) {
-            const existing = await this.findOne({ contentTypeName, id });
-            await branchService.saveBranchEntry(branchId, id, "delete", {}, existing?.data as Record<string, unknown>);
+            await branchService.saveBranchEntry(branchId, id, "delete", {}, existingEntry?.data as Record<string, unknown>);
             rosmariumEvents.emit("content.deleted", id, contentTypeName);
             return;
         }
@@ -503,6 +566,15 @@ export const contentCrudService = {
             resourceId: id,
             resourceType: contentTypeName,
         });
+
+        if (existingEntry) {
+            await hookEngine.execute('content:afterDelete', {
+                entry: existingEntry.data as Record<string, unknown>,
+                contentType: contentTypeName,
+                action: 'delete',
+                user: deletedBy
+            });
+        }
 
         rosmariumEvents.emit("content.deleted", id, contentTypeName);
     },

@@ -22,6 +22,7 @@ const schema = z.object({
     OLLAMA_BASE_URL: z.string().url(),
     OTEL_EXPORTER_OTLP_ENDPOINT: z.string().url().optional(),
     OTEL_SERVICE_NAME: z.string().default("rosmarium-server"),
+    PLUGINS: z.string().optional().transform(val => val ? val.split(',').map(s => s.trim()) : []),
 });
 
 export const config = schema.parse(process.env);

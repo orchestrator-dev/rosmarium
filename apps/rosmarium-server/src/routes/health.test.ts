@@ -35,8 +35,8 @@ vi.mock("../modules/content/registry.js", () => ({
 }));
 
 // Mock ioredis
-vi.mock("ioredis", () => ({
-    Redis: vi.fn().mockImplementation(() => {
+vi.mock("ioredis", () => {
+    const RedisMock = vi.fn().mockImplementation(() => {
         const target: Record<string, unknown> = {
             connect: vi.fn().mockResolvedValue(undefined),
             ping: vi.fn().mockResolvedValue("PONG"),
@@ -49,8 +49,12 @@ vi.mock("ioredis", () => ({
                 return vi.fn().mockResolvedValue(1);
             },
         });
-    }),
-}));
+    });
+    return {
+        default: RedisMock,
+        Redis: RedisMock,
+    };
+});
 
 describe("Health Routes", () => {
     it("GET /health returns 200 ok", async () => {

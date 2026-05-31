@@ -52,7 +52,10 @@ const { mockEntry, mockDb } = vi.hoisted(() => {
     return { mockEntry: entry, mockDb: db };
 });
 
-vi.mock("../../db/index.js", () => ({ db: mockDb }));
+vi.mock("../../db/index.js", () => ({ 
+    db: mockDb,
+    branchStorage: { getStore: vi.fn().mockReturnValue(undefined) }
+}));
 
 vi.mock("./registry.js", () => ({
     registry: {
@@ -65,6 +68,7 @@ vi.mock("./registry.js", () => ({
                 { type: "slug", name: "slug", label: "Slug", required: false, unique: false, localised: false, generatedFrom: "title" },
             ],
         }),
+        getAll: vi.fn().mockReturnValue([{ id: "ct-1", name: "article" }]),
         validateEntry: vi.fn().mockReturnValue({ valid: true, errors: [] }),
     },
     ContentTypeRegistry: vi.fn(),
