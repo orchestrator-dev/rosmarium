@@ -55,7 +55,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
 def create_app() -> FastAPI:
     """Create and configure the FastAPI application."""
-    from .api.routes import graph, health, intelligence, rag, search
+    from .api.routes import graph, health, intelligence, rag, search, generation, translation
 
     app = FastAPI(
         title="Rosmarium AI Worker",
@@ -72,6 +72,8 @@ def create_app() -> FastAPI:
     app.include_router(rag.router, prefix="/rag", tags=["rag"])
     app.include_router(intelligence.router, prefix="/intelligence", tags=["intelligence"])
     app.include_router(graph.router, prefix="/graph", tags=["graph"])
+    app.include_router(generation.router, prefix="/generation", tags=["generation"])
+    app.include_router(translation.router, prefix="/translation", tags=["translation"])
 
     return app
 
