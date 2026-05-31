@@ -20,6 +20,83 @@ import { branchStorage } from "../../db/index.js";
 import { branchService } from "../branches/branch.service.js";
 import { createId } from "@paralleldrive/cuid2";
 import { hookEngine } from "../../plugins/hook-engine.js";
+import { createContentLoader } from "./dataloader.js";
+import type DataLoader from "dataloader";
+import type { FieldDefinition, ComponentFieldsLookup } from "./field-types.js";
+
+async function populateRelations(
+    data: Record<string, unknown>,
+    fields: FieldDefinition[],
+    loader: DataLoader<string, ContentEntry | null>,
+    depth: number,
+    maxDepth: number,
+    lookupComponentFields: ComponentFieldsLookup
+): Promise<Record<string, unknown>> {
+    if (depth >= maxDepth) return data;
+
+    const result = { ...data };
+
+    for (const field of fields) {
+        const val = result[field.name];
+        if (val === undefined || val === null) continue;
+
+        if (field.type === "relation") {
+            if (field.many && Array.isArray(val)) {
+                const loaded = await Promise.all(val.map(id => typeof id === "string" ? loader.load(id) : null));
+                result[field.name] = loaded.filter(Boolean);
+            } else if (!field.many && typeof val === "string") {
+                const loaded = await loader.load(val);
+                if (loaded) result[field.name] = loaded;
+            }
+        } else if (field.type === "group" && typeof val === "object") {
+            result[field.name] = await populateRelations(
+                val as Record<string, unknown>,
+                field.fields,
+                loader,
+                depth,
+                maxDepth,
+                lookupComponentFields
+            );
+        } else if (field.type === "component" && typeof val === "object") {
+            const compData = val as Record<string, unknown>;
+            const compName = compData["_component"] as string;
+            if (compName) {
+                const compFields = lookupComponentFields(compName);
+                if (compFields) {
+                    result[field.name] = await populateRelations(
+                        compData,
+                        compFields,
+                        loader,
+                        depth,
+                        maxDepth,
+                        lookupComponentFields
+                    );
+                }
+            }
+        } else if (field.type === "blocks" && Array.isArray(val)) {
+            result[field.name] = await Promise.all(val.map(async (block) => {
+                const blockData = block as Record<string, unknown>;
+                const compName = blockData["_component"] as string;
+                if (compName) {
+                    const compFields = lookupComponentFields(compName);
+                    if (compFields) {
+                        return populateRelations(
+                            blockData,
+                            compFields,
+                            loader,
+                            depth,
+                            maxDepth,
+                            lookupComponentFields
+                        );
+                    }
+                }
+                return block;
+            }));
+        }
+    }
+
+    return result;
+}
 
 export interface ContentVersion {
     id: string;
@@ -37,6 +114,7 @@ export interface FindManyOpts {
     locale?: string;
     localeFallbackChain?: string[];
     status?: "draft" | "published" | "archived";
+    populate?: boolean;
 }
 
 export interface FindManyUnifiedOpts {
@@ -48,12 +126,14 @@ export interface FindManyUnifiedOpts {
     localeFallbackChain?: string[];
     status?: "draft" | "published" | "archived";
     localizationGroupId?: string;
+    populate?: boolean;
 }
 
 export interface FindOneOpts {
     contentTypeName: string;
     id: string;
     locale?: string;
+    populate?: boolean;
 }
 
 /** Generate a URL-friendly slug from a string. */
@@ -177,6 +257,19 @@ export const contentCrudService = {
             }
         }
 
+        if (opts.populate) {
+            const loader = createContentLoader();
+            const lookup = (name: string) => registry.getComponent(name)?.fields || null;
+            entries = await Promise.all(entries.map(async (entry) => {
+                const ct = registry.getAll().find(c => c.id === entry.contentTypeId);
+                if (!ct) return entry;
+                return {
+                    ...entry,
+                    data: await populateRelations(entry.data as Record<string, unknown>, ct.fields, loader, 0, 3, lookup)
+                };
+            }));
+        }
+
         return {
             entries,
             nextCursor,
@@ -285,6 +378,19 @@ export const contentCrudService = {
             }
         }
 
+        if (opts.populate) {
+            const loader = createContentLoader();
+            const lookup = (name: string) => registry.getComponent(name)?.fields || null;
+            entries = await Promise.all(entries.map(async (entry) => {
+                const ct = registry.getAll().find(c => c.id === entry.contentTypeId);
+                if (!ct) return entry;
+                return {
+                    ...entry,
+                    data: await populateRelations(entry.data as Record<string, unknown>, ct.fields, loader, 0, 3, lookup)
+                };
+            }));
+        }
+
         return {
             entries,
             nextCursor,
@@ -337,6 +443,15 @@ export const contentCrudService = {
                 } else if (row) {
                     row = { ...row, data: bEntry.data as Record<string, unknown> };
                 }
+            }
+        }
+
+        if (row && opts.populate) {
+            const loader = createContentLoader();
+            const lookup = (name: string) => registry.getComponent(name)?.fields || null;
+            const ct = registry.getAll().find(c => c.id === row!.contentTypeId);
+            if (ct) {
+                row.data = await populateRelations(row.data as Record<string, unknown>, ct.fields, loader, 0, 3, lookup);
             }
         }
 

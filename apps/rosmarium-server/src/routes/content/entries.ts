@@ -15,6 +15,7 @@ interface ListQuery {
     cursor?: string;
     locale?: string;
     status?: string;
+    populate?: string;
 }
 
 function parseSortParam(sort: string | undefined): SortInput {
@@ -46,6 +47,7 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
                         status: { type: "string", enum: ["draft", "published", "archived"] },
                         sort: { type: "string" },
                         contentTypes: { type: "string" }, // Comma-separated content type names
+                        populate: { type: "string" },
                     },
                     additionalProperties: true,
                 },
@@ -87,6 +89,7 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
                     locale: request.query.locale ?? request.locale,
                     localeFallbackChain: request.localeFallbackChain,
                     status: request.query.status as "draft" | "published" | "archived" | undefined,
+                    populate: request.query.populate === "true" || request.query.populate === "1",
                 });
 
                 // Attach contentTypeName to each entry so the frontend knows what it is
@@ -136,6 +139,7 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
                         locale: { type: "string" },
                         status: { type: "string", enum: ["draft", "published", "archived"] },
                         sort: { type: "string" },
+                        populate: { type: "string" },
                     },
                     additionalProperties: true,
                 },
@@ -181,6 +185,7 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
                     locale: request.query.locale ?? request.locale,
                     localeFallbackChain: request.localeFallbackChain,
                     status: request.query.status as "draft" | "published" | "archived" | undefined,
+                    populate: request.query.populate === "true" || request.query.populate === "1",
                 });
                 return {
                     data: result.entries,
@@ -313,7 +318,7 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     // GET /api/content/:type/:id — get single entry
     app.get<{
         Params: { type: string; id: string };
-        Querystring: { locale?: string };
+        Querystring: { locale?: string; populate?: string };
     }>(
         "/api/content/:type/:id",
         {
@@ -325,6 +330,10 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
                     type: "object",
                     properties: { type: { type: "string" }, id: { type: "string" } },
                     required: ["type", "id"],
+                },
+                querystring: {
+                    type: "object",
+                    properties: { locale: { type: "string" }, populate: { type: "string" } },
                 },
                 response: {
                     200: { type: "object", properties: { data: { type: "object", additionalProperties: true } } },
@@ -341,6 +350,7 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
                 contentTypeName: request.params.type,
                 id: request.params.id,
                 locale: request.query.locale ?? request.locale,
+                populate: request.query.populate === "true" || request.query.populate === "1",
             });
             if (!entry) {
                 return reply.status(404).send({

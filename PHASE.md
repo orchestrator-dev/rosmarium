@@ -65,8 +65,15 @@
   - [x] `apps/rosmarium-server/src/modules/media/transforms.ts` Transformation definitions
   - [x] `apps/rosmarium-server/src/modules/media/media.routes.ts` Transformation query parameters
 
+### Month 14: Performance & Horizontal Scale
+- [x] **Task 14.1: Query Performance Optimization**
+  - [x] `apps/rosmarium-server/src/modules/content/query.builder.ts` Optimize relation loading
+  - [x] `apps/rosmarium-server/src/modules/content/dataloader.ts` DataLoader for batched relation resolution
+  - [x] `apps/rosmarium-server/src/modules/content/cache.service.ts` Redis caching layer
+
 ## Notes
 Phase 4 (AI-Native Content Intelligence) is officially completed.
 Phase 5 Task 12.1 (Edge Delivery Network) is completed.
 Phase 5 Task 13.1 (Media Processing Pipeline) is completed.
+Phase 5 Task 14.1 (Query Performance Optimization) is completed.
 Current priority: **Phase 3 — Developer Experience & Extensibility** (Resume Tasks 7.2).
