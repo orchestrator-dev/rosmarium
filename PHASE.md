@@ -59,7 +59,14 @@
   - [x] `apps/rosmarium-edge/src/router.ts` Edge API routing
   - [x] `apps/rosmarium-server/src/modules/cache/invalidation.service.ts` Cache invalidation via webhooks
 
+### Month 13: Media Processing Pipeline (G21)
+- [x] **Task 13.1: Image Processing**
+  - [x] `apps/rosmarium-server/src/modules/media/processing.service.ts` Image processing with Sharp
+  - [x] `apps/rosmarium-server/src/modules/media/transforms.ts` Transformation definitions
+  - [x] `apps/rosmarium-server/src/modules/media/media.routes.ts` Transformation query parameters
+
 ## Notes
 Phase 4 (AI-Native Content Intelligence) is officially completed.
 Phase 5 Task 12.1 (Edge Delivery Network) is completed.
+Phase 5 Task 13.1 (Media Processing Pipeline) is completed.
 Current priority: **Phase 3 — Developer Experience & Extensibility** (Resume Tasks 7.2).
