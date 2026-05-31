@@ -24,6 +24,7 @@ import {
   Webhook as WebhookIcon,
   Security as SecurityIcon,
   Schema as SchemaIcon,
+  AccountTree as AccountTreeIcon,
 } from '@mui/icons-material';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 
@@ -40,6 +41,7 @@ const settingsItems = [
   { text: 'Content Types', icon: <SchemaIcon />, path: '/settings/content-types' },
   { text: 'Webhooks', icon: <WebhookIcon />, path: '/settings/webhooks' },
   { text: 'Access Control', icon: <SecurityIcon />, path: '/settings/access' },
+  { text: 'Workflows', icon: <AccountTreeIcon />, path: '/settings/workflows' },
 ];
 
 export function AppShell() {

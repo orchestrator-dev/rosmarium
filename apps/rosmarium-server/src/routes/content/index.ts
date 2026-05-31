@@ -6,6 +6,7 @@ import contentEntryRoutes from "./entries.js";
 import templateRoutes from "./templates.js";
 import bulkRoutes from "./bulk.js";
 import hierarchyRoutes from "./hierarchy.js";
+import { schedulerRoutes } from "../../modules/content/scheduler.routes.js";
 
 const contentRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     await app.register(contentTypeRoutes);
@@ -13,6 +14,7 @@ const contentRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     await app.register(templateRoutes);
     await app.register(bulkRoutes);
     await app.register(hierarchyRoutes);
+    await app.register(schedulerRoutes);
 };
 
 export default fp(contentRoutes, { name: "content-routes" });

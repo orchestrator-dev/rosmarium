@@ -14,6 +14,7 @@ import { MediaLibraryPage } from './pages/MediaLibrary';
 import { ContentTypesPage } from './pages/settings/ContentTypes';
 import { WebhooksPage } from './pages/settings/Webhooks';
 import { AccessControlPage } from './pages/settings/AccessControl';
+import { WorkflowsPage } from './pages/settings/Workflows';
 
 import { LoginPage } from './pages/Login';
 
@@ -36,6 +37,7 @@ export function App() {
             <Route path="settings/content-types" element={<ContentTypesPage />} />
             <Route path="settings/webhooks" element={<WebhooksPage />} />
             <Route path="settings/access" element={<AccessControlPage />} />
+            <Route path="settings/workflows" element={<WorkflowsPage />} />
           </Route>
         </Routes>
       </BrowserRouter>

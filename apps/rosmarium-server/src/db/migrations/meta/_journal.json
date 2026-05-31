@@ -71,6 +71,20 @@
       "when": 1780213279985,
       "tag": "0010_lean_master_mold",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1780218217698,
+      "tag": "0011_slow_charles_xavier",
+      "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1780218303874,
+      "tag": "0012_easy_freak",
+      "breakpoints": true
     }
   ]
 }

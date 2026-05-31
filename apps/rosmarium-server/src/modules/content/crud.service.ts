@@ -250,12 +250,24 @@ export const contentCrudService = {
             throw new Error(`Validation failed: ${messages}`);
         }
 
+        // Get workflow initial state if any
+        let status = "draft";
+        try {
+            const { workflowService } = await import("../workflow/workflow.service.js");
+            const wf = await workflowService.getWorkflowForContentType(contentType.id);
+            if (wf) {
+                status = wf.definition.initialState || "draft";
+            }
+        } catch {
+            // Workflow module not loaded or similar
+        }
+
         const [entry] = await db
             .insert(contentEntries)
             .values({
                 contentTypeId: contentType.id,
                 locale: opts.locale ?? "en",
-                status: "draft",
+                status,
                 data,
                 createdBy: opts.createdBy,
                 updatedBy: opts.createdBy,

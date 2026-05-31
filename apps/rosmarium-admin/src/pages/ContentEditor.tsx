@@ -33,7 +33,8 @@ import { PreviewPanel } from '../components/preview/PreviewPanel';
 import type { ContentType } from '../components/content-type-builder/types';
 import { FieldRenderer } from '../components/editor/FieldRenderer';
 import { TooltipButton } from '../components/common/TooltipButton';
-
+import { ScheduleDialog } from '../components/content/ScheduleDialog';
+import { WorkflowTimeline } from '../components/workflow/WorkflowTimeline';
 interface ContentEntry {
   id: string;
   contentType: string;
@@ -65,6 +66,9 @@ export function ContentEditorPage() {
   const [templateDescription, setTemplateDescription] = useState('');
   const [templateIsGlobal, setTemplateIsGlobal] = useState(false);
   const [savingTemplate, setSavingTemplate] = useState(false);
+
+  const [scheduleDialogOpen, setScheduleDialogOpen] = useState(false);
+  const [scheduleAction, setScheduleAction] = useState<'publish' | 'unpublish'>('publish');
 
   // Fetch content type definition + entry (if editing) + all content types (for component lookup)
   useEffect(() => {
@@ -192,6 +196,8 @@ export function ContentEditorPage() {
     if (!entry) return;
     setSaving(true);
     try {
+      // Actually this is now workflow transition if a workflow is assigned, but we'll fall back to simple update
+      // For this, we just update status to "published" or "draft" which might fail if workflow transitions are strictly enforced, but that's handled by the backend
       const res = await fetch(`/api/content/${type}/${entry.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
@@ -205,6 +211,21 @@ export function ContentEditorPage() {
       console.error('Publish/unpublish failed', err);
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleSchedule = async (date: Date, action: 'publish' | 'unpublish') => {
+    if (!entry) return;
+    try {
+      const res = await fetch(`/api/content/${type}/${entry.id}/schedule`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action, scheduledAt: date.toISOString() }),
+      });
+      if (!res.ok) throw new Error('Failed to schedule');
+      // show success snackbar here
+    } catch (err) {
+      console.error('Schedule failed', err);
     }
   };
 
@@ -475,34 +496,64 @@ export function ContentEditorPage() {
               {!isNew && entry && (
                 <Stack spacing={1} sx={{ mt: 1 }}>
                   {entry.status !== 'published' ? (
-                    <TooltipButton
-                      tooltipTitle="Publish this entry to make it visible to clients"
-                      variant="contained"
-                      color="success"
-                      startIcon={<PublishIcon />}
-                      onClick={() => void handlePublish(true)}
-                      disabled={saving}
-                      fullWidth
-                    >
-                      Publish
-                    </TooltipButton>
+                    <>
+                      <TooltipButton
+                        tooltipTitle="Publish this entry to make it visible to clients"
+                        variant="contained"
+                        color="success"
+                        startIcon={<PublishIcon />}
+                        onClick={() => void handlePublish(true)}
+                        disabled={saving}
+                        fullWidth
+                      >
+                        Publish
+                      </TooltipButton>
+                      <Button
+                        variant="outlined"
+                        color="success"
+                        size="small"
+                        onClick={() => {
+                          setScheduleAction('publish');
+                          setScheduleDialogOpen(true);
+                        }}
+                      >
+                        Schedule Publish...
+                      </Button>
+                    </>
                   ) : (
-                    <TooltipButton
-                      tooltipTitle="Unpublish to hide this entry from clients"
-                      variant="outlined"
-                      color="warning"
-                      startIcon={<UnpublishIcon />}
-                      onClick={() => void handlePublish(false)}
-                      disabled={saving}
-                      fullWidth
-                    >
-                      Unpublish
-                    </TooltipButton>
+                    <>
+                      <TooltipButton
+                        tooltipTitle="Unpublish to hide this entry from clients"
+                        variant="outlined"
+                        color="warning"
+                        startIcon={<UnpublishIcon />}
+                        onClick={() => void handlePublish(false)}
+                        disabled={saving}
+                        fullWidth
+                      >
+                        Unpublish
+                      </TooltipButton>
+                      <Button
+                        variant="outlined"
+                        color="warning"
+                        size="small"
+                        onClick={() => {
+                          setScheduleAction('unpublish');
+                          setScheduleDialogOpen(true);
+                        }}
+                      >
+                        Schedule Unpublish...
+                      </Button>
+                    </>
                   )}
                 </Stack>
               )}
             </Stack>
           </Paper>
+
+          {!isNew && entry && (
+              <WorkflowTimeline entryId={entry.id} />
+          )}
         </Grid>
       </Grid>
 
@@ -549,6 +600,13 @@ export function ContentEditorPage() {
           </Button>
         </DialogActions>
       </Dialog>
+
+      <ScheduleDialog
+        open={scheduleDialogOpen}
+        onClose={() => setScheduleDialogOpen(false)}
+        action={scheduleAction}
+        onSchedule={handleSchedule}
+      />
     </Box>
   );
 }

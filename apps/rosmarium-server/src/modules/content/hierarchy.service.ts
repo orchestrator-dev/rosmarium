@@ -1,7 +1,7 @@
 import { and, eq } from "drizzle-orm";
 import { db } from "../../db/index.js";
 import { contentEntries, graphEdges } from "../../db/schema/index.js";
-import { rosmariumEvents } from "../../lib/events.js";
+
 
 export interface HierarchyNode {
     id: string;
