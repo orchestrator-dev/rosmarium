@@ -1,6 +1,6 @@
 import { db } from "../../db/index.js";
 import { aiWorkerClient } from "./ai-worker.client.js";
-import { vectorSearch } from "./vector.search.js";
+import { vectorSearch, VectorSearchResult } from "./vector.search.js";
 
 export const recommendationService = {
     /**
@@ -15,7 +15,7 @@ export const recommendationService = {
         const entry = entryRows[0];
         if (!entry) throw new Error("Entry not found");
 
-        const typedEntry = entry as Record<string, unknown>;
+        const typedEntry = entry as { content_type_id: string; data?: { title?: string; description?: string; body?: string } };
         const textToEmbed = [
             typedEntry.data?.title,
             typedEntry.data?.description,
@@ -23,7 +23,7 @@ export const recommendationService = {
         ].filter(Boolean).join(" ");
 
         // 2. Vector Search
-        let vectorResults: Record<string, unknown>[] = [];
+        let vectorResults: VectorSearchResult[] = [];
         try {
             const embedResult = await aiWorkerClient.embedQuery(textToEmbed);
             vectorResults = await vectorSearch({
@@ -71,11 +71,11 @@ export const recommendationService = {
         // 4. Merge and Score
         const scores = new Map<string, number>();
 
-        vectorResults.forEach((vr: Record<string, unknown>, idx: number) => {
-            if (vr.entryId !== entryId) {
+        vectorResults.forEach((vr: VectorSearchResult, idx: number) => {
+            if (vr.contentEntryId !== entryId) {
                 // simple rank-based score
                 const score = 1 / (idx + 1);
-                scores.set(vr.entryId as string, (scores.get(vr.entryId as string) || 0) + score);
+                scores.set(vr.contentEntryId, (scores.get(vr.contentEntryId) || 0) + score);
             }
         });
 

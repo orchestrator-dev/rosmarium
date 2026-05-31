@@ -57,7 +57,7 @@ export const aiGovernanceService = {
         // Get tenant's plan/budget settings
         const tenantData = await db.select({ settings: tenants.settings }).from(tenants).where(eq(tenants.id, tenantId));
         const settings = (tenantData[0]?.settings as Record<string, unknown>) || {};
-        const budget = settings.aiTokenBudget || 1000000; // default 1M tokens
+        const budget = (settings.aiTokenBudget as number) || 1000000; // default 1M tokens
 
         return {
             usage,
