@@ -1,0 +1,42 @@
+name: CLI Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'pnpm'
+          
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+        
+      - name: Build JS
+        run: pnpm --filter @orchestrator.dev/cli build
+        
+      - name: Build Binaries (pkg)
+        working-directory: apps/rosmarium-cli
+        run: npx pkg . -t node18-linux-x64,node18-macos-x64,node18-win-x64 --out-path bin
+        
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            apps/rosmarium-cli/bin/rosmarium-linux
+            apps/rosmarium-cli/bin/rosmarium-macos
+            apps/rosmarium-cli/bin/rosmarium-win.exe
