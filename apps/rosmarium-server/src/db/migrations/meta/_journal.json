@@ -85,6 +85,13 @@
       "when": 1780218303874,
       "tag": "0012_easy_freak",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1780227495464,
+      "tag": "0013_red_joshua_kane",
+      "breakpoints": true
     }
   ]
 }

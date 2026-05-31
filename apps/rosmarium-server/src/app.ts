@@ -10,6 +10,7 @@ import { webhookService } from "./modules/webhooks/webhook.service.js";
 import graphqlPlugin from "./graphql/index.js";
 import { dispatchIntelligenceJob, dispatchEmbeddingJob } from "./modules/jobs/intelligence.jobs.js";
 import { tenantMiddleware, tenantStorageHook } from "./modules/tenants/tenant.middleware.js";
+import { branchStorageHook } from "./modules/branches/branch.middleware.js";
 
 export async function buildApp() {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -30,9 +31,10 @@ export async function buildApp() {
         } as any 
     });
 
-    // Register multi-tenant context
+    // Register multi-tenant and branch context
     app.addHook("onRequest", tenantMiddleware);
     app.addHook("onRequest", tenantStorageHook);
+    app.addHook("onRequest", branchStorageHook);
 
     await registerPlugins(app);
 

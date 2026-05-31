@@ -25,8 +25,10 @@ import {
   Security as SecurityIcon,
   Schema as SchemaIcon,
   AccountTree as AccountTreeIcon,
+  CallSplit as CallSplitIcon,
 } from '@mui/icons-material';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { BranchSwitcher } from './branches/BranchSwitcher';
 
 const drawerWidth = 240;
 
@@ -42,6 +44,7 @@ const settingsItems = [
   { text: 'Webhooks', icon: <WebhookIcon />, path: '/settings/webhooks' },
   { text: 'Access Control', icon: <SecurityIcon />, path: '/settings/access' },
   { text: 'Workflows', icon: <AccountTreeIcon />, path: '/settings/workflows' },
+  { text: 'Branches', icon: <CallSplitIcon />, path: '/settings/branches' },
 ];
 
 export function AppShell() {
@@ -181,6 +184,7 @@ export function AppShell() {
           >
             <MenuIcon />
           </IconButton>
+          <BranchSwitcher />
           <Box sx={{ flexGrow: 1 }} />
           <IconButton color="inherit" onClick={() => {
             fetch('/api/auth/logout', { method: 'POST' }).finally(() => navigate('/login'));

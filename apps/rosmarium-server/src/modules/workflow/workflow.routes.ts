@@ -1,8 +1,15 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
 import { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
 import { Type } from "@sinclair/typebox";
 import { workflowService } from "./workflow.service.js";
 
-export const workflowRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
+declare module "fastify" {
+    interface FastifyInstance {
+        requirePermission(permission: string): any;
+    }
+}
+
+export const workflowRoutes: FastifyPluginAsyncTypebox = async (fastify: any) => {
     fastify.addHook("onRequest", fastify.requirePermission("workflow:read:any"));
 
     const WorkflowDef = Type.Object({
@@ -53,7 +60,7 @@ export const workflowRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
                 isDefault: Type.Boolean()
             })
         }
-    }, async (req) => {
+    }, async (req: any) => {
         const body = req.body as { name: string; definition: unknown; isDefault: boolean };
         return workflowService.createWorkflow(body as any);
     });
@@ -68,7 +75,7 @@ export const workflowRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
                 isDefault: Type.Optional(Type.Boolean())
             })
         }
-    }, async (req) => {
+    }, async (req: any) => {
         const body = req.body as { name?: string; definition?: unknown; isDefault?: boolean };
         return workflowService.updateWorkflow(req.params.id, body as any);
     });
@@ -78,13 +85,13 @@ export const workflowRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
         schema: {
             params: Type.Object({ id: Type.String() })
         }
-    }, async (req, reply) => {
+    }, async (req: any, reply: any) => {
         await workflowService.deleteWorkflow(req.params.id);
         reply.code(204).send();
     });
 
     // Content entry transition endpoints
-    fastify.get("/history/:entryId", async (req) => {
+    fastify.get("/history/:entryId", async (req: any) => {
         return workflowService.getHistory(req.params.entryId as string);
     });
 
@@ -96,7 +103,7 @@ export const workflowRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
                 comment: Type.Optional(Type.String())
             })
         }
-    }, async (req) => {
+    }, async (req: any) => {
         return workflowService.transition(req.params.entryId, req.body.toState, req.user!.id, req.body.comment);
     });
 };

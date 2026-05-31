@@ -2,6 +2,7 @@ import { and, eq, count, sql } from "drizzle-orm";
 import { db } from "../../db/index.js";
 import {
     contentEntries,
+    branchEntries,
     auditLog,
     type ContentEntry,
 } from "../../db/schema/index.js";
@@ -15,6 +16,9 @@ import {
     type SortInput,
 } from "./query.builder.js";
 import { rosmariumEvents } from "../../lib/events.js";
+import { branchStorage } from "../../db/index.js";
+import { branchService } from "../branches/branch.service.js";
+import { createId } from "@paralleldrive/cuid2";
 
 export interface ContentVersion {
     id: string;
@@ -119,10 +123,29 @@ export const contentCrudService = {
         ]);
 
         const hasMore = rows.length > limit;
-        const entries = hasMore ? rows.slice(0, limit) : rows;
+        let entries = hasMore ? rows.slice(0, limit) : rows;
         const lastEntry = entries.at(-1);
         const nextCursor =
             hasMore && lastEntry ? encodeCursor(lastEntry.id) : null;
+
+        const branchId = branchStorage.getStore();
+        if (branchId && entries.length > 0) {
+            const entryIds = entries.map(e => e.id);
+            const bEntries = await db.query.branchEntries.findMany({
+                where: and(
+                    eq(branchEntries.branchId, branchId),
+                    sql`${branchEntries.entryId} = ANY(ARRAY[${sql.join(entryIds, sql`, `)}]::text[])`
+                )
+            });
+            if (bEntries.length > 0) {
+                entries = entries.map(entry => {
+                    const b = bEntries.find(be => be.entryId === entry.id);
+                    if (!b) return entry;
+                    if (b.action === "delete") return null;
+                    return { ...entry, data: b.data as Record<string, unknown> };
+                }).filter(Boolean) as ContentEntry[];
+            }
+        }
 
         return {
             entries,
@@ -184,10 +207,29 @@ export const contentCrudService = {
         ]);
 
         const hasMore = rows.length > limit;
-        const entries = hasMore ? rows.slice(0, limit) : rows;
+        let entries = hasMore ? rows.slice(0, limit) : rows;
         const lastEntry = entries.at(-1);
         const nextCursor =
             hasMore && lastEntry ? encodeCursor(lastEntry.id) : null;
+
+        const branchId = branchStorage.getStore();
+        if (branchId && entries.length > 0) {
+            const entryIds = entries.map(e => e.id);
+            const bEntries = await db.query.branchEntries.findMany({
+                where: and(
+                    eq(branchEntries.branchId, branchId),
+                    sql`${branchEntries.entryId} = ANY(ARRAY[${sql.join(entryIds, sql`, `)}]::text[])`
+                )
+            });
+            if (bEntries.length > 0) {
+                entries = entries.map(entry => {
+                    const b = bEntries.find(be => be.entryId === entry.id);
+                    if (!b) return entry;
+                    if (b.action === "delete") return null;
+                    return { ...entry, data: b.data as Record<string, unknown> };
+                }).filter(Boolean) as ContentEntry[];
+            }
+        }
 
         return {
             entries,
@@ -208,11 +250,41 @@ export const contentCrudService = {
         ];
         if (opts.locale) conditions.push(eq(contentEntries.locale, opts.locale));
 
-        const [row] = await db
+        let [row] = await db
             .select()
             .from(contentEntries)
             .where(and(...conditions))
             .limit(1);
+
+        const branchId = branchStorage.getStore();
+        if (branchId) {
+            const bEntry = await db.query.branchEntries.findFirst({
+                where: and(
+                    eq(branchEntries.branchId, branchId),
+                    eq(branchEntries.entryId, opts.id)
+                )
+            });
+            if (bEntry) {
+                if (bEntry.action === "delete") return null;
+                if (bEntry.action === "create" && !row) {
+                    row = {
+                        id: bEntry.entryId,
+                        contentTypeId: contentType.id,
+                        locale: opts.locale || "en",
+                        status: "draft",
+                        data: bEntry.data,
+                        metadata: {},
+                        createdBy: null,
+                        updatedBy: null,
+                        createdAt: bEntry.createdAt,
+                        updatedAt: bEntry.updatedAt,
+                        publishedAt: null
+                    } as ContentEntry;
+                } else if (row) {
+                    row = { ...row, data: bEntry.data as Record<string, unknown> };
+                }
+            }
+        }
 
         return row ?? null;
     },
@@ -262,12 +334,33 @@ export const contentCrudService = {
             // Workflow module not loaded or similar
         }
 
+        const branchId = branchStorage.getStore();
+        if (branchId) {
+            const newId = createId();
+            await branchService.saveBranchEntry(branchId, newId, "create", data);
+            const entry = {
+                id: newId,
+                contentTypeId: contentType.id,
+                locale: opts.locale ?? "en",
+                status,
+                data,
+                metadata: {},
+                createdBy: opts.createdBy,
+                updatedBy: opts.createdBy,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                publishedAt: null
+            } as ContentEntry;
+            rosmariumEvents.emit("content.created", entry);
+            return entry;
+        }
+
         const [entry] = await db
             .insert(contentEntries)
             .values({
                 contentTypeId: contentType.id,
                 locale: opts.locale ?? "en",
-                status,
+                status: status as "draft" | "published" | "archived",
                 data,
                 createdBy: opts.createdBy,
                 updatedBy: opts.createdBy,
@@ -316,6 +409,14 @@ export const contentCrudService = {
 
         // Snapshot before update
         await this.createVersion(opts.id);
+
+        const branchId = branchStorage.getStore();
+        if (branchId) {
+            await branchService.saveBranchEntry(branchId, opts.id, "update", mergedData, existing.data as Record<string, unknown>);
+            const entry = { ...existing, data: mergedData, updatedBy: opts.updatedBy, updatedAt: new Date() } as ContentEntry;
+            rosmariumEvents.emit("content.updated", entry);
+            return entry;
+        }
 
         const [entry] = await db
             .update(contentEntries)
@@ -381,6 +482,14 @@ export const contentCrudService = {
         contentTypeName: string,
         deletedBy: string,
     ): Promise<void> {
+        const branchId = branchStorage.getStore();
+        if (branchId) {
+            const existing = await this.findOne({ contentTypeName, id });
+            await branchService.saveBranchEntry(branchId, id, "delete", {}, existing?.data as Record<string, unknown>);
+            rosmariumEvents.emit("content.deleted", id, contentTypeName);
+            return;
+        }
+
         const [row] = await db
             .delete(contentEntries)
             .where(eq(contentEntries.id, id))

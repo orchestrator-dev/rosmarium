@@ -1,5 +1,5 @@
 import { getSchedulerQueue } from "./scheduler.queue.js";
-import { TRPCError } from "@trpc/server";
+
 import { db } from "../../db/index.js";
 import { contentEntries } from "../../db/schema/index.js";
 import { eq } from "drizzle-orm";
@@ -10,13 +10,13 @@ export const schedulerService = {
         const delay = scheduledAt.getTime() - Date.now();
         
         if (delay <= 0) {
-            throw new TRPCError({ code: "BAD_REQUEST", message: "Scheduled time must be in the future" });
+            throw new Error("Scheduled time must be in the future");
         }
 
         // Verify entry exists
         const [entry] = await db.select().from(contentEntries).where(eq(contentEntries.id, entryId));
         if (!entry) {
-            throw new TRPCError({ code: "NOT_FOUND", message: "Entry not found" });
+            throw new Error("Entry not found");
         }
 
         // Add to BullMQ with delay

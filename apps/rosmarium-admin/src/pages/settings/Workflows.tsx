@@ -39,11 +39,14 @@ export function WorkflowsPage() {
                     {workflows.map(wf => (
                         <Paper key={wf.id} sx={{ p: 3 }}>
                             <Typography variant="h6" sx={{ mb: 2 }}>{wf.name} {wf.isDefault && "(Default)"}</Typography>
-                            <WorkflowBuilder 
-                                initialStates={wf.definition?.states || []} 
-                                initialTransitions={wf.definition?.transitions || []} 
-                                onChange={() => {}}
-                            />
+                            <Box sx={{ flex: 1 }}>
+                                <WorkflowBuilder 
+                                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                    initialStates={(wf.definition?.states as any) || []} 
+                                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                    initialTransitions={(wf.definition?.transitions as any) || []} 
+                                />
+                            </Box>
                         </Paper>
                     ))}
                 </Stack>

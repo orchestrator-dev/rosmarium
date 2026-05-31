@@ -11,6 +11,7 @@ import graphRoutes from "./graph.js";
 import userRoutes from "./users.js";
 import { previewRoutes } from "../modules/preview/preview.routes.js";
 import { workflowRoutes } from "../modules/workflow/workflow.routes.js";
+import { branchRoutes } from "../modules/branches/branch.routes.js";
 
 export const registerRoutes = async (app: FastifyInstance) => {
     await app.register(healthRoutes);
@@ -25,4 +26,5 @@ export const registerRoutes = async (app: FastifyInstance) => {
     await app.register(userRoutes);
     await app.register(previewRoutes);
     await app.register(workflowRoutes, { prefix: "/api/workflow" });
+    await app.register(branchRoutes, { prefix: "/api/branches" });
 };

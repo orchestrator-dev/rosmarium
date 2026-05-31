@@ -166,6 +166,9 @@ importers:
       '@fastify/swagger-ui':
         specifier: ^3.0.0
         version: 3.1.0
+      '@fastify/type-provider-typebox':
+        specifier: ^6.1.0
+        version: 6.1.0(typebox@1.1.39)
       '@lucia-auth/adapter-drizzle':
         specifier: ^1.1.0
         version: 1.1.0(drizzle-orm@0.43.1(@opentelemetry/api@1.9.1)(@types/pg@8.15.6)(postgres@3.4.8))(lucia@3.2.2)
@@ -211,6 +214,9 @@ importers:
       '@pothos/plugin-with-input':
         specifier: ^4.1.4
         version: 4.1.4(@pothos/core@4.12.0(graphql@16.13.1))(graphql@16.13.1)
+      '@sinclair/typebox':
+        specifier: ^0.34.49
+        version: 0.34.49
       bullmq:
         specifier: ^5.71.0
         version: 5.71.0
@@ -1252,6 +1258,11 @@ packages:
 
   '@fastify/swagger@8.15.0':
     resolution: {integrity: sha512-zy+HEEKFqPMS2sFUsQU5X0MHplhKJvWeohBwTCkBAJA/GDYGLGUWQaETEhptiqxK7Hs0fQB9B4MDb3pbwIiCwA==}
+
+  '@fastify/type-provider-typebox@6.1.0':
+    resolution: {integrity: sha512-k29cOitDRcZhMXVjtRq0+caKxdWoArz7su+dQWGzGWnFG+fSKhevgiZ7nexHWuXOEEQzgJlh6cptIMu69beaTA==}
+    peerDependencies:
+      typebox: ^1.0.13
 
   '@floating-ui/core@1.7.5':
     resolution: {integrity: sha512-1Ih4WTWyw0+lKyFMcBHGbb5U5FtuHJuujoyyr5zTaWS5EYMeT6Jb2AuDeftsCsEuchO+mM2ij5+q9crhydzLhQ==}
@@ -2668,6 +2679,9 @@ packages:
 
   '@sinclair/typebox@0.27.10':
     resolution: {integrity: sha512-MTBk/3jGLNB2tVxv6uLlFh1iu64iYOQ2PbdOSK3NW8JZsmlaOh2q6sdtKowBhfw8QFLmYNzTW4/oK4uATIi6ZA==}
+
+  '@sinclair/typebox@0.34.49':
+    resolution: {integrity: sha512-brySQQs7Jtn0joV8Xh9ZV/hZb9Ozb0pmazDIASBkYKCjXrXU3mpcFahmK/z4YDhGkQvP9mWJbVyahdtU5wQA+A==}
 
   '@tailwindcss/node@4.3.0':
     resolution: {integrity: sha512-aFb4gUhFOgdh9AXo4IzBEOzBkkAxm9VigwDJnMIYv3lcfXCJVesNfbEaBl4BNgVRyid92AmdviqwBUBRKSeY3g==}
@@ -5663,6 +5677,9 @@ packages:
     resolution: {integrity: sha512-TkRKr9sUTxEH8MdfuCSP7VizJyzRNMjj2J2do2Jr3Kym598JVdEksuzPQCnlFPW4ky9Q+iA+ma9BGm06XQBy8g==}
     engines: {node: '>= 0.6'}
 
+  typebox@1.1.39:
+    resolution: {integrity: sha512-vj0afVtOfLQvv0GR0VxVagYxsXN64btL7Z9XoaG0ZggH3mruMMkOO6hXdgMsjCY3shZgEvooAWVeznQVs5c43w==}
+
   typed-query-selector@2.12.2:
     resolution: {integrity: sha512-EOPFbyIub4ngnEdqi2yOcNeDLaX/0jcE1JoAXQDDMIthap7FoN795lc/SHfIq2d416VufXpM8z/lD+WRm2gfOQ==}
 
@@ -6827,6 +6844,10 @@ snapshots:
       yaml: 2.8.2
     transitivePeerDependencies:
       - supports-color
+
+  '@fastify/type-provider-typebox@6.1.0(typebox@1.1.39)':
+    dependencies:
+      typebox: 1.1.39
 
   '@floating-ui/core@1.7.5':
     dependencies:
@@ -8322,6 +8343,8 @@ snapshots:
   '@shikijs/vscode-textmate@10.0.2': {}
 
   '@sinclair/typebox@0.27.10': {}
+
+  '@sinclair/typebox@0.34.49': {}
 
   '@tailwindcss/node@4.3.0':
     dependencies:
@@ -11973,6 +11996,8 @@ snapshots:
     dependencies:
       media-typer: 0.3.0
       mime-types: 2.1.35
+
+  typebox@1.1.39: {}
 
   typed-query-selector@2.12.2: {}
 

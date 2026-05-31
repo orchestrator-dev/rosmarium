@@ -5,6 +5,7 @@ import * as schema from "./schema/index.js";
 import { AsyncLocalStorage } from "node:async_hooks";
 
 export const tenantStorage = new AsyncLocalStorage<string>();
+export const branchStorage = new AsyncLocalStorage<string>();
 
 const client = postgres(config.DATABASE_URL, {
     max: 10,

@@ -15,6 +15,8 @@ import { ContentTypesPage } from './pages/settings/ContentTypes';
 import { WebhooksPage } from './pages/settings/Webhooks';
 import { AccessControlPage } from './pages/settings/AccessControl';
 import { WorkflowsPage } from './pages/settings/Workflows';
+import BranchesPage from './pages/Branches';
+import MergePage from './pages/MergePage';
 
 import { LoginPage } from './pages/Login';
 
@@ -38,6 +40,8 @@ export function App() {
             <Route path="settings/webhooks" element={<WebhooksPage />} />
             <Route path="settings/access" element={<AccessControlPage />} />
             <Route path="settings/workflows" element={<WorkflowsPage />} />
+            <Route path="settings/branches" element={<BranchesPage />} />
+            <Route path="settings/branches/:id/merge" element={<MergePage />} />
           </Route>
         </Routes>
       </BrowserRouter>
