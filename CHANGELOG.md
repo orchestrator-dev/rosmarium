@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.11.0] - 2026-05-31
+
+### Added
+- **rosmarium-ai-worker**: AI Generative Content Studio — text generation from prompts with SSE streaming (`generator.py`).
+- **rosmarium-ai-worker**: Inline AI Rewriter for tone adjustment, expansion, and compression (`rewriter.py`).
+- **rosmarium-ai-worker**: AI SEO Optimizer for automatic metadata extraction (`seo_optimizer.py`).
+- **rosmarium-ai-worker**: Multi-lingual AI translation engine with tenant-specific glossary enforcement (`translator.py`, `glossary.py`).
+- **rosmarium-server**: Fastify proxy routes forwarding SSE streams to the frontend (`generation.routes.ts`, `translation.routes.ts`).
+- **rosmarium-admin**: Floating AI Assistant UI integrated into the content authoring experience.
+- **rosmarium-admin**: Inline AI context menu for quick content transformations.
+- **rosmarium-admin**: One-click translation button.
+
 ## [1.5.0] - 2026-05-31
 
 ### Added
