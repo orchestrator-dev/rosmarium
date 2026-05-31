@@ -34,13 +34,13 @@
   - [ ] Allow plugins to extend GraphQL schema
 
 ### Month 8: CLI & Config-as-Code (G10, G11)
-- [ ] **Task 8.1: CLI Implementation**
-  - [ ] Rewrite CLI in TypeScript with Commander.js
-  - [ ] `rosmarium init`, `dev`, `migrate` commands
-  - [ ] `rosmarium content export/import` commands
-- [ ] **Task 8.2: Config-as-Code System**
-  - [ ] `rosmarium schema pull/push/diff` commands
-  - [ ] Bidirectional schema sync (DB ↔ YAML files)
+- [x] **Task 8.1: CLI Implementation**
+  - [x] Rewrite CLI in TypeScript with Commander.js
+  - [x] `rosmarium init`, `dev`, `migrate` commands
+  - [x] `rosmarium content export/import` commands
+- [x] **Task 8.2: Config-as-Code System**
+  - [x] `rosmarium schema pull/push/diff` commands
+  - [x] Bidirectional schema sync (DB ↔ YAML files)
 
 ### Month 9: SDK Integrations & i18n (G12, G13)
 - [ ] **Task 9.1: SDK/Framework Integrations**

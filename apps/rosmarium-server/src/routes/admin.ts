@@ -8,9 +8,11 @@ import type { FastifyInstance } from "fastify";
 import { requireRole } from "../modules/rbac/rbac.middleware.js";
 import { getQueueStats } from "../modules/jobs/intelligence.jobs.js";
 import { tenantService, TenantPlan } from "../modules/tenants/tenant.service.js";
+import { schemaSyncRoutes } from "../modules/content/schema-sync.routes.js";
 import { z } from "zod";
 
 export default async function adminRoutes(app: FastifyInstance) {
+    await app.register(schemaSyncRoutes, { prefix: "/api/admin" });
     // GET /api/admin/queue-stats — admin/super_admin only
     app.get(
         "/api/admin/queue-stats",
