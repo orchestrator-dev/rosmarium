@@ -73,7 +73,5 @@
 
 ## Notes
 Phase 4 (AI-Native Content Intelligence) is officially completed.
-Phase 5 Task 12.1 (Edge Delivery Network) is completed.
-Phase 5 Task 13.1 (Media Processing Pipeline) is completed.
-Phase 5 Task 14.1 (Query Performance Optimization) is completed.
+Phase 5 (Edge Delivery & Scale) is fully completed in v1.13.0.
 Current priority: **Phase 3 — Developer Experience & Extensibility** (Resume Tasks 7.2).
