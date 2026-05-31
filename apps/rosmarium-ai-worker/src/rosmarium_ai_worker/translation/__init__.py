@@ -1,6 +1,6 @@
 """Translation module exports."""
 
-from .translator import translator
 from .glossary import glossary_manager
+from .translator import translator
 
-__all__ = ["translator", "glossary_manager"]
+__all__ = ["glossary_manager", "translator"]

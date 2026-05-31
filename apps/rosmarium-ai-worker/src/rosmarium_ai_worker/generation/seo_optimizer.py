@@ -6,10 +6,10 @@ Generates SEO titles, meta descriptions, and alt text using LLMs.
 from __future__ import annotations
 
 import json
-from pydantic import BaseModel
 
 import httpx
 import structlog
+from pydantic import BaseModel
 
 from ..config import settings
 

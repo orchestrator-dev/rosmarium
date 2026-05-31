@@ -19,7 +19,7 @@ export function createContentLoader() {
     
     cachedEntries.forEach((entry, idx) => {
       if (!entry) {
-        missingIds.push(ids[idx]);
+        missingIds.push(ids[idx] as string);
         missingIndices.push(idx);
       }
     });

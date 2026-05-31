@@ -55,7 +55,7 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
 def create_app() -> FastAPI:
     """Create and configure the FastAPI application."""
-    from .api.routes import graph, health, intelligence, rag, search, generation, translation
+    from .api.routes import generation, graph, health, intelligence, rag, search, translation
 
     app = FastAPI(
         title="Rosmarium AI Worker",

@@ -259,7 +259,7 @@ export const contentCrudService = {
 
         if (opts.populate) {
             const loader = createContentLoader();
-            const lookup = (name: string) => registry.getComponent(name)?.fields || null;
+            const lookup = (name: string) => registry.get(name)?.fields || null;
             entries = await Promise.all(entries.map(async (entry) => {
                 const ct = registry.getAll().find(c => c.id === entry.contentTypeId);
                 if (!ct) return entry;
@@ -380,7 +380,7 @@ export const contentCrudService = {
 
         if (opts.populate) {
             const loader = createContentLoader();
-            const lookup = (name: string) => registry.getComponent(name)?.fields || null;
+            const lookup = (name: string) => registry.get(name)?.fields || null;
             entries = await Promise.all(entries.map(async (entry) => {
                 const ct = registry.getAll().find(c => c.id === entry.contentTypeId);
                 if (!ct) return entry;
@@ -448,7 +448,7 @@ export const contentCrudService = {
 
         if (row && opts.populate) {
             const loader = createContentLoader();
-            const lookup = (name: string) => registry.getComponent(name)?.fields || null;
+            const lookup = (name: string) => registry.get(name)?.fields || null;
             const ct = registry.getAll().find(c => c.id === row!.contentTypeId);
             if (ct) {
                 row.data = await populateRelations(row.data as Record<string, unknown>, ct.fields, loader, 0, 3, lookup);

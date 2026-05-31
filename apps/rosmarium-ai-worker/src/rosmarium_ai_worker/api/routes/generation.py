@@ -2,16 +2,16 @@
 
 from __future__ import annotations
 
+from typing import Any, Literal
+
 import structlog
 from fastapi import APIRouter, Depends
-from fastapi.responses import StreamingResponse
-from pydantic import BaseModel
-from typing import Literal, Any
+from pydantic import BaseModel, Field
 
-from .intelligence import require_worker_secret
 from ...generation.generator import content_generator
 from ...generation.rewriter import content_rewriter
-from ...generation.seo_optimizer import seo_optimizer, SEOResult
+from ...generation.seo_optimizer import SEOResult, seo_optimizer
+from .intelligence import require_worker_secret
 
 logger = structlog.get_logger(__name__)
 router = APIRouter()
@@ -28,7 +28,7 @@ class RewriteRequest(BaseModel):
 
 class SEORequest(BaseModel):
     text: str
-    focusKeyword: str | None = None
+    focus_keyword: str | None = Field(default=None, alias="focusKeyword")
 
 class AltTextRequest(BaseModel):
     context: str
@@ -46,7 +46,7 @@ async def rewrite_content(request: RewriteRequest) -> Any:
 
 @router.post("/seo-optimize", dependencies=[Depends(require_worker_secret)])
 async def optimize_seo(request: SEORequest) -> SEOResult:
-    return await seo_optimizer.optimize(request.text, request.focusKeyword)
+    return await seo_optimizer.optimize(request.text, request.focus_keyword)
 
 @router.post("/alt-text", dependencies=[Depends(require_worker_secret)])
 async def generate_alt_text(request: AltTextRequest) -> Any:
