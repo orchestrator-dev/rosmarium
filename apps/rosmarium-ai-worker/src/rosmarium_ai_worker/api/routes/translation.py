@@ -5,6 +5,7 @@ from __future__ import annotations
 import structlog
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
+from typing import Any
 
 from .intelligence import require_worker_secret
 from ...translation.translator import translator
@@ -23,11 +24,11 @@ class GlossaryAddRequest(BaseModel):
     target: str
 
 @router.post("/translate", dependencies=[Depends(require_worker_secret)])
-async def translate_text(request: TranslateRequest):
+async def translate_text(request: TranslateRequest) -> Any:
     result = await translator.translate(request.text, request.targetLanguage, request.tenantId)
     return {"result": result}
 
 @router.post("/glossary/{tenant_id}", dependencies=[Depends(require_worker_secret)])
-async def add_glossary_term(tenant_id: str, request: GlossaryAddRequest):
+async def add_glossary_term(tenant_id: str, request: GlossaryAddRequest) -> Any:
     glossary_manager.add_term(tenant_id, request.source, request.target)
     return {"status": "ok"}

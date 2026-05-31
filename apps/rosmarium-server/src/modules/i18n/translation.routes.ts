@@ -1,4 +1,4 @@
-import { FastifyInstance } from "fastify";
+import { FastifyInstance, FastifyReply } from "fastify";
 import { config } from "../../config.js";
 import { z } from "zod";
 
@@ -15,7 +15,7 @@ const glossaryBodySchema = z.object({
 
 export async function translationRoutes(fastify: FastifyInstance) {
     
-    async function proxyToWorker(path: string, body: unknown, reply: any) {
+    async function proxyToWorker(path: string, body: unknown, reply: FastifyReply) {
         const res = await fetch(`${config.AI_WORKER_URL}${path}`, {
             method: "POST",
             headers: {

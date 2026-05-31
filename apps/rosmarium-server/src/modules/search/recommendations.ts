@@ -15,22 +15,23 @@ export const recommendationService = {
         const entry = entryRows[0];
         if (!entry) throw new Error("Entry not found");
 
+        const typedEntry = entry as Record<string, unknown>;
         const textToEmbed = [
-            (entry as any).data.title,
-            (entry as any).data.description,
-            (entry as any).data.body
+            typedEntry.data?.title,
+            typedEntry.data?.description,
+            typedEntry.data?.body
         ].filter(Boolean).join(" ");
 
         // 2. Vector Search
-        let vectorResults: any[] = [];
+        let vectorResults: Record<string, unknown>[] = [];
         try {
             const embedResult = await aiWorkerClient.embedQuery(textToEmbed);
             vectorResults = await vectorSearch({
                 embedding: embedResult.embedding,
-                contentType: (entry as any).content_type_id,
+                contentType: typedEntry.content_type_id,
                 limit: limit * 2,
             });
-        } catch (e) {
+        } catch {
             console.warn("Vector search failed, falling back to graph proximity only");
         }
 
@@ -70,17 +71,17 @@ export const recommendationService = {
         // 4. Merge and Score
         const scores = new Map<string, number>();
 
-        vectorResults.forEach((vr: any, idx: number) => {
+        vectorResults.forEach((vr: Record<string, unknown>, idx: number) => {
             if (vr.entryId !== entryId) {
                 // simple rank-based score
                 const score = 1 / (idx + 1);
-                scores.set(vr.entryId, (scores.get(vr.entryId) || 0) + score);
+                scores.set(vr.entryId as string, (scores.get(vr.entryId as string) || 0) + score);
             }
         });
 
-        graphResults.forEach((gr: any, idx: number) => {
-            const score = 1 / ((gr as any).min_depth + 1);
-            scores.set((gr as any).related_id, (scores.get((gr as any).related_id) || 0) + score);
+        graphResults.forEach((gr: Record<string, unknown>) => {
+            const score = 1 / ((gr.min_depth as number) + 1);
+            scores.set(gr.related_id as string, (scores.get(gr.related_id as string) || 0) + score);
         });
 
         const sorted = Array.from(scores.entries())
@@ -97,6 +98,6 @@ export const recommendationService = {
         `);
 
         // Order by the scored list
-        return sorted.map(id => relatedEntries.find((e: any) => e.id === id)).filter(Boolean);
+        return sorted.map(id => relatedEntries.find((e: Record<string, unknown>) => e.id === id)).filter(Boolean);
     }
 };

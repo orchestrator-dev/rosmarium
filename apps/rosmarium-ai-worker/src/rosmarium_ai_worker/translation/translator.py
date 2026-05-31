@@ -40,7 +40,7 @@ class AITranslator:
                 )
                 resp.raise_for_status()
                 data = resp.json()
-                return data.get("response", "").strip()
+                return str(data.get("response", "")).strip()
         except Exception as e:
             logger.error("translation_error", error=str(e), target_language=target_language)
             raise

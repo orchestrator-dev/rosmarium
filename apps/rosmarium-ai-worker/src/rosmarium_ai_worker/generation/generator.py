@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import AsyncGenerator
+from typing import Any
 
 import httpx
 import structlog
@@ -23,7 +24,7 @@ class ContentGenerator:
     """Generates content using configured LLM provider."""
 
     async def generate_stream(
-        self, prompt: str, context: dict | None = None
+        self, prompt: str, context: dict[str, Any] | None = None
     ) -> StreamingResponse:
         """Generate content from prompt and stream the response."""
         full_prompt = self._build_prompt(prompt, context)
@@ -55,7 +56,7 @@ class ContentGenerator:
 
         return StreamingResponse(event_generator(), media_type="text/event-stream")
 
-    async def generate(self, prompt: str, context: dict | None = None) -> str:
+    async def generate(self, prompt: str, context: dict[str, Any] | None = None) -> str:
         """Generate content synchronously (wait for full response)."""
         full_prompt = self._build_prompt(prompt, context)
         model = settings.summarization_model
@@ -68,12 +69,12 @@ class ContentGenerator:
                 )
                 resp.raise_for_status()
                 data = resp.json()
-                return data.get("response", "").strip()
+                return str(data.get("response", "")).strip()
         except Exception as e:
             logger.error("generation_error", error=str(e))
             raise
 
-    def _build_prompt(self, prompt: str, context: dict | None) -> str:
+    def _build_prompt(self, prompt: str, context: dict[str, Any] | None) -> str:
         if not context:
             return prompt
         

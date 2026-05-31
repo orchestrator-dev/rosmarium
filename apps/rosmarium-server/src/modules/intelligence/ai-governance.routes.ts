@@ -1,9 +1,9 @@
-import { FastifyInstance } from "fastify";
+import { FastifyInstance, FastifyRequest } from "fastify";
 import { aiGovernanceService } from "./ai-governance.service.js";
 
 export async function aiGovernanceRoutes(fastify: FastifyInstance) {
     fastify.get("/dashboard", async (request, reply) => {
-        const tenantId = (request as any).tenant;
+        const tenantId = (request as FastifyRequest & { tenant?: string }).tenant;
         const metrics = await aiGovernanceService.getDashboardMetrics(tenantId);
         const budget = tenantId ? await aiGovernanceService.checkTenantTokenBudget(tenantId) : null;
         
@@ -11,7 +11,7 @@ export async function aiGovernanceRoutes(fastify: FastifyInstance) {
     });
 
     fastify.get("/limits", async (request, reply) => {
-        const userId = (request as any).user?.id;
+        const userId = (request as FastifyRequest & { user?: { id: string } }).user?.id;
         if (!userId) {
             return reply.status(401).send({ error: "Unauthorized" });
         }

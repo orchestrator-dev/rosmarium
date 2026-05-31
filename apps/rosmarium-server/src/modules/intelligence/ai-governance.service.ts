@@ -1,7 +1,7 @@
 import { db } from "../../db/index.js";
 import { aiOperationsLog } from "../../db/schema/ai-audit.js";
 import { tenants } from "../../db/schema/tenants.js";
-import { eq, and, gte, sum, sql } from "drizzle-orm";
+import { eq, and, gte, sql } from "drizzle-orm";
 
 export interface LogAIOperationParams {
     operationType: string;
@@ -56,7 +56,7 @@ export const aiGovernanceService = {
 
         // Get tenant's plan/budget settings
         const tenantData = await db.select({ settings: tenants.settings }).from(tenants).where(eq(tenants.id, tenantId));
-        const settings = (tenantData[0]?.settings as any) || {};
+        const settings = (tenantData[0]?.settings as Record<string, unknown>) || {};
         const budget = settings.aiTokenBudget || 1000000; // default 1M tokens
 
         return {

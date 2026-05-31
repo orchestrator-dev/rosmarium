@@ -1,4 +1,4 @@
-import { FastifyInstance } from "fastify";
+import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { config } from "../../config.js";
 import { z } from "zod";
 
@@ -27,7 +27,7 @@ export async function generationRoutes(fastify: FastifyInstance) {
     const { aiGovernanceService } = await import("./ai-governance.service.js");
     
     // Helper to proxy to python worker
-    async function proxyToWorker(path: string, body: unknown, reply: any, opType: string, request: any) {
+    async function proxyToWorker(path: string, body: unknown, reply: FastifyReply, opType: string, request: FastifyRequest) {
         const startTime = Date.now();
         const res = await fetch(`${config.AI_WORKER_URL}${path}`, {
             method: "POST",
@@ -38,8 +38,8 @@ export async function generationRoutes(fastify: FastifyInstance) {
             body: JSON.stringify(body)
         });
         
-        const tenantId = (request as any).tenant;
-        const userId = (request as any).user?.id;
+        const tenantId = (request as FastifyRequest & { tenant?: string }).tenant;
+        const userId = (request as FastifyRequest & { user?: { id: string } }).user?.id;
         
         if (!res.ok) {
             await aiGovernanceService.logOperation({

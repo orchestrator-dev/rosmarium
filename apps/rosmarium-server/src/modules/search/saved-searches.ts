@@ -3,7 +3,7 @@ import { savedSearches } from "../../db/schema/saved-searches.js";
 import { eq, and } from "drizzle-orm";
 
 export const savedSearchService = {
-    async saveSearch(userId: string, query: string, filters: Record<string, any>, notifyOnNew: boolean = false) {
+    async saveSearch(userId: string, query: string, filters: Record<string, unknown>, notifyOnNew: boolean = false) {
         const result = await db.insert(savedSearches).values({
             userId,
             query,
