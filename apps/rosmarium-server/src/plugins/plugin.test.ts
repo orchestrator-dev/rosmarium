@@ -54,7 +54,7 @@ describe("Plugin Extensibility (Task 7.2)", () => {
             graphql: {
                 types: (builder) => {
                     builder.queryType({
-                        fields: (t: any) => ({
+                        fields: (t: unknown) => ({
                             helloPlugin: t.string({
                                 resolve: () => "world",
                             }),

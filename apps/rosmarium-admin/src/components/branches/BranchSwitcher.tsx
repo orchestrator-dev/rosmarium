@@ -14,7 +14,13 @@ export const BranchSwitcher: React.FC = () => {
                 const res = await fetch('/api/branches');
                 if (res.ok) {
                     const data = await res.json();
-                    setBranches(data);
+                    if (Array.isArray(data)) {
+                        setBranches(data);
+                    } else if (data && Array.isArray(data.data)) {
+                        setBranches(data.data);
+                    } else {
+                        setBranches([]);
+                    }
                 }
             } catch (err) {
                 console.error("Failed to fetch branches", err);

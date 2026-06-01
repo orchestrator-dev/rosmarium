@@ -6,29 +6,70 @@ order: 5
 
 # AI Pipeline
 
-The Rosmarium AI Pipeline is driven by a separate Python background worker (`rosmarium-ai-worker`). 
+The Rosmarium AI Pipeline is driven by a separate Python background worker (`rosmarium-ai-worker`), ensuring that heavy machine learning tasks never block the core Node API.
 
-![AI Dashboard](/docs/admin_ai_dashboard.png)
-*(Screenshot: The Rosmarium AI Intelligence Dashboard)*
+<div class="my-10 p-1 rounded-xl bg-gradient-to-r from-neon-purple/20 to-neon-cyan/20 shadow-2xl not-prose">
+  <img src="/docs/admin_ai_dashboard.png" alt="AI Dashboard" class="rounded-lg w-full bg-[#0B0D17]" />
+</div>
 
-## 1. Vector Embeddings
-Vector embeddings are automatically generated in the background. For the pipeline to trigger:
-1. **Enable AI**: The Content Type must have AI Intelligence enabled in its settings (`aiIntelligence.enabled = true`).
-2. **Publish Content**: The content entry must be formally published (triggering the `content.published` event).
+## Vector Embeddings
 
-When these conditions are met, the Node API pushes a job to BullMQ. The Python AI worker then:
-1. **Chunks** the text fields using `spaCy` sentencizer or HTML structure chunking.
-2. **Embeds** the chunks using a local `Ollama` instance running `nomic-embed-text`.
-3. **Upserts** the resulting vectors to PostgreSQL via the `pgvector` extension.
+Vector embeddings are automatically generated in the background. For the pipeline to trigger, the Content Type must have `aiIntelligence.enabled = true` and the entry must be published.
 
-## 2. RAG (Retrieval-Augmented Generation)
-Rosmarium provides a native RAG integration powered by `LlamaIndex`. It supports:
-- **Parallel Retrieval**: Searching across multiple content types simultaneously.
-- **Freshness Decay**: Time-weighted scoring so newer content surfaces higher.
-- **Reranking**: An optional Cohere reranker pass to refine results.
+When these conditions are met, the Node API pushes a job to BullMQ, and the Python worker executes the following:
 
-## 3. Metadata Intelligence
-Rosmarium automatically enhances your unstructured data with intelligence ops:
-- **Auto-tagging**: Uses a zero-shot cross-encoder NLI model to classify content against your custom taxonomy.
-- **Named Entity Recognition (NER)**: Extracts PERSON, ORG, and GPE entities via `spaCy`.
-- **Semantic Duplicate Detection**: Scans the vector space to flag identical or heavily overlapping content pieces.
+<div class="flex items-start gap-4 mb-6 mt-8 not-prose">
+  <div class="w-10 h-10 rounded-full bg-neon-purple/10 border border-neon-purple flex items-center justify-center text-neon-purple font-bold flex-shrink-0">1</div>
+  <div class="flex-1">
+    <h3 class="text-white font-bold text-lg mb-2">Chunking</h3>
+    <p class="text-zinc-400 text-sm">The text is broken down into semantic chunks using the <code>spaCy</code> sentencizer or our specialized HTML structure chunker.</p>
+  </div>
+</div>
+
+<div class="flex items-start gap-4 mb-6 not-prose">
+  <div class="w-10 h-10 rounded-full bg-neon-purple/10 border border-neon-purple flex items-center justify-center text-neon-purple font-bold flex-shrink-0">2</div>
+  <div class="flex-1">
+    <h3 class="text-white font-bold text-lg mb-2">Embedding</h3>
+    <p class="text-zinc-400 text-sm">The chunks are embedded into high-dimensional vectors using a local <code>Ollama</code> instance running <code>nomic-embed-text</code>, or via OpenAI API.</p>
+  </div>
+</div>
+
+<div class="flex items-start gap-4 mb-6 not-prose">
+  <div class="w-10 h-10 rounded-full bg-neon-purple/10 border border-neon-purple flex items-center justify-center text-neon-purple font-bold flex-shrink-0">3</div>
+  <div class="flex-1">
+    <h3 class="text-white font-bold text-lg mb-2">Vector Storage</h3>
+    <p class="text-zinc-400 text-sm">The resulting vectors are directly upserted back to PostgreSQL utilizing the <code>pgvector</code> extension for blazing fast HNSW indexing.</p>
+  </div>
+</div>
+
+---
+
+## Intelligence Operations
+
+Rosmarium automatically enhances your unstructured data with the following operations on publish:
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-10 not-prose">
+  <div class="bg-dark-surface border border-dark-border p-6 rounded-xl hover:border-neon-purple transition-colors">
+    <div class="text-neon-purple mb-4 text-2xl">✦</div>
+    <h3 class="text-white font-bold text-lg mb-2">Native RAG Retrieval</h3>
+    <p class="text-zinc-400 text-sm leading-relaxed">Powered by LlamaIndex, the platform provides parallel retrieval, time-weighted freshness decay, and Cohere reranker refinement right out of the box.</p>
+  </div>
+  
+  <div class="bg-dark-surface border border-dark-border p-6 rounded-xl hover:border-neon-purple transition-colors">
+    <div class="text-neon-purple mb-4 text-2xl">✦</div>
+    <h3 class="text-white font-bold text-lg mb-2">Zero-Shot Auto-tagging</h3>
+    <p class="text-zinc-400 text-sm leading-relaxed">Uses a zero-shot cross-encoder NLI model to classify incoming content against your custom taxonomy without requiring manual tagging.</p>
+  </div>
+  
+  <div class="bg-dark-surface border border-dark-border p-6 rounded-xl hover:border-neon-cyan transition-colors">
+    <div class="text-neon-cyan mb-4 text-2xl">✦</div>
+    <h3 class="text-white font-bold text-lg mb-2">Named Entity Recognition</h3>
+    <p class="text-zinc-400 text-sm leading-relaxed">Automatically extracts PERSON, ORG, and GPE entities via <code>spaCy</code>, feeding them directly into the Knowledge Graph.</p>
+  </div>
+  
+  <div class="bg-dark-surface border border-dark-border p-6 rounded-xl hover:border-neon-cyan transition-colors">
+    <div class="text-neon-cyan mb-4 text-2xl">✦</div>
+    <h3 class="text-white font-bold text-lg mb-2">Semantic Deduplication</h3>
+    <p class="text-zinc-400 text-sm leading-relaxed">Scans the vector space on save to flag identical or heavily overlapping content pieces, keeping your repository pristine.</p>
+  </div>
+</div>

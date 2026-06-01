@@ -1,38 +1,70 @@
 ---
 title: Workflows & Scheduling
-description: Build custom approval processes, track state transitions, and schedule delayed publishing in Rosmarium COS.
+description: Ensure compliance, brand consistency, and seamless team collaboration with visual workflow orchestration.
 order: 5
 ---
 
 # Workflows & Scheduling
 
-Rosmarium COS provides a robust workflow automation engine designed to support complex editorial approval processes and delayed publication.
+Ensure brand consistency and compliance across your entire organization. Rosmarium COS provides a robust workflow automation engine designed to support complex enterprise editorial processes, legal approvals, and automated campaign launches.
 
-## Workflow State Machine
+<div class="my-10 p-1 rounded-xl bg-gradient-to-r from-neon-cyan/20 to-neon-purple/20 shadow-2xl not-prose">
+  <img src="/docs/workflow-flow.svg" alt="Workflow Architecture" class="rounded-lg w-full bg-[#0B0D17]" />
+</div>
 
-Workflows in Rosmarium are powered by a state machine that allows you to define custom approval chains tailored to your team's needs.
-Each Content Type can be assigned a default Workflow. 
+## Enterprise State Machine
 
-- **States**: Define logical stages for your content (e.g., `Draft`, `In Review`, `Approved`, `Published`).
-- **Transitions**: Define how content moves between states. 
-- **Validations**: Transitions can be guarded by role-based access control or conditional rules to ensure that only authorized personnel can approve content.
+Workflows in Rosmarium are powered by a state machine that allows you to define custom approval chains tailored to your exact business hierarchy. 
 
-### Visual Workflow Builder
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 my-8 not-prose">
+  <div class="bg-dark-surface border border-dark-border p-5 rounded-lg text-center hover:border-neon-cyan transition-colors">
+    <div class="text-neon-cyan text-2xl mb-2">📌</div>
+    <h4 class="text-white font-bold mb-1">States</h4>
+    <p class="text-zinc-400 text-xs leading-relaxed">Define logical stages for your content (e.g., Draft, In Review, Published).</p>
+  </div>
+  
+  <div class="bg-dark-surface border border-dark-border p-5 rounded-lg text-center hover:border-neon-cyan transition-colors">
+    <div class="text-neon-cyan text-2xl mb-2">🔄</div>
+    <h4 class="text-white font-bold mb-1">Transitions</h4>
+    <p class="text-zinc-400 text-xs leading-relaxed">Map exact directional paths defining how content moves between states.</p>
+  </div>
+  
+  <div class="bg-dark-surface border border-dark-border p-5 rounded-lg text-center hover:border-neon-cyan transition-colors">
+    <div class="text-neon-cyan text-2xl mb-2">🛡</div>
+    <h4 class="text-white font-bold mb-1">Validations (RBAC)</h4>
+    <p class="text-zinc-400 text-xs leading-relaxed">Guard transitions with rules to ensure only authorized personnel can approve content.</p>
+  </div>
+</div>
 
-The Admin Dashboard provides an intuitive, drag-and-drop ReactFlow-powered **Workflow Builder**. You can visually map out states and transitions, making it easy to design complex editorial processes without writing code.
+> [!IMPORTANT]
+> **Audit Trails:** Every transition requires a mandatory reason or comment, ensuring compliance and clear accountability across large organizations. Every transition is tracked in the database, creating a comprehensive audit log visible in the editor's **Workflow Timeline**.
 
-![Workflow Builder](/docs/admin_workflow_builder.png)
+---
 
-### Workflow Timeline
+## Visual Workflow Builder
 
-Every transition is tracked in the database, creating a comprehensive audit log. The **Workflow Timeline** in the Content Editor displays exactly who made a transition, when it happened, and any comments they left during the review.
+The Admin Dashboard provides an intuitive, drag-and-drop **Workflow Builder**. You can visually map out states and transitions, making it easy to design complex editorial processes without writing code.
+
+<div class="my-8 not-prose">
+  <img src="/docs/screenshot-workflows.png" alt="Visual Workflow Builder" class="rounded-xl border border-dark-border shadow-lg" />
+</div>
+
+---
 
 ## Scheduled Publishing
 
-Editorial teams often need to embargo content until a specific date and time. 
+Editorial teams often need to embargo content until a specific date and time. Rosmarium integrates with **BullMQ** (powered by Redis) to offer delayed publishing capabilities directly within the Content Editor.
 
-Rosmarium integrates with **BullMQ** (powered by Redis) to offer delayed publishing capabilities directly within the Content Editor.
-- **Schedule to Publish**: Pick a future date and time for content to automatically become visible.
-- **Schedule to Unpublish**: Automatically archive seasonal or time-sensitive content.
-
-The system handles everything in the background reliably, ensuring your content is delivered precisely when intended.
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-8 not-prose">
+  <div class="bg-[#0D1117] border border-zinc-800 p-6 rounded-xl relative overflow-hidden">
+    <div class="absolute top-0 right-0 p-4 opacity-10 text-4xl text-neon-cyan">⏱</div>
+    <h3 class="text-white font-bold text-lg mb-2">Schedule to Publish</h3>
+    <p class="text-zinc-400 text-sm">Pick a future date and time for drafted content to automatically become visible. The system queues the transition securely in the background.</p>
+  </div>
+  
+  <div class="bg-[#0D1117] border border-zinc-800 p-6 rounded-xl relative overflow-hidden">
+    <div class="absolute top-0 right-0 p-4 opacity-10 text-4xl text-neon-purple">🗄</div>
+    <h3 class="text-white font-bold text-lg mb-2">Schedule to Unpublish</h3>
+    <p class="text-zinc-400 text-sm">Automatically archive seasonal campaigns or time-sensitive content without requiring manual intervention from editors.</p>
+  </div>
+</div>

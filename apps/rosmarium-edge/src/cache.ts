@@ -11,7 +11,7 @@ export const getCacheKey = (url: string, idOrPath: string, options?: CacheOption
   return `content:${locale}:${branch}:${idOrPath}`;
 };
 
-export const getCachedContent = async (kv: KVNamespace, key: string): Promise<any | null> => {
+export const getCachedContent = async (kv: KVNamespace, key: string): Promise<unknown | null> => {
   const data = await kv.get(key, 'json');
   return data;
 };
@@ -19,7 +19,7 @@ export const getCachedContent = async (kv: KVNamespace, key: string): Promise<an
 export const cacheContent = async (
   kv: KVNamespace,
   key: string,
-  content: any,
+  content: unknown,
   ttl: number = 3600
 ): Promise<void> => {
   await kv.put(key, JSON.stringify(content), { expirationTtl: ttl });

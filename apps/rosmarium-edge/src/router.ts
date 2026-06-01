@@ -1,8 +1,9 @@
 import { Hono } from 'hono';
 import { getCachedContent, cacheContent, getCacheKey, invalidateCache } from './cache.js';
 
+import type { KVNamespace } from '@cloudflare/workers-types';
 export type Env = {
-  CONTENT_CACHE: any;
+  CONTENT_CACHE: KVNamespace;
   ORIGIN_URL: string;
   INVALIDATION_SECRET: string;
 };
@@ -57,22 +58,47 @@ router.get('/api/content/:id', async (c) => {
 
 // Invalidation Endpoint
 router.post('/internal/invalidate', async (c) => {
-  const auth = c.req.header('Authorization');
-  if (auth !== `Bearer ${c.env.INVALIDATION_SECRET}`) {
+  const signatureHeader = c.req.header('X-Rosmarium-Signature');
+  if (!signatureHeader) {
     return c.json({ error: 'Unauthorized' }, 401);
   }
 
-  const body = await c.req.json();
-  const ids = body.ids || [];
-  const locale = body.locale;
-  const branch = body.branch;
+  const rawBody = await c.req.text();
+  const encoder = new TextEncoder();
+  const key = await crypto.subtle.importKey(
+    'raw',
+    encoder.encode(c.env.INVALIDATION_SECRET),
+    { name: 'HMAC', hash: 'SHA-256' },
+    false,
+    ['verify']
+  );
 
-  for (const id of ids) {
+  const signatureHex = signatureHeader.replace('sha256=', '');
+  const signatureBytes = new Uint8Array(signatureHex.match(/.{1,2}/g)!.map(byte => parseInt(byte, 16)));
+
+  const isValid = await crypto.subtle.verify(
+    'HMAC',
+    key,
+    signatureBytes,
+    encoder.encode(rawBody)
+  );
+
+  if (!isValid) {
+    return c.json({ error: 'Unauthorized' }, 401);
+  }
+
+  const payload = JSON.parse(rawBody);
+  const data = payload.data || {};
+  const id = data.id || payload.id;
+  const locale = data.locale;
+  const branch = data.branch;
+
+  if (id) {
     const key = getCacheKey('', id, { locale, branch });
     await invalidateCache(c.env.CONTENT_CACHE, key);
   }
 
-  return c.json({ success: true, invalidatedCount: ids.length });
+  return c.json({ success: true, invalidatedCount: id ? 1 : 0 });
 });
 
 export default router;

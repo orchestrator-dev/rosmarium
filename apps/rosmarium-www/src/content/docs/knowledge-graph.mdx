@@ -8,29 +8,65 @@ order: 6
 
 Content doesn't live in isolation. Rosmarium provides a lightweight knowledge graph layer powered directly inside PostgreSQL.
 
-![Graph Explorer](/docs/admin_graph_explorer.png)
-*(Screenshot: Cytoscape Graph Explorer in the Admin UI)*
+<div class="my-10 p-1 rounded-xl bg-gradient-to-r from-neon-purple/20 to-neon-cyan/20 shadow-2xl not-prose">
+  <img src="/docs/admin_graph_explorer.png" alt="Cytoscape Graph Explorer" class="rounded-lg w-full bg-[#0B0D17]" />
+</div>
 
-## Typed Edges
-You can define directional, typed edges between content items. 
-- Example: `Article -> AUTHORED_BY -> Person`
-- Example: `Company -> COMPETES_WITH -> Company`
+## Building the Graph
 
-## Auto-Inference
-Rosmarium's AI worker automatically infers edges! When the NER pipeline extracts a named entity (like "Google"), the Graph Engine attempts to resolve it against existing "Company" entries and creates an `INFERRED_REFERENCE` edge.
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-8 not-prose">
+  <div class="bg-dark-surface border border-dark-border p-6 rounded-xl hover:border-neon-cyan transition-colors">
+    <div class="text-neon-cyan mb-4 text-2xl">✦</div>
+    <h3 class="text-white font-bold text-lg mb-2">Typed Edges</h3>
+    <p class="text-zinc-400 text-sm leading-relaxed mb-4">You can define directional, typed edges between content items to map relationships manually.</p>
+    <ul class="space-y-2 text-xs text-zinc-300 font-mono bg-dark-bg p-3 rounded border border-zinc-800">
+      <li>Article -> <span class="text-neon-cyan">AUTHORED_BY</span> -> Person</li>
+      <li>Company -> <span class="text-neon-cyan">COMPETES_WITH</span> -> Company</li>
+    </ul>
+  </div>
 
-## Cypher-lite Traversal
-You can traverse the graph using a subset of the Cypher DSL:
-```cypher
-MATCH (a:article)-[:AUTHORED_BY]->(p:person)
+  <div class="bg-dark-surface border border-dark-border p-6 rounded-xl hover:border-neon-purple transition-colors">
+    <div class="text-neon-purple mb-4 text-2xl">✦</div>
+    <h3 class="text-white font-bold text-lg mb-2">Auto-Inference</h3>
+    <p class="text-zinc-400 text-sm leading-relaxed">Rosmarium's AI worker automatically infers edges! When NER extracts an entity (e.g. "Google"), the Engine attempts to resolve it against existing "Company" entries and creates an <code>INFERRED_REFERENCE</code> edge.</p>
+  </div>
+</div>
+
+---
+
+## Graph Traversal & Analytics
+
+### Cypher-lite Traversal
+You can traverse the graph via API using a subset of the Cypher query language:
+
+<div class="bg-[#0D1117] p-4 rounded-lg border border-dark-border text-zinc-300 text-sm overflow-x-auto not-prose my-6">
+<pre><code class="font-mono text-neon-cyan">MATCH (a:article)-[:AUTHORED_BY]->(p:person)
 WHERE p.name = "John Doe"
-RETURN a
-```
-The API transpiles this into recursive CTEs executed natively in PostgreSQL.
+RETURN a</code></pre>
+</div>
+The Node.js API transpiles this into recursive CTEs executed natively in PostgreSQL, so no specialized graph database is required.
 
-## Graph Analytics
-The Python worker leverages `NetworkX` to run heavy analytics across the entire graph dataset:
-- **PageRank**: Identify the most authoritative content entries.
-- **Louvain Communities**: Group highly interconnected entries into contextual clusters.
+### Deep Graph Analytics
 
-You can export the entire graph in `JSON-LD`, `RDF`, or `GraphML` formats.
+The Python worker leverages `NetworkX` to run heavy analytics across the entire dataset:
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-6 not-prose">
+  <div class="bg-dark-surface border border-dark-border p-5 rounded-lg flex items-start gap-4">
+    <div class="w-8 h-8 rounded-full bg-neon-cyan/20 flex items-center justify-center text-neon-cyan">📈</div>
+    <div>
+      <h4 class="text-white font-bold mb-1">PageRank</h4>
+      <p class="text-zinc-400 text-sm">Identify the most authoritative content entries.</p>
+    </div>
+  </div>
+  
+  <div class="bg-dark-surface border border-dark-border p-5 rounded-lg flex items-start gap-4">
+    <div class="w-8 h-8 rounded-full bg-neon-purple/20 flex items-center justify-center text-neon-purple">🕸</div>
+    <div>
+      <h4 class="text-white font-bold mb-1">Louvain Communities</h4>
+      <p class="text-zinc-400 text-sm">Group highly interconnected entries into contextual clusters.</p>
+    </div>
+  </div>
+</div>
+
+> [!TIP]
+> **Data Portability:** You can export the entire graph in standard `JSON-LD`, `RDF`, or `GraphML` formats at any time.

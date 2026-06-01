@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Box, Typography, Button, CircularProgress, Table, TableHead, TableRow, TableCell, TableBody, Paper, TableContainer } from "@mui/material";
 
 export function AuditLogPage() {
-    const [logs, setLogs] = useState<any[]>([]);
+    const [logs, setLogs] = useState<Array<{ id: string; createdAt: string; userId: string; action: string; resourceId: string }>>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {

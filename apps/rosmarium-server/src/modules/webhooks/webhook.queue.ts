@@ -7,7 +7,8 @@ import { config } from "../../config.js";
 import { createId } from "@paralleldrive/cuid2";
 
 export interface WebhookJobData {
-    webhookId: string;
+    webhookId?: string;
+    systemWebhook?: { url: string; secret: string };
     event: string;
     contentType: string;
     payload: unknown;
@@ -43,15 +44,27 @@ export function getWebhookWorker(): Worker<WebhookJobData> {
     _worker = new Worker<WebhookJobData>(
         "webhook-deliveries",
         async (job) => {
-            const { webhookId, event, contentType, payload, attempt } = job.data;
+            const { webhookId, systemWebhook, event, contentType, payload, attempt } = job.data;
 
-            const [webhook] = await db
-                .select()
-                .from(webhooks)
-                .where(eq(webhooks.id, webhookId))
-                .limit(1);
+            let url = "";
+            let secret = "";
 
-            if (!webhook || !webhook.isActive) return;
+            if (systemWebhook) {
+                url = systemWebhook.url;
+                secret = systemWebhook.secret;
+            } else if (webhookId) {
+                const [webhook] = await db
+                    .select()
+                    .from(webhooks)
+                    .where(eq(webhooks.id, webhookId))
+                    .limit(1);
+
+                if (!webhook || !webhook.isActive) return;
+                url = webhook.url;
+                secret = webhook.secret;
+            } else {
+                return;
+            }
 
             const deliveryId = createId();
             const body = JSON.stringify({
@@ -62,7 +75,7 @@ export function getWebhookWorker(): Worker<WebhookJobData> {
                 timestamp: new Date().toISOString(),
             });
 
-            const signature = createHmac("sha256", webhook.secret).update(body).digest("hex");
+            const signature = createHmac("sha256", secret).update(body).digest("hex");
 
             const startMs = Date.now();
             let responseCode: number | null = null;
@@ -70,7 +83,7 @@ export function getWebhookWorker(): Worker<WebhookJobData> {
             let success = false;
 
             try {
-                const res = await fetch(webhook.url, {
+                const res = await fetch(url, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -92,17 +105,19 @@ export function getWebhookWorker(): Worker<WebhookJobData> {
 
             const durationMs = Date.now() - startMs;
 
-            await db.insert(webhookDeliveries).values({
-                id: deliveryId,
-                webhookId,
-                event,
-                payload: payload as Record<string, unknown>,
-                responseCode,
-                responseBody,
-                durationMs,
-                success,
-                attempt,
-            });
+            if (webhookId) {
+                await db.insert(webhookDeliveries).values({
+                    id: deliveryId,
+                    webhookId,
+                    event,
+                    payload: payload as Record<string, unknown>,
+                    responseCode,
+                    responseBody,
+                    durationMs,
+                    success,
+                    attempt,
+                });
+            }
 
             if (!success) {
                 throw new Error(`Webhook delivery failed: HTTP ${responseCode ?? "network error"}`);

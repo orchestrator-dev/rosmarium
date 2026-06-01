@@ -1,0 +1,88 @@
+---
+title: Content Branching
+description: Isolate changes, collaborate safely, and merge content updates just like Git.
+order: 6
+---
+
+# Content Branching
+
+Rosmarium COS introduces **Content Branching**, a revolutionary way for marketing and editorial teams to collaborate on large campaigns or site redesigns without disrupting the live production environment. 
+
+By treating content exactly like software code, your teams gain the confidence to iterate quickly and securely.
+
+<div class="my-10 p-1 rounded-xl bg-gradient-to-r from-neon-purple/20 to-neon-cyan/20 shadow-2xl not-prose">
+  <img src="/docs/branching-flow.svg" alt="Branching Architecture" class="rounded-lg w-full bg-[#0B0D17]" />
+</div>
+
+## How It Works
+
+Traditional CMS platforms rely on a single "Draft" state, which makes it nearly impossible for multiple people to work on sweeping changes simultaneously without stepping on each other's toes. Rosmarium solves this by allowing you to create isolated branches:
+
+<div class="flex items-start gap-4 mb-6 mt-8 not-prose">
+  <div class="w-10 h-10 rounded-full bg-neon-cyan/10 border border-neon-cyan flex items-center justify-center text-neon-cyan font-bold flex-shrink-0">1</div>
+  <div class="flex-1">
+    <h3 class="text-white font-bold text-lg mb-2">Create a Branch</h3>
+    <p class="text-zinc-400 text-sm">Start a new branch (e.g., <code>summer-campaign</code>) based on the current live content state.</p>
+  </div>
+</div>
+
+<div class="flex items-start gap-4 mb-6 not-prose">
+  <div class="w-10 h-10 rounded-full bg-neon-cyan/10 border border-neon-cyan flex items-center justify-center text-neon-cyan font-bold flex-shrink-0">2</div>
+  <div class="flex-1">
+    <h3 class="text-white font-bold text-lg mb-2">Work in Isolation</h3>
+    <p class="text-zinc-400 text-sm">Make changes to multiple entries, create new pages, or update assets. These changes exist <em>only</em> in your isolated branch context.</p>
+  </div>
+</div>
+
+<div class="flex items-start gap-4 mb-6 not-prose">
+  <div class="w-10 h-10 rounded-full bg-neon-cyan/10 border border-neon-cyan flex items-center justify-center text-neon-cyan font-bold flex-shrink-0">3</div>
+  <div class="flex-1">
+    <h3 class="text-white font-bold text-lg mb-2">Live Preview</h3>
+    <p class="text-zinc-400 text-sm">Generate a branch-specific preview link to safely share the WIP campaign with external stakeholders.</p>
+  </div>
+</div>
+
+<div class="flex items-start gap-4 mb-6 not-prose">
+  <div class="w-10 h-10 rounded-full bg-neon-purple/10 border border-neon-purple flex items-center justify-center text-neon-purple font-bold flex-shrink-0">4</div>
+  <div class="flex-1">
+    <h3 class="text-white font-bold text-lg mb-2">Merge to Production</h3>
+    <p class="text-zinc-400 text-sm">Once approved, merge the entire branch into <code>main</code> with a single click, taking the campaign live instantly.</p>
+  </div>
+</div>
+
+---
+
+## Conflict Resolution
+
+If another editor updates an entry on `main` while you were working on it in your branch, Rosmarium's intelligent merge engine will detect the conflict.
+
+The Admin Dashboard provides a visual **Three-Way Merge** tool, allowing you to easily choose which changes to keep, line-by-line or block-by-block, ensuring you never accidentally overwrite someone else's work.
+
+---
+
+## Using the Developer API
+
+You can programmatically create branches and commit changes using the Rosmarium SDK:
+
+<div class="bg-[#0D1117] p-4 rounded-lg border border-dark-border text-zinc-300 text-sm overflow-x-auto not-prose my-6">
+```typescript
+import { RosmariumClient } from '@rosmarium/client';
+
+const client = new RosmariumClient({ apiKey: 'YOUR_API_KEY' });
+
+// 1. Create a new branch
+const branch = await client.branches.create({
+  name: 'holiday-promo',
+  baseBranchId: 'main'
+});
+
+// 2. Make changes within the branch context
+await client.content.update('hero-banner', 'entry_123', {
+  title: 'Holiday Mega Sale!',
+  discount: 40
+}, { branch: branch.id });
+
+// 3. Merge branch back to main
+await client.branches.merge(branch.id);
+```
+</div>

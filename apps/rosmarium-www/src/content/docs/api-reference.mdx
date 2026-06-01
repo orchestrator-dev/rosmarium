@@ -6,116 +6,122 @@ order: 4
 
 # API Reference
 
-![Swagger UI](/docs/swagger_ui.png)
-*(Screenshot: Interactive Swagger UI documenting the REST API)*
+<div class="my-10 p-1 rounded-xl bg-gradient-to-r from-neon-cyan/20 to-neon-purple/20 shadow-2xl not-prose">
+  <img src="/docs/swagger_ui.png" alt="Interactive Swagger UI documenting the REST API" class="rounded-lg w-full bg-[#0B0D17]" />
+</div>
 
-Rosmarium provides a comprehensive REST API for content management, semantic search, and graph traversals. All endpoints expect and return JSON.
+Rosmarium provides a comprehensive REST API for content management, semantic search, and graph traversals. All endpoints expect and return standard `application/json`.
 
 ## Authentication
 
-All API endpoints (except public reads if configured) require authentication. 
-You can use a **Session Cookie** (for browser contexts) or an **API Key** (for server-to-server).
+All API endpoints (except public reads if explicitly configured) require authentication. 
+You can use a **Session Cookie** (for browser contexts) or an **API Key** (for server-to-server communication).
 
-```bash
-# Example: Using an API Key via Bearer Token
-curl -H 'Authorization: Bearer ctx_live_...' http://localhost:3000/api/content-types
-```
+<div class="bg-[#0D1117] p-4 rounded-lg border border-dark-border text-zinc-300 text-sm overflow-x-auto not-prose my-6">
+  <div class="text-zinc-500 text-xs uppercase tracking-widest mb-2 border-b border-zinc-800 pb-2">Example: API Key Auth</div>
+  <code class="font-mono text-neon-cyan">curl -H 'Authorization: Bearer ctx_live_...' http://localhost:3000/api/content-types</code>
+</div>
 
 ---
 
-## Content API
+## Endpoint Definitions
 
-### `GET /api/content/:type`
-Fetch a paginated list of entries for a specific content type.
-
-**Parameters:**
-- `filters` (query, optional): e.g. `filters[status][eq]=draft`
-- `sort` (query, optional): e.g. `createdAt:desc`
-- `limit` (query, optional): default 20.
-
-**Response:**
+<div class="grid grid-cols-1 gap-6 not-prose my-8">
+  {/* Content GET */}
+  <div class="bg-dark-surface border border-dark-border rounded-xl overflow-hidden hover:border-neon-cyan transition-colors">
+    <div class="p-4 border-b border-dark-border bg-dark-bg/50 flex items-center gap-3">
+      <span class="px-2 py-1 bg-neon-cyan/20 text-neon-cyan text-xs font-bold rounded">GET</span>
+      <code class="text-white font-mono text-sm">/api/content/:type</code>
+    </div>
+    <div class="p-5">
+      <p class="text-zinc-400 text-sm mb-4">Fetch a paginated list of entries for a specific content type.</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <h4 class="text-white text-xs uppercase tracking-widest mb-2">Parameters</h4>
+          <ul class="text-xs text-zinc-500 space-y-1">
+            <li><code class="text-zinc-300">filters</code> (optional) e.g. filters[status][eq]=draft</li>
+            <li><code class="text-zinc-300">sort</code> (optional) e.g. createdAt:desc</li>
+            <li><code class="text-zinc-300">limit</code> (optional) default 20</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-white text-xs uppercase tracking-widest mb-2">Response</h4>
 ```json
 {
   "data": [
-    {
-      "id": "cuid...",
-      "data": { "title": "Hello World" }
-    }
+    { "id": "cuid...", "data": { "title": "Hello" } }
   ],
   "meta": { "total": 1 }
 }
 ```
+        </div>
+      </div>
+    </div>
+  </div>
 
-### `POST /api/content/:type`
-Create a new content entry.
-
-**Body:**
-```json
-{
-  "data": {
-    "title": "New Article",
-    "body": "Content goes here."
-  }
-}
-```
-
----
-
-## Search API
-
-### `GET /api/search`
-Perform a hybrid search across all content types using Reciprocal Rank Fusion (RRF).
-
-**Parameters:**
-- `q` (query, required): The search string.
-- `alpha` (query, optional): Balance between BM25 and Vector. `0` = pure keyword, `1` = pure vector, `0.5` = balanced. Default: `0.5`.
-- `limit` (query, optional): default 10.
-
-**Response:**
+  {/* Search GET */}
+  <div class="bg-dark-surface border border-dark-border rounded-xl overflow-hidden hover:border-neon-cyan transition-colors">
+    <div class="p-4 border-b border-dark-border bg-dark-bg/50 flex items-center gap-3">
+      <span class="px-2 py-1 bg-neon-cyan/20 text-neon-cyan text-xs font-bold rounded">GET</span>
+      <code class="text-white font-mono text-sm">/api/search</code>
+    </div>
+    <div class="p-5">
+      <p class="text-zinc-400 text-sm mb-4">Perform a hybrid search across all content types using Reciprocal Rank Fusion (RRF).</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <h4 class="text-white text-xs uppercase tracking-widest mb-2">Parameters</h4>
+          <ul class="text-xs text-zinc-500 space-y-1">
+            <li><code class="text-zinc-300">q</code> (required) The search string</li>
+            <li><code class="text-zinc-300">alpha</code> (optional) 0=keyword, 1=vector. Default 0.5</li>
+            <li><code class="text-zinc-300">limit</code> (optional) default 10</li>
+          </ul>
+        </div>
+        <div>
+          <h4 class="text-white text-xs uppercase tracking-widest mb-2">Response</h4>
 ```json
 {
   "data": [
-    {
-      "id": "entry-cuid",
-      "contentType": "article",
-      "score": 0.01563,
-      "snippet": "…getting <mark>started</mark> with…",
-      "data": { "title": "Getting Started" }
-    }
+    { "id": "cuid...", "score": 0.0156, "snippet": "..." }
   ],
   "meta": { "alpha": 0.5, "latencyMs": 42 }
 }
 ```
+        </div>
+      </div>
+    </div>
+  </div>
 
----
-
-## RAG Retrieval API
-
-### `POST /api/rag/retrieve`
-Retrieve semantically relevant chunks formatted for LLM context windows.
-
-**Body:**
+  {/* RAG POST */}
+  <div class="bg-dark-surface border border-dark-border rounded-xl overflow-hidden hover:border-neon-purple transition-colors">
+    <div class="p-4 border-b border-dark-border bg-dark-bg/50 flex items-center gap-3">
+      <span class="px-2 py-1 bg-neon-purple/20 text-neon-purple text-xs font-bold rounded">POST</span>
+      <code class="text-white font-mono text-sm">/api/rag/retrieve</code>
+    </div>
+    <div class="p-5">
+      <p class="text-zinc-400 text-sm mb-4">Retrieve semantically relevant chunks formatted for LLM context windows.</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <h4 class="text-white text-xs uppercase tracking-widest mb-2">Body payload</h4>
 ```json
 {
-  "query": "How do I install Rosmarium?",
-  "content_types": ["documentation"],
+  "query": "Install guide?",
+  "content_types": ["doc"],
   "top_k": 5,
   "rerank": true
 }
 ```
-
-**Response:**
+        </div>
+        <div>
+          <h4 class="text-white text-xs uppercase tracking-widest mb-2">Response</h4>
 ```json
 {
   "chunks": [
-    {
-      "chunk_text": "Run pnpm install...",
-      "score": 0.89,
-      "freshness_score": 0.95
-    }
+    { "chunk_text": "...", "score": 0.89 }
   ]
 }
 ```
-
-![API Swagger](/docs/swagger_ui.png)
-*(Screenshot: Auto-generated API documentation preview)*
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

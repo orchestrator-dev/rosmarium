@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="mainBranch" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#3B82F6"/>
+      <stop offset="100%" stop-color="#2563EB"/>
+    </linearGradient>
+    <linearGradient id="featureBranch" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94A3B8"/>
+    </marker>
+  </defs>
+  
+  <rect width="800" height="400" fill="#0F172A" rx="12"/>
+  
+  <g font-family="system-ui, sans-serif" fill="#F8FAFC">
+    <text x="50" y="50" font-size="24" font-weight="bold">Content Branching Workflow</text>
+    
+    <!-- Main Branch Line -->
+    <path d="M 100 150 L 700 150" stroke="url(#mainBranch)" stroke-width="8" stroke-linecap="round"/>
+    <text x="100" y="130" font-size="16" fill="#60A5FA" font-weight="bold">Main Branch (Production)</text>
+    
+    <!-- Feature Branch Line -->
+    <path d="M 250 150 C 300 150, 300 280, 350 280 L 550 280 C 600 280, 600 150, 650 150" fill="none" stroke="url(#featureBranch)" stroke-width="8" stroke-linecap="round"/>
+    <text x="350" y="320" font-size="16" fill="#34D399" font-weight="bold">Draft Branch (Campaign Update)</text>
+    
+    <!-- Nodes on Main -->
+    <circle cx="150" cy="150" r="12" fill="#1D4ED8" stroke="#60A5FA" stroke-width="4"/>
+    <circle cx="250" cy="150" r="12" fill="#1D4ED8" stroke="#60A5FA" stroke-width="4"/>
+    <circle cx="450" cy="150" r="12" fill="#1D4ED8" stroke="#60A5FA" stroke-width="4"/>
+    <circle cx="650" cy="150" r="12" fill="#1D4ED8" stroke="#60A5FA" stroke-width="4"/>
+    
+    <!-- Nodes on Feature -->
+    <circle cx="350" cy="280" r="12" fill="#047857" stroke="#34D399" stroke-width="4"/>
+    <circle cx="450" cy="280" r="12" fill="#047857" stroke="#34D399" stroke-width="4"/>
+    <circle cx="550" cy="280" r="12" fill="#047857" stroke="#34D399" stroke-width="4"/>
+    
+    <!-- Labels -->
+    <text x="250" y="110" font-size="14" fill="#94A3B8" text-anchor="middle">Branch Created</text>
+    <path d="M 250 115 L 250 130" stroke="#94A3B8" stroke-width="2" marker-end="url(#arrow)"/>
+    
+    <text x="650" y="110" font-size="14" fill="#94A3B8" text-anchor="middle">Merged &amp; Published</text>
+    <path d="M 650 115 L 650 130" stroke="#94A3B8" stroke-width="2" marker-end="url(#arrow)"/>
+    
+    <text x="450" y="240" font-size="14" fill="#94A3B8" text-anchor="middle">Draft Edits</text>
+    <text x="450" y="255" font-size="14" fill="#94A3B8" text-anchor="middle">Live Preview</text>
+  </g>
+</svg>

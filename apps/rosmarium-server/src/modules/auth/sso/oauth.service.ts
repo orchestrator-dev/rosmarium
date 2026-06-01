@@ -42,7 +42,8 @@ export const oauthService = {
             url = client.createAuthorizationURLWithPKCE(config.authorizationEndpoint, state, CodeChallengeMethod.S256, codeVerifier, scopes);
         } else {
             // Google, MicrosoftEntraId, Okta
-            url = (client as any).createAuthorizationURL(state, codeVerifier, scopes);
+            const genericClient = client as { createAuthorizationURL: (s: string, c: string, sc: string[]) => URL };
+            url = genericClient.createAuthorizationURL(state, codeVerifier, scopes);
         }
 
         return { url: url.toString(), state, codeVerifier };
@@ -59,7 +60,8 @@ export const oauthService = {
             }
             tokens = await client.validateAuthorizationCode(config.tokenEndpoint, code, codeVerifier);
         } else {
-            tokens = await (client as any).validateAuthorizationCode(code, codeVerifier);
+            const genericClient = client as { validateAuthorizationCode: (c: string, cv: string) => Promise<any> };
+            tokens = await genericClient.validateAuthorizationCode(code, codeVerifier);
         }
 
         return tokens;

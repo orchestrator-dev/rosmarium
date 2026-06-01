@@ -49,9 +49,10 @@ async function populateRelations(
                 if (loaded) result[field.name] = loaded;
             }
         } else if (field.type === "group" && typeof val === "object") {
+            const groupField = field as { fields: FieldDefinition[] };
             result[field.name] = await populateRelations(
                 val as Record<string, unknown>,
-                field.fields,
+                groupField.fields,
                 loader,
                 depth,
                 maxDepth,
@@ -473,14 +474,15 @@ export const contentCrudService = {
         // Auto-generate slug fields
         let data = { ...opts.data };
         for (const field of contentType.fields) {
+            const slugField = field as { type: string; name: string; generatedFrom?: string };
             if (
-                field.type === "slug" &&
-                !data[field.name] &&
-                field.generatedFrom
+                slugField.type === "slug" &&
+                !data[slugField.name] &&
+                slugField.generatedFrom
             ) {
-                const sourceValue = data[field.generatedFrom];
+                const sourceValue = data[slugField.generatedFrom];
                 if (typeof sourceValue === "string") {
-                    data = { ...data, [field.name]: slugify(sourceValue) };
+                    data = { ...data, [slugField.name]: slugify(sourceValue) };
                 }
             }
         }

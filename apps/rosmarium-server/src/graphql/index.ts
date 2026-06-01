@@ -18,9 +18,10 @@ import "./queries/content-entries.js";
 import "./mutations/content-types.js";
 import "./mutations/content-entries.js";
 import "./subscriptions/content.js";
+import type { GraphQLSchema } from "graphql";
 // ─────────────────────────────────────────────────────────────────────────────
 
-let _schema: any = null;
+let _schema: GraphQLSchema | null = null;
 
 export function getSchema() {
     if (!_schema) {

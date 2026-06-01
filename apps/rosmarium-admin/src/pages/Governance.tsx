@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Box, Typography, Card, CardContent, CircularProgress, Chip, Stack } from "@mui/material";
 
 export function GovernancePage() {
-    const [stats, setStats] = useState<any>(null);
-    const [rotItems, setRotItems] = useState<any[]>([]);
+    const [stats, setStats] = useState<{ freshnessScore: number; outdatedCount: number; total: number } | null>(null);
+    const [rotItems, setRotItems] = useState<Array<{ id: string; reasons: string[] }>>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {

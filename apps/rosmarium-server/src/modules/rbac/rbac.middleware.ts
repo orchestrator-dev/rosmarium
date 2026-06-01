@@ -65,7 +65,7 @@ async function resolveUser(
             request.user = result.user;
             request.sessionId = null; // API key auth — no session
             
-            const apiKey = (result as any).apiKey;
+            const apiKey = (result as { apiKey?: { workspaceId?: string } }).apiKey;
             const wsId = apiKey?.workspaceId || (request.headers["x-workspace-id"] as string | undefined);
             if (wsId) {
                 const wsRole = await workspaceService.getMemberRole(wsId, request.user.id);

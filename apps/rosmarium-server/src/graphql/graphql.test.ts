@@ -114,7 +114,7 @@ function makeContext(user: GraphQLContext["user"] = null): GraphQLContext {
         user,
         dataloaders: createDataloaders(),
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        pubsub: { subscribe: vi.fn(), publish: vi.fn() } as any,
+        pubsub: { subscribe: vi.fn(), publish: vi.fn() } as unknown,
         requestId: "test-req",
     };
 }
@@ -139,7 +139,7 @@ describe("GraphQL — contentTypes query", () => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ query: "{ contentTypes { id name displayName } }" }),
         });
-        const json = await res.json() as any;
+        const json = await res.json() as unknown;
         if (json.errors) console.error(json.errors);
         expect(json.data.contentTypes).toHaveLength(1);
         expect(json.data.contentTypes[0]?.name).toBe("article");

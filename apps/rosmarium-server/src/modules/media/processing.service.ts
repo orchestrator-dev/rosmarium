@@ -68,7 +68,7 @@ export const processingService = {
 
         // Handle Focal Point if provided (and fit is cover)
         if (options.focal && options.fit === "cover") {
-          const [fxStr, fyStr] = options.focal.split(",");
+          // const [fxStr, fyStr] = options.focal.split(",");
           // Note: Sharp has basic positional cropping, but true focal point needs math to calculate left/top based on image size.
           // For simplicity, we use sharp's attention or a specific gravity.
           // We will extract metadata to do math if needed, but for now we fallback to 'attention'

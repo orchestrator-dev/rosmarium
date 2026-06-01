@@ -1,26 +1,25 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { invalidationService } from './invalidation.service.js';
 import { rosmariumEvents } from '../../lib/events.js';
+import * as webhookQueue from '../webhooks/webhook.queue.js';
 
 describe('Invalidation Service', () => {
+  let mockAdd: ReturnType<typeof vi.fn>;
+
   beforeEach(() => {
     vi.resetAllMocks();
-    global.fetch = vi.fn().mockResolvedValue({
-      ok: true,
-      json: () => Promise.resolve({ success: true, invalidatedCount: 1 })
-    });
+    mockAdd = vi.fn().mockResolvedValue({});
+    vi.spyOn(webhookQueue, 'getWebhookQueue').mockReturnValue({ add: mockAdd } as any);
   });
 
-  it('should invalidate content via fetch to Edge API', async () => {
+  it('should invalidate content via webhook queue', async () => {
     await invalidationService.invalidateContent('test-id', 'en');
-    
-    expect(global.fetch).toHaveBeenCalledWith('http://localhost:8787/internal/invalidate', expect.objectContaining({
-      method: 'POST',
-      headers: expect.objectContaining({
-        'Content-Type': 'application/json',
-        'Authorization': expect.stringContaining('Bearer '),
-      }),
-      body: JSON.stringify({ ids: ['test-id'], locale: 'en' }),
+
+    expect(mockAdd).toHaveBeenCalledWith("deliver", expect.objectContaining({
+        systemWebhook: expect.objectContaining({ url: 'http://localhost:8787/internal/invalidate' }),
+        event: "entry.updated",
+        contentType: "system",
+        payload: { id: "test-id", locale: "en" },
     }));
   });
 

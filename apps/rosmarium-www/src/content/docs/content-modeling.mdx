@@ -1,53 +1,81 @@
 ---
 title: Content Modeling
-description: Build nested, composite, and dynamic content models in Rosmarium COS.
+description: Empower your teams to build rich, dynamic content layouts without relying on engineering bottlenecks.
 order: 4
 ---
 
 # Content Modeling
 
-Rosmarium supports creating advanced content models beyond just linear content, allowing developers and editors to construct rich, nested, and repeatable structures comparable to Enterprise Headless CMS platforms like Contentful and Contentstack.
+Rosmarium empowers marketing and editorial teams to construct rich, nested, and reusable content structures. Comparable to leading enterprise headless CMS platforms, our advanced content modeling capabilities ensure you can adapt to any digital channel instantly.
 
 ## Basic Fields
 
-Rosmarium includes all standard field types to model data:
-- **Text & Rich Text**: For titles, short descriptions, and long-form markdown content.
-- **Number & Boolean**: For precise values and toggles.
-- **Date & DateTime**: For scheduling and tracking.
-- **Slug**: Auto-generated identifiers for URL routing.
-- **Media**: References to uploaded assets and images.
-- **Relation**: Link entries to other content types (e.g. Authors to Posts).
-- **JSON**: Store arbitrary untyped structured data.
+Rosmarium includes all standard field types to model your data effectively.
+
+| Field Type | Best Used For | Example Use Case |
+| :--- | :--- | :--- |
+| **Text & Rich Text** | Titles, short descriptions, and long-form markdown | Blog Post Body, Product Title |
+| **Number & Boolean** | Precise values, toggles, and metrics | Product Price, Is Published Flag |
+| **Date & DateTime** | Scheduling, events, and historical tracking | Event Start Date, Publish Time |
+| **Slug** | Auto-generated identifiers for URL routing | `/blog/my-awesome-post` |
+| **Media** | References to uploaded assets and images | Hero Image, Author Avatar |
+| **Relation** | Linking entries to other content types | Connecting an Author to a Post |
+| **JSON** | Storing arbitrary, untyped structured data | 3rd Party API Responses, Metadata |
+
+---
 
 ## Composite Fields (Nested Content)
 
-To support complex layouts and repeating blocks (e.g. page builders, nested component trees), Rosmarium provides three advanced field types:
+To support complex layouts and repeating blocks (e.g. page builders, nested component trees), Rosmarium provides three advanced composite field types:
 
-### 1. Group
-A **Group** field allows you to define a fixed set of sub-fields grouped together under a single object key.
-- **Use Case**: Grouping SEO metadata (Title, Description, Keywords) or grouping Address details (Street, City, Zip).
-- **Schema**: Defined inline with the parent content type.
+<div class="grid grid-cols-1 gap-4 my-8 not-prose">
+  <div class="bg-dark-surface border border-dark-border p-5 rounded-xl hover:border-neon-cyan transition-colors">
+    <div class="flex items-center gap-3 mb-2">
+      <span class="px-2 py-1 bg-neon-cyan/20 text-neon-cyan text-xs font-bold rounded uppercase tracking-wider">Group</span>
+      <h3 class="text-white font-bold text-lg">Fixed Sub-fields</h3>
+    </div>
+    <p class="text-zinc-400 text-sm mb-3">Defines a fixed set of sub-fields grouped together under a single object key (inline with the parent).</p>
+    <div class="bg-[#0D1117] p-3 rounded border border-zinc-800 text-zinc-500 text-xs">
+      <strong>Use Case:</strong> Grouping SEO metadata (Title, Description, Keywords) or Address details (Street, City, Zip).
+    </div>
+  </div>
 
-### 2. Component
-A **Component** field embeds exactly one instance of a predefined "Component" content type.
-- **Use Case**: Reusing a standard "Call to Action" component or "Author Bio" block across multiple different content models.
-- **Setup**: You must first create a Content Type and mark it as a `Component`. Then, your component field can reference it.
+  <div class="bg-dark-surface border border-dark-border p-5 rounded-xl hover:border-neon-cyan transition-colors">
+    <div class="flex items-center gap-3 mb-2">
+      <span class="px-2 py-1 bg-neon-cyan/20 text-neon-cyan text-xs font-bold rounded uppercase tracking-wider">Component</span>
+      <h3 class="text-white font-bold text-lg">Reusable Singleton</h3>
+    </div>
+    <p class="text-zinc-400 text-sm mb-3">Embeds exactly one instance of a predefined "Component" content type.</p>
+    <div class="bg-[#0D1117] p-3 rounded border border-zinc-800 text-zinc-500 text-xs">
+      <strong>Use Case:</strong> Reusing a standard "Call to Action" component or "Author Bio" block across multiple content models.
+    </div>
+  </div>
 
-### 3. Blocks (Dynamic Zones)
-A **Blocks** field (often called Dynamic Zones or Modular Content) allows editors to insert a dynamic array of different components in any order.
-- **Use Case**: Building landing pages where editors can freely mix and match Hero Sections, Feature Grids, and Testimonials.
-- **Validation**: You can specify minimum and maximum limits on the number of blocks, and restrict which Component types are allowed inside the array.
+  <div class="bg-dark-surface border border-dark-border p-5 rounded-xl hover:border-neon-cyan transition-colors">
+    <div class="flex items-center gap-3 mb-2">
+      <span class="px-2 py-1 bg-neon-cyan/20 text-neon-cyan text-xs font-bold rounded uppercase tracking-wider">Blocks</span>
+      <h3 class="text-white font-bold text-lg">Dynamic Zones</h3>
+    </div>
+    <p class="text-zinc-400 text-sm mb-3">Allows editors to insert a dynamic array of different components in any order. Validation can restrict which components are allowed.</p>
+    <div class="bg-[#0D1117] p-3 rounded border border-zinc-800 text-zinc-500 text-xs">
+      <strong>Use Case:</strong> Building dynamic landing pages where editors can freely mix and match Hero Sections, Feature Grids, and Testimonials.
+    </div>
+  </div>
+</div>
 
-## The Content Editor
+---
 
-The Admin Dashboard provides a rich visual editor for these composite fields:
-- **Nested Rendering**: Groups and Components are visually nested in the form.
-- **Block Builder**: Blocks are rendered as a sortable, collapsible list where editors can add, reorder, and remove sections visually.
-- **Dual Mode**: Editors can instantly switch between the visual form ("Fields") and raw data ("JSON") via the tabbed interface to inspect the resulting structure.
+## The Visual Content Editor
 
-![Content Builder](/docs/admin_content_builder.png)
-*(Screenshot: Creating a new entry using the block-based Content Builder)*
+The Admin Dashboard provides an intuitive, distraction-free visual editor designed specifically for marketing and editorial teams.
 
-![Content Dashboard](/docs/admin_content_dashboard.png)
-*(Screenshot: The Unified Content Dashboard with advanced filtering)*
+- **Visual Nesting**: Complex data structures are visually nested, making it incredibly easy for non-technical users to grasp content hierarchies.
+- **Drag-and-Drop Block Builder**: Editors can effortlessly add, reorder, and remove sections to build landing pages on the fly.
 
+> [!TIP]
+> **JSON Mode:** At any time, technical users can toggle to "JSON Mode" in the editor to inspect the exact API payload being generated, making frontend integration a breeze.
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-10 not-prose">
+  <img src="/docs/screenshot-modeling.png" alt="Content Builder" class="rounded-lg border border-dark-border shadow-lg" />
+  <img src="/docs/screenshot-editor.png" alt="Content Dashboard" class="rounded-lg border border-dark-border shadow-lg" />
+</div>

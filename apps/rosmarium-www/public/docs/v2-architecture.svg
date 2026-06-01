@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0F172A"/>
+      <stop offset="100%" stop-color="#1E293B"/>
+    </linearGradient>
+    <linearGradient id="edgeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#3B82F6"/>
+      <stop offset="100%" stop-color="#2563EB"/>
+    </linearGradient>
+    <linearGradient id="gatewayGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#8B5CF6"/>
+      <stop offset="100%" stop-color="#7C3AED"/>
+    </linearGradient>
+    <linearGradient id="coreGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#10B981"/>
+      <stop offset="100%" stop-color="#059669"/>
+    </linearGradient>
+    <linearGradient id="aiGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F59E0B"/>
+      <stop offset="100%" stop-color="#D97706"/>
+    </linearGradient>
+    <linearGradient id="dataGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#EF4444"/>
+      <stop offset="100%" stop-color="#DC2626"/>
+    </linearGradient>
+    
+    <marker id="arrowDown" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94A3B8"/>
+    </marker>
+  </defs>
+
+  <rect width="800" height="1000" fill="url(#bgGrad)" rx="16"/>
+
+  <text x="400" y="50" font-family="system-ui" font-size="28" font-weight="bold" fill="#F8FAFC" text-anchor="middle">Rosmarium V2 Platform Architecture</text>
+  
+  <g font-family="system-ui" font-size="14" fill="#F8FAFC">
+    
+    <!-- Edge Layer -->
+    <rect x="50" y="100" width="700" height="120" rx="8" fill="#1E293B" stroke="url(#edgeGrad)" stroke-width="3"/>
+    <text x="400" y="130" font-size="18" font-weight="bold" text-anchor="middle" fill="#60A5FA">Edge Delivery Layer</text>
+    
+    <rect x="100" y="150" width="160" height="50" rx="6" fill="#334155"/>
+    <text x="180" y="180" text-anchor="middle">CDN Cache</text>
+    
+    <rect x="320" y="150" width="160" height="50" rx="6" fill="#334155"/>
+    <text x="400" y="180" text-anchor="middle">Edge KV</text>
+    
+    <rect x="540" y="150" width="160" height="50" rx="6" fill="#334155"/>
+    <text x="620" y="180" text-anchor="middle">Edge Functions</text>
+
+    <!-- Arrow down -->
+    <path d="M 400 220 L 400 260" stroke="#94A3B8" stroke-width="4" marker-end="url(#arrowDown)"/>
+
+    <!-- API Gateway -->
+    <rect x="50" y="270" width="700" height="80" rx="8" fill="#1E293B" stroke="url(#gatewayGrad)" stroke-width="3"/>
+    <text x="400" y="300" font-size="18" font-weight="bold" text-anchor="middle" fill="#A78BFA">API Gateway</text>
+    <text x="400" y="325" text-anchor="middle" fill="#CBD5E1">REST + GraphQL + WebSocket + SSE</text>
+
+    <!-- Arrow down -->
+    <path d="M 400 350 L 400 390" stroke="#94A3B8" stroke-width="4" marker-end="url(#arrowDown)"/>
+
+    <!-- Core Server -->
+    <rect x="50" y="400" width="700" height="180" rx="8" fill="#1E293B" stroke="url(#coreGrad)" stroke-width="3"/>
+    <text x="400" y="430" font-size="18" font-weight="bold" text-anchor="middle" fill="#34D399">Core Server (Fastify)</text>
+    
+    <rect x="100" y="450" width="160" height="50" rx="6" fill="#334155"/>
+    <text x="180" y="480" text-anchor="middle">Content Engine</text>
+
+    <rect x="320" y="450" width="160" height="50" rx="6" fill="#334155"/>
+    <text x="400" y="480" text-anchor="middle">Workflow Engine</text>
+
+    <rect x="540" y="450" width="160" height="50" rx="6" fill="#334155"/>
+    <text x="620" y="480" text-anchor="middle">Plugin Runtime</text>
+
+    <rect x="100" y="510" width="160" height="50" rx="6" fill="#334155"/>
+    <text x="180" y="540" text-anchor="middle">RBAC + Auth</text>
+
+    <rect x="320" y="510" width="160" height="50" rx="6" fill="#334155"/>
+    <text x="400" y="540" text-anchor="middle">Collab &amp; Preview</text>
+
+    <rect x="540" y="510" width="160" height="50" rx="6" fill="#334155"/>
+    <text x="620" y="540" text-anchor="middle">Media &amp; i18n</text>
+
+    <!-- Arrow down -->
+    <path d="M 400 580 L 400 620" stroke="#94A3B8" stroke-width="4" marker-end="url(#arrowDown)"/>
+
+    <!-- AI Worker -->
+    <rect x="50" y="630" width="700" height="180" rx="8" fill="#1E293B" stroke="url(#aiGrad)" stroke-width="3"/>
+    <text x="400" y="660" font-size="18" font-weight="bold" text-anchor="middle" fill="#FBBF24">AI Worker (FastAPI)</text>
+    
+    <rect x="100" y="680" width="160" height="50" rx="6" fill="#334155"/>
+    <text x="180" y="710" text-anchor="middle">Embed Pipeline</text>
+
+    <rect x="320" y="680" width="160" height="50" rx="6" fill="#334155"/>
+    <text x="400" y="710" text-anchor="middle">Content Intelligence</text>
+
+    <rect x="540" y="680" width="160" height="50" rx="6" fill="#334155"/>
+    <text x="620" y="710" text-anchor="middle">Generative Studio</text>
+
+    <rect x="100" y="740" width="160" height="50" rx="6" fill="#334155"/>
+    <text x="180" y="770" text-anchor="middle">RAG Streaming</text>
+
+    <rect x="320" y="740" width="160" height="50" rx="6" fill="#334155"/>
+    <text x="400" y="770" text-anchor="middle">Graph Inference</text>
+
+    <rect x="540" y="740" width="160" height="50" rx="6" fill="#334155"/>
+    <text x="620" y="770" text-anchor="middle">Translation AI</text>
+
+    <!-- Arrow down -->
+    <path d="M 400 810 L 400 850" stroke="#94A3B8" stroke-width="4" marker-end="url(#arrowDown)"/>
+
+    <!-- Data Layer -->
+    <rect x="50" y="860" width="700" height="110" rx="8" fill="#1E293B" stroke="url(#dataGrad)" stroke-width="3"/>
+    <text x="400" y="890" font-size="18" font-weight="bold" text-anchor="middle" fill="#F87171">Data Layer</text>
+    
+    <rect x="100" y="905" width="160" height="50" rx="6" fill="#334155"/>
+    <text x="180" y="927" text-anchor="middle" font-weight="bold">PostgreSQL</text>
+    <text x="180" y="945" font-size="12" fill="#94A3B8" text-anchor="middle">+ pgvector</text>
+
+    <rect x="320" y="905" width="160" height="50" rx="6" fill="#334155"/>
+    <text x="400" y="927" text-anchor="middle" font-weight="bold">Redis</text>
+    <text x="400" y="945" font-size="12" fill="#94A3B8" text-anchor="middle">PubSub + BullMQ</text>
+
+    <rect x="540" y="905" width="160" height="50" rx="6" fill="#334155"/>
+    <text x="620" y="927" text-anchor="middle" font-weight="bold">S3 Object Store</text>
+    <text x="620" y="945" font-size="12" fill="#94A3B8" text-anchor="middle">MinIO</text>
+
+  </g>
+</svg>

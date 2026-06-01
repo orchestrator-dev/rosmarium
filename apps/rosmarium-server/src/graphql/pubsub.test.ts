@@ -31,6 +31,8 @@ describe("Redis PubSub Integration", () => {
         // Start listening (promise is pending)
         const nextPromise = iterator.next();
 
+        await new Promise((resolve) => setTimeout(resolve, 50));
+
         // Publish
         pubsub.publish("entry.created.test-ct", payload);
 
@@ -46,6 +48,7 @@ describe("Redis PubSub Integration", () => {
         const payload = [{ id: "test-2" }] as any;
         const iterator = pubsub.subscribe("entry.updated.test-ct")[Symbol.asyncIterator]();
         const nextPromise = iterator.next();
+        await new Promise((resolve) => setTimeout(resolve, 50));
         pubsub.publish("entry.updated.test-ct", payload);
         const result = await nextPromise;
         expect(result.value).toEqual(payload);
@@ -56,6 +59,7 @@ describe("Redis PubSub Integration", () => {
         const payload = [{ id: "test-3", contentType: "test-ct" }] as any;
         const iterator = pubsub.subscribe("entry.deleted.test-ct")[Symbol.asyncIterator]();
         const nextPromise = iterator.next();
+        await new Promise((resolve) => setTimeout(resolve, 50));
         pubsub.publish("entry.deleted.test-ct", payload);
         const result = await nextPromise;
         expect(result.value).toEqual(payload);
@@ -70,6 +74,7 @@ describe("Redis PubSub Integration", () => {
         const payload = [{ id: "comment-1", entryId: "test-1", content: "test" }] as any;
         const iterator = pubsub.subscribe("comment.added.test-1")[Symbol.asyncIterator]();
         const nextPromise = iterator.next();
+        await new Promise((resolve) => setTimeout(resolve, 50));
         pubsub.publish("comment.added.test-1", payload);
         const result = await nextPromise;
         expect(result.value).toEqual(payload);
@@ -80,6 +85,7 @@ describe("Redis PubSub Integration", () => {
         const payload = [{ id: "test-other" }] as any;
         const iterator = pubsub.subscribe("entry.created.other-ct")[Symbol.asyncIterator]();
         const nextPromise = iterator.next();
+        await new Promise((resolve) => setTimeout(resolve, 50));
         
         pubsub.publish("entry.created.test-ct", payload); // Publish to a different channel
         

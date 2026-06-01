@@ -18,7 +18,10 @@ export function LoginPage() {
 
   useEffect(() => {
     fetch('/api/auth/sso/providers')
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) throw new Error('Network response was not ok');
+        return res.json();
+      })
       .then(data => {
         if (Array.isArray(data)) setSsoProviders(data);
       })
@@ -73,6 +76,7 @@ export function LoginPage() {
               type="email"
               required
               fullWidth
+              autoComplete="username"
               value={email}
               onChange={e => setEmail(e.target.value)}
             />
@@ -81,6 +85,7 @@ export function LoginPage() {
               type="password"
               required
               fullWidth
+              autoComplete="current-password"
               value={password}
               onChange={e => setPassword(e.target.value)}
             />

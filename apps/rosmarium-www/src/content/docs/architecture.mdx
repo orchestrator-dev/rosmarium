@@ -8,30 +8,86 @@ order: 3
 
 Rosmarium relies on a deliberate split-stack architecture. By using Node.js for I/O bound API tasks and Python for CPU-heavy AI tasks, each layer operates where it is most efficient.
 
-![Rosmarium Architecture](/rosmarium_infographic.svg)
+<div class="my-10 p-1 rounded-xl bg-gradient-to-r from-neon-cyan/20 to-neon-purple/20 shadow-2xl not-prose">
+  <img src="/docs/v2-architecture.svg" alt="Detailed V2 Architecture" class="rounded-lg w-full bg-[#0B0D17]" />
+</div>
 
 ## Core Components
 
-### 1. `rosmarium-server` (Node.js / Fastify)
-The primary entrypoint for all clients.
-- **Content API**: Handles REST and GraphQL queries.
-- **Auth & RBAC**: Session management and API key validation.
-- **Job Dispatch**: When content is published, it dispatches a `BullMQ` job to the Redis queue for the AI worker to pick up.
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-8 not-prose">
+  <div class="bg-dark-surface border border-dark-border p-6 rounded-xl hover:border-neon-cyan transition-colors">
+    <div class="flex items-center gap-2 mb-4">
+      <span class="w-3 h-3 rounded-full bg-neon-cyan"></span>
+      <h3 class="text-white font-bold text-lg">rosmarium-server</h3>
+    </div>
+    <div class="text-xs text-neon-cyan uppercase tracking-widest mb-4">Node.js / Fastify</div>
+    <ul class="space-y-2 text-zinc-400 text-sm">
+      <li><strong>Content API:</strong> Handles REST and GraphQL queries.</li>
+      <li><strong>Auth & RBAC:</strong> Session management and API key validation.</li>
+      <li><strong>Job Dispatch:</strong> Dispatches BullMQ jobs to Redis for the AI worker.</li>
+    </ul>
+  </div>
 
-### 2. `rosmarium-ai-worker` (Python / FastAPI)
-The asynchronous background worker.
-- **Embedding Engine**: Generates vector embeddings for content via Ollama, OpenAI, or Cohere.
-- **RAG Pipeline**: Utilizes LlamaIndex and spaCy for semantic retrieval and chunking.
-- **Graph Analytics**: Uses NetworkX for PageRank and Louvain community detection.
+  <div class="bg-dark-surface border border-dark-border p-6 rounded-xl hover:border-neon-purple transition-colors">
+    <div class="flex items-center gap-2 mb-4">
+      <span class="w-3 h-3 rounded-full bg-neon-purple"></span>
+      <h3 class="text-white font-bold text-lg">rosmarium-ai-worker</h3>
+    </div>
+    <div class="text-xs text-neon-purple uppercase tracking-widest mb-4">Python / FastAPI</div>
+    <ul class="space-y-2 text-zinc-400 text-sm">
+      <li><strong>Embedding Engine:</strong> Vector generation via Ollama/OpenAI.</li>
+      <li><strong>RAG Pipeline:</strong> LlamaIndex & spaCy chunking.</li>
+      <li><strong>Graph Analytics:</strong> NetworkX PageRank & community detection.</li>
+    </ul>
+  </div>
+</div>
 
-### 3. Shared Infrastructure
-- **PostgreSQL 16**: The central source of truth. Contains both structured JSONB content and `pgvector` embeddings.
-- **Redis 7**: The job queue intermediary using BullMQ schema.
+<div class="bg-dark-surface border border-dark-border p-6 rounded-xl mb-12 not-prose">
+  <h3 class="text-white font-bold text-lg mb-4">Shared Infrastructure</h3>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div class="bg-[#0D1117] p-4 rounded-lg border border-zinc-800">
+      <strong class="text-white block mb-1">PostgreSQL 16</strong>
+      <span class="text-zinc-500 text-sm">Central source of truth. JSONB content + pgvector embeddings.</span>
+    </div>
+    <div class="bg-[#0D1117] p-4 rounded-lg border border-zinc-800">
+      <strong class="text-white block mb-1">Redis 7</strong>
+      <span class="text-zinc-500 text-sm">Job queue intermediary using BullMQ schema + edge cache.</span>
+    </div>
+  </div>
+</div>
 
 ## Event Flow: Content Creation
 
-When a user creates and publishes content:
-1. `rosmarium-server` writes the JSONB entry to PostgreSQL.
-2. An event emitter dispatches an `embed-content` job to Redis.
-3. `rosmarium-ai-worker` pulls the job, chunks the text, hits the local Ollama LLM for embeddings, and directly upserts them to `pgvector`.
-4. A second `analyse-content` job is dispatched for NER extraction and auto-tagging.
+When a user creates and publishes content, the split-stack orchestrates the intelligence pipeline seamlessly:
+
+<div class="flex items-start gap-4 mb-6 mt-8 not-prose">
+  <div class="w-10 h-10 rounded-full bg-neon-cyan/10 border border-neon-cyan flex items-center justify-center text-neon-cyan font-bold flex-shrink-0">1</div>
+  <div class="flex-1">
+    <h3 class="text-white font-bold text-lg mb-2">Write to Database</h3>
+    <p class="text-zinc-400 text-sm"><code>rosmarium-server</code> validates the schema and writes the JSONB entry directly to PostgreSQL.</p>
+  </div>
+</div>
+
+<div class="flex items-start gap-4 mb-6 not-prose">
+  <div class="w-10 h-10 rounded-full bg-neon-cyan/10 border border-neon-cyan flex items-center justify-center text-neon-cyan font-bold flex-shrink-0">2</div>
+  <div class="flex-1">
+    <h3 class="text-white font-bold text-lg mb-2">Dispatch Job</h3>
+    <p class="text-zinc-400 text-sm">An event emitter catches the publish hook and dispatches an <code>embed-content</code> job to the Redis queue.</p>
+  </div>
+</div>
+
+<div class="flex items-start gap-4 mb-6 not-prose">
+  <div class="w-10 h-10 rounded-full bg-neon-purple/10 border border-neon-purple flex items-center justify-center text-neon-purple font-bold flex-shrink-0">3</div>
+  <div class="flex-1">
+    <h3 class="text-white font-bold text-lg mb-2">Vectorize & Upsert</h3>
+    <p class="text-zinc-400 text-sm"><code>rosmarium-ai-worker</code> pulls the job, chunks the text, hits the local Ollama LLM for embeddings, and directly upserts them to <code>pgvector</code>.</p>
+  </div>
+</div>
+
+<div class="flex items-start gap-4 mb-6 not-prose">
+  <div class="w-10 h-10 rounded-full bg-neon-purple/10 border border-neon-purple flex items-center justify-center text-neon-purple font-bold flex-shrink-0">4</div>
+  <div class="flex-1">
+    <h3 class="text-white font-bold text-lg mb-2">Intelligence Ops</h3>
+    <p class="text-zinc-400 text-sm">A secondary <code>analyse-content</code> job is dispatched for NER extraction, auto-tagging, and graph edge generation.</p>
+  </div>
+</div>

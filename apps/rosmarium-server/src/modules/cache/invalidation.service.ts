@@ -1,5 +1,6 @@
 import { rosmariumEvents } from "../../lib/events.js";
 import { logger } from "../../lib/logger.js";
+import { getWebhookQueue } from "../webhooks/webhook.queue.js";
 
 // Configuration for edge worker
 const EDGE_URL = process.env.EDGE_URL || "http://localhost:8787";
@@ -11,26 +12,17 @@ export const invalidationService = {
    */
   async invalidateContent(id: string, locale?: string) {
     try {
-      const response = await fetch(`${EDGE_URL}/internal/invalidate`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${INVALIDATION_SECRET}`
-        },
-        body: JSON.stringify({
-          ids: [id],
-          locale
-        })
+      const queue = getWebhookQueue();
+      await queue.add("deliver", {
+        systemWebhook: { url: `${EDGE_URL}/internal/invalidate`, secret: INVALIDATION_SECRET },
+        event: "entry.updated",
+        contentType: "system",
+        payload: { id, locale },
+        attempt: 1,
       });
-
-      if (!response.ok) {
-        throw new Error(`Edge invalidation failed: ${response.statusText}`);
-      }
-
-      const result = await response.json();
-      logger.info({ id, result }, "Edge cache invalidated");
+      logger.info({ id }, "Edge cache invalidation job enqueued");
     } catch (err) {
-      logger.error({ id, err }, "Failed to invalidate edge cache");
+      logger.error({ id, err }, "Failed to enqueue edge cache invalidation");
     }
   },
 

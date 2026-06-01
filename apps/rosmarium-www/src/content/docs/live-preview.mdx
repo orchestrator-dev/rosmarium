@@ -1,0 +1,84 @@
+---
+title: Visual Live Preview
+description: Give your marketing team a true WYSIWYG experience across any frontend framework.
+order: 7
+---
+
+# Visual Live Preview
+
+Rosmarium's **Visual Live Preview** bridges the gap between powerful developer APIs and intuitive content management tools. It provides a true "What You See Is What You Get" (WYSIWYG) experience, allowing content editors to see their changes in real-time as they type, without ever needing to hit the "Save" button or wait for a rebuild.
+
+<div class="my-10 p-1 rounded-xl bg-gradient-to-r from-neon-cyan/20 to-neon-purple/20 shadow-2xl not-prose">
+  <img src="/docs/preview-flow.svg" alt="Visual Live Preview Flow" class="rounded-lg w-full bg-[#0B0D17]" />
+</div>
+
+## How It Works
+
+Because Rosmarium is a headless CMS, your frontend lives completely separate from your content repository. To enable seamless live previews, Rosmarium establishes a secure, real-time connection between the Admin Dashboard and your frontend application.
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-8 not-prose">
+  <div class="bg-dark-surface border border-dark-border p-6 rounded-xl">
+    <div class="text-neon-cyan font-bold text-xl mb-2">1. Authentication</div>
+    <p class="text-zinc-400 text-sm leading-relaxed">The Admin Dashboard requests a short-lived JWT preview token for the specific entry being edited to ensure security.</p>
+  </div>
+  
+  <div class="bg-dark-surface border border-dark-border p-6 rounded-xl">
+    <div class="text-neon-cyan font-bold text-xl mb-2">2. Iframe Rendering</div>
+    <p class="text-zinc-400 text-sm leading-relaxed">Your frontend application (Next.js, Nuxt, Astro) is loaded within an iframe directly alongside the content editor.</p>
+  </div>
+  
+  <div class="bg-dark-surface border border-dark-border p-6 rounded-xl">
+    <div class="text-neon-purple font-bold text-xl mb-2">3. Real-Time Sync</div>
+    <p class="text-zinc-400 text-sm leading-relaxed">As the editor types, field updates are instantly transmitted to the iframe via secure <code>postMessage</code> API events.</p>
+  </div>
+  
+  <div class="bg-dark-surface border border-dark-border p-6 rounded-xl">
+    <div class="text-neon-purple font-bold text-xl mb-2">4. Instant Re-render</div>
+    <p class="text-zinc-400 text-sm leading-relaxed">Your frontend application intercepts these messages and instantly re-renders the React/Vue components on screen.</p>
+  </div>
+</div>
+
+---
+
+## Developer Integration
+
+Adding Live Preview support to a Next.js or React application is incredibly simple using our official React SDK. Wrap your layout with the `LivePreviewProvider` and pass the initial content data fetched from the server. The hook will automatically merge real-time updates when the app is viewed inside the Rosmarium Admin iframe.
+
+<div class="bg-[#0D1117] p-4 rounded-lg border border-dark-border text-zinc-300 text-sm overflow-x-auto not-prose my-6">
+  <div class="text-zinc-500 text-xs uppercase tracking-widest mb-2 border-b border-zinc-800 pb-2">app/blog/[slug]/page.tsx</div>
+```tsx
+import { useLivePreview } from '@rosmarium/react';
+import { BlogPost } from '@/components/BlogPost';
+
+export default async function Page({ params }) {
+  // Fetch initial content from Rosmarium
+  const initialData = await fetchRosmariumEntry('post', params.slug);
+
+  return (
+    <LivePreviewComponent initialData={initialData} />
+  );
+}
+```
+</div>
+
+<div class="bg-[#0D1117] p-4 rounded-lg border border-dark-border text-zinc-300 text-sm overflow-x-auto not-prose my-6">
+  <div class="text-zinc-500 text-xs uppercase tracking-widest mb-2 border-b border-zinc-800 pb-2">components/LivePreviewComponent.tsx</div>
+```tsx
+'use client';
+import { useLivePreview } from '@rosmarium/react';
+
+export function LivePreviewComponent({ initialData }) {
+  // Automatically listens to postMessage events from the Admin UI
+  // and merges the live draft data with the initial data.
+  const { data } = useLivePreview(initialData);
+
+  return <BlogPost content={data} />;
+}
+```
+</div>
+
+---
+
+## Device Simulators
+
+Within the preview pane, editors can easily toggle between **Desktop**, **Tablet**, and **Mobile** viewports to ensure their content looks perfect across all devices before hitting publish.

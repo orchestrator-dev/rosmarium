@@ -130,10 +130,10 @@ export function ContentTypesPage() {
                     </Stack>
                   </TableCell>
                   <TableCell align="right">
-                    <IconButton size="small" color="primary" disabled={ct.isSystem} onClick={() => handleEditCT(ct)}>
+                    <IconButton size="small" color="primary" disabled={ct.isSystem} onClick={() => handleEditCT(ct)} aria-label="Edit Content Type" title="Edit Content Type">
                       <EditIcon fontSize="small" />
                     </IconButton>
-                    <IconButton size="small" color="error" disabled={ct.isSystem} onClick={() => void handleDelete(ct.name)}>
+                    <IconButton size="small" color="error" disabled={ct.isSystem} onClick={() => void handleDelete(ct.name)} aria-label="Delete Content Type" title="Delete Content Type">
                       <DeleteIcon fontSize="small" />
                     </IconButton>
                   </TableCell>

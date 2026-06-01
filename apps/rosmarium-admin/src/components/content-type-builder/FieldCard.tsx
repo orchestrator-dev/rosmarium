@@ -25,10 +25,10 @@ export function FieldCard({ field, onEdit, onRemove }: FieldCardProps) {
       <TableCell><Chip size="small" label={field.type} /></TableCell>
       <TableCell>{field.required ? 'Yes' : 'No'}</TableCell>
       <TableCell align="right">
-        <IconButton size="small" color="primary" onClick={onEdit}>
+        <IconButton size="small" color="primary" onClick={onEdit} aria-label="Edit field" title="Edit field">
           <EditIcon fontSize="small" />
         </IconButton>
-        <IconButton size="small" color="error" onClick={onRemove}>
+        <IconButton size="small" color="error" onClick={onRemove} aria-label="Remove field" title="Remove field">
           <DeleteIcon fontSize="small" />
         </IconButton>
       </TableCell>

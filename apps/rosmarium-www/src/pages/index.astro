@@ -7,22 +7,34 @@ import Layout from '../layouts/Layout.astro';
   <section class="relative pt-32 pb-20 overflow-hidden">
     <div class="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-neon-purple/20 via-dark-bg to-dark-bg -z-10"></div>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight text-white mb-6">
-        The <span class="text-transparent bg-clip-text bg-gradient-to-r from-neon-cyan to-neon-purple">AI-Native</span> Revolution
+      <div class="inline-block px-4 py-1.5 rounded-full border border-neon-cyan/30 bg-neon-cyan/5 text-neon-cyan text-sm font-semibold tracking-wide mb-6">
+        THE ENTERPRISE HEADLESS CMS
+      </div>
+      <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight text-white mb-6 leading-tight">
+        Accelerate Content Velocity. <br class="hidden md:block"/>
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-neon-cyan to-neon-purple">Eliminate Bottlenecks.</span>
       </h1>
-      <p class="text-xl md:text-2xl text-zinc-400 max-w-3xl mx-auto mb-10 font-light">
-        A polyglot, headless architecture designed from the ground up to integrate deeply with large language models, RAG pipelines, and modern frontends.
+      <p class="text-xl md:text-2xl text-zinc-400 max-w-3xl mx-auto mb-10 font-light leading-relaxed">
+        Empower marketing teams to ship personalized, omnichannel campaigns instantly—without waiting on engineering. Rosmarium unifies content, native AI, and automated workflows into one seamless platform.
       </p>
       <div class="flex flex-col sm:flex-row justify-center gap-4 mb-20">
-        <a href="https://demo.rosmarium.com" target="_blank" rel="noopener noreferrer" class="inline-flex justify-center items-center px-8 py-4 text-base font-bold text-white bg-neon-purple rounded-lg hover:bg-neon-purple/90 transition-all shadow-[0_0_20px_rgba(168,85,247,0.5)]">
-          Interactive Demo
+        <a href="https://demo.rosmarium.com" target="_blank" rel="noopener noreferrer" class="inline-flex justify-center items-center px-8 py-4 text-base font-bold text-white bg-neon-purple rounded-lg hover:bg-neon-purple/90 transition-all shadow-[0_0_20px_rgba(168,85,247,0.4)]">
+          Start Interactive Demo
         </a>
-        <a href="/docs" class="inline-flex justify-center items-center px-8 py-4 text-base font-bold text-black bg-neon-cyan rounded-lg hover:bg-neon-cyan/90 transition-all">
-          Read the Docs
+        <a href="/docs" class="inline-flex justify-center items-center px-8 py-4 text-base font-semibold text-white bg-dark-surface border border-dark-border rounded-lg hover:bg-zinc-800 transition-all">
+          Read Documentation
         </a>
-        <a href="https://github.com/orchestrator-dev/rosmarium" target="_blank" rel="noopener noreferrer" class="inline-flex justify-center items-center px-8 py-4 text-base font-semibold text-white bg-dark-surface border border-dark-border rounded-lg hover:bg-zinc-800 transition-all">
-          View on GitHub
-        </a>
+      </div>
+      
+      {/* Ecosystem Readiness */}
+      <div class="mb-20 pt-10 border-t border-dark-border/50 max-w-5xl mx-auto">
+        <p class="text-sm font-medium text-zinc-500 uppercase tracking-widest mb-8 text-center">Ready for the current and future digital ecosystem</p>
+        <div class="flex flex-wrap justify-center items-center gap-6 md:gap-10 text-zinc-400 font-semibold">
+          <div class="flex items-center gap-2 bg-dark-surface px-4 py-2 rounded-full border border-dark-border"><span class="text-neon-cyan">✦</span> Web & E-commerce</div>
+          <div class="flex items-center gap-2 bg-dark-surface px-4 py-2 rounded-full border border-dark-border"><span class="text-neon-cyan">✦</span> Native Apps (Flutter)</div>
+          <div class="flex items-center gap-2 bg-dark-surface px-4 py-2 rounded-full border border-dark-border"><span class="text-neon-purple">✧</span> LLM Integrations (ChatGPT)</div>
+          <div class="flex items-center gap-2 bg-dark-surface px-4 py-2 rounded-full border border-dark-border"><span class="text-neon-purple">✧</span> Agentic Commerce (MCP)</div>
+        </div>
       </div>
       
       {/* Architecture Infographic */}
@@ -49,9 +61,9 @@ import Layout from '../layouts/Layout.astro';
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4" />
             </svg>
           </div>
-          <h3 class="text-xl font-bold text-white mb-3">Dynamic, Headless Architecture</h3>
+          <h3 class="text-xl font-bold text-white mb-3">Unify Your Digital Presence</h3>
           <p class="text-zinc-400 leading-relaxed">
-            Content is decoupled from presentation. Build your frontend with any framework while Rosmarium handles the structured data, API delivery, and user roles via comprehensive REST and GraphQL APIs.
+            Stop maintaining duplicate content. Write once and publish seamlessly across web, mobile apps, and IoT. Decoupling content from presentation reduces IT overhead by up to 40%.
           </p>
         </div>
 
@@ -62,9 +74,9 @@ import Layout from '../layouts/Layout.astro';
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
           </div>
-          <h3 class="text-xl font-bold text-white mb-3">Integrated AI Workers</h3>
+          <h3 class="text-xl font-bold text-white mb-3">Scale Operations with Native AI</h3>
           <p class="text-zinc-400 leading-relaxed">
-            Embedded Python-based intelligence workers run alongside your application. Enjoy native RAG pipelines, automatic tagging, semantic deduplication, and high-performance vector search right out of the box.
+            Don't pay for bolt-on AI tools. Accelerate your editorial team with built-in semantic tagging, automated summaries, and RAG search out-of-the-box.
           </p>
         </div>
 
@@ -75,9 +87,9 @@ import Layout from '../layouts/Layout.astro';
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
             </svg>
           </div>
-          <h3 class="text-xl font-bold text-white mb-3">PostgreSQL + pgvector</h3>
+          <h3 class="text-xl font-bold text-white mb-3">Ensure Global Compliance</h3>
           <p class="text-zinc-400 leading-relaxed">
-            Leverage the world's most advanced open-source relational database. Rosmarium uses pgvector for seamless, scalable similarity searches without the operational overhead of a separate vector database.
+            Mitigate regulatory risks instantly. Enforce strict visual approval chains, role-based access controls, and maintain complete audit logs for every editorial action.
           </p>
         </div>
 
@@ -88,9 +100,9 @@ import Layout from '../layouts/Layout.astro';
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
             </svg>
           </div>
-          <h3 class="text-xl font-bold text-white mb-3">High-Speed Content Delivery</h3>
+          <h3 class="text-xl font-bold text-white mb-3">Eliminate Vendor Lock-in</h3>
           <p class="text-zinc-400 leading-relaxed">
-            Optimized for performance with Edge-compatible delivery endpoints. Advanced caching and robust asset engines ensure your content is served globally with sub-millisecond latency.
+            Own your data. Rosmarium is built on fully open-source standards (Node.js, Python, PostgreSQL), giving you complete control over your enterprise infrastructure.
           </p>
         </div>
 
@@ -101,9 +113,9 @@ import Layout from '../layouts/Layout.astro';
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
             </svg>
           </div>
-          <h3 class="text-xl font-bold text-white mb-3">Workflow Engine & Scheduling</h3>
+          <h3 class="text-xl font-bold text-white mb-3">Visual Workflow Automation</h3>
           <p class="text-zinc-400 leading-relaxed">
-            Create custom approval processes with visual state transitions and role-based validations. Schedule entries to publish or unpublish automatically using robust delayed jobs via BullMQ.
+            Stop losing campaigns to miscommunication. Design custom approval chains visually and automate scheduling to ensure your content launches flawlessly, every time.
           </p>
         </div>
 
@@ -114,9 +126,9 @@ import Layout from '../layouts/Layout.astro';
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
             </svg>
           </div>
-          <h3 class="text-xl font-bold text-white mb-3">Rich Content Hierarchy</h3>
+          <h3 class="text-xl font-bold text-white mb-3">Empower Marketing Independence</h3>
           <p class="text-zinc-400 leading-relaxed">
-            Model sophisticated relationships with Groups, Components, and dynamic Block structures. Build page builders and modular layouts directly inside the Admin Dashboard.
+            Give marketers the power to build dynamic landing pages and composite layouts using drag-and-drop blocks, entirely removing developers from the content publishing path.
           </p>
         </div>
       </div>
@@ -129,9 +141,9 @@ import Layout from '../layouts/Layout.astro';
     <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex flex-col md:flex-row items-center gap-12">
         <div class="md:w-1/2">
-          <h2 class="text-3xl md:text-4xl font-bold mb-6">Built for Developers.</h2>
+          <h2 class="text-3xl md:text-4xl font-bold mb-6">Built for Agility.</h2>
           <p class="text-zinc-400 text-lg mb-8 leading-relaxed">
-            Fetch content, execute graph traversals, or query vector similarity with simple, intuitive SDKs. Rosmarium stays out of your way so you can focus on building amazing frontends.
+            Give your marketing and engineering teams the freedom to iterate quickly. Rosmarium bridges the gap between powerful developer APIs and intuitive content management tools.
           </p>
           <a href="/docs" class="text-neon-cyan font-semibold hover:underline flex items-center gap-2">
             View the quickstart guide

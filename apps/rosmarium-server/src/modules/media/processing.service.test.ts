@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { processingService } from './processing.service.js';
 import fs from 'fs/promises';
-import path from 'path';
 
 // Mock sharp
 vi.mock('sharp', () => {

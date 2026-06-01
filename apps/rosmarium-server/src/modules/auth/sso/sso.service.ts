@@ -50,7 +50,7 @@ export const ssoService = {
             user = newUser;
         } else {
             // Update role and name if changed
-            const updateData: any = {};
+            const updateData: Partial<{ role: UserRole; firstName: string; lastName: string }> = {};
             if (role && user.role !== role) {
                 updateData.role = role;
             }

@@ -73,7 +73,7 @@ export const fieldSchema: z.ZodType<FieldDefinition, z.ZodTypeDef, unknown> = z.
     z.union([
         builtInFieldSchema,
         // Catch-all for custom field types registered by plugins
-        baseField.extend({ type: z.string() }).passthrough() as unknown as z.ZodType<any>,
+        baseField.extend({ type: z.string() }).passthrough() as z.ZodType<FieldDefinition>,
     ])
 );
 
@@ -106,7 +106,7 @@ export type FieldDefinition = z.infer<typeof baseField> &
               minBlocks?: number;
               maxBlocks?: number;
           }
-        | { type: string; [key: string]: any }
+        | { type: string; [key: string]: unknown }
     );
 
 export const fieldsArraySchema: z.ZodType<FieldDefinition[], z.ZodTypeDef, unknown> = z.lazy(() =>
@@ -138,16 +138,17 @@ export function validateFieldValue(
             if (typeof value !== "string")
                 return `Field '${field.name}' must be a string`;
             if (field.type === "text") {
+                const f = field as { name: string; minLength?: number; maxLength?: number };
                 if (
-                    field.minLength !== undefined &&
-                    value.length < field.minLength
+                    f.minLength !== undefined && f.minLength !== null &&
+                    value.length < f.minLength
                 )
-                    return `Field '${field.name}' must be at least ${field.minLength} characters`;
+                    return `Field '${f.name}' must be at least ${f.minLength} characters`;
                 if (
-                    field.maxLength !== undefined &&
-                    value.length > field.maxLength
+                    f.maxLength !== undefined && f.maxLength !== null &&
+                    value.length > f.maxLength
                 )
-                    return `Field '${field.name}' must be at most ${field.maxLength} characters`;
+                    return `Field '${f.name}' must be at most ${f.maxLength} characters`;
             }
             return null;
         }
@@ -159,14 +160,15 @@ export function validateFieldValue(
                 : `Field '${field.name}' must be a string or a valid BlockDocument JSON`;
         }
         case "number": {
+            const f = field as { name: string; min?: number; max?: number; integer: boolean };
             if (typeof value !== "number")
-                return `Field '${field.name}' must be a number`;
-            if (field.integer && !Number.isInteger(value))
-                return `Field '${field.name}' must be an integer`;
-            if (field.min !== undefined && value < field.min)
-                return `Field '${field.name}' must be >= ${field.min}`;
-            if (field.max !== undefined && value > field.max)
-                return `Field '${field.name}' must be <= ${field.max}`;
+                return `Field '${f.name}' must be a number`;
+            if (f.integer && !Number.isInteger(value))
+                return `Field '${f.name}' must be an integer`;
+            if (f.min !== undefined && f.min !== null && value < f.min)
+                return `Field '${f.name}' must be >= ${f.min}`;
+            if (f.max !== undefined && f.max !== null && value > f.max)
+                return `Field '${f.name}' must be <= ${f.max}`;
             return null;
         }
         case "boolean":
@@ -179,10 +181,11 @@ export function validateFieldValue(
                 ? null
                 : `Field '${field.name}' must be a date string or Date object`;
         case "select": {
-            const validValues = field.options.map((o) => o.value);
+            const f = field as { name: string; options: { label: string; value: string }[] };
+            const validValues = f.options.map((o: { label: string; value: string }) => o.value);
             return validValues.includes(String(value))
                 ? null
-                : `Field '${field.name}' must be one of: ${validValues.join(", ")}`;
+                : `Field '${f.name}' must be one of: ${validValues.join(", ")}`;
         }
         case "media":
         case "json":
@@ -191,28 +194,30 @@ export function validateFieldValue(
 
         // --- Nested / Composite field validation ---
         case "group": {
+            const f = field as { name: string; fields: FieldDefinition[] };
             if (typeof value !== "object" || value === null || Array.isArray(value))
-                return `Field '${field.name}' must be an object`;
+                return `Field '${f.name}' must be an object`;
             const groupData = value as Record<string, unknown>;
-            for (const subField of field.fields) {
+            for (const subField of f.fields) {
                 const error = validateFieldValue(
                     subField,
                     groupData[subField.name],
                     lookupComponentFields,
                 );
-                if (error) return `${field.name}.${error}`;
+                if (error) return `${f.name}.${error}`;
             }
             return null;
         }
         case "component": {
+            const f = field as { name: string; allowedComponents: string[] };
             if (typeof value !== "object" || value === null || Array.isArray(value))
-                return `Field '${field.name}' must be an object`;
+                return `Field '${f.name}' must be an object`;
             const compData = value as Record<string, unknown>;
             const compName = compData["_component"];
             if (typeof compName !== "string")
-                return `Field '${field.name}' must have a '_component' string identifier`;
-            if (!field.allowedComponents.includes(compName))
-                return `Field '${field.name}': component '${compName}' is not allowed. Allowed: ${field.allowedComponents.join(", ")}`;
+                return `Field '${f.name}' must have a '_component' string identifier`;
+            if (!f.allowedComponents.includes(compName))
+                return `Field '${f.name}': component '${compName}' is not allowed. Allowed: ${f.allowedComponents.join(", ")}`;
             // Validate component sub-fields if lookup is available
             if (lookupComponentFields) {
                 const compFields = lookupComponentFields(compName);
@@ -223,25 +228,26 @@ export function validateFieldValue(
                             compData[subField.name],
                             lookupComponentFields,
                         );
-                        if (error) return `${field.name}.${error}`;
+                        if (error) return `${f.name}.${error}`;
                     }
                 }
             }
             return null;
         }
         case "blocks": {
+            const f = field as { name: string; allowedComponents: string[]; minBlocks?: number; maxBlocks?: number };
             if (!Array.isArray(value))
-                return `Field '${field.name}' must be an array`;
+                return `Field '${f.name}' must be an array`;
             if (
-                field.minBlocks !== undefined &&
-                value.length < field.minBlocks
+                f.minBlocks !== undefined && f.minBlocks !== null &&
+                value.length < f.minBlocks
             )
-                return `Field '${field.name}' must have at least ${field.minBlocks} blocks`;
+                return `Field '${f.name}' must have at least ${f.minBlocks} blocks`;
             if (
-                field.maxBlocks !== undefined &&
-                value.length > field.maxBlocks
+                f.maxBlocks !== undefined && f.maxBlocks !== null &&
+                value.length > f.maxBlocks
             )
-                return `Field '${field.name}' must have at most ${field.maxBlocks} blocks`;
+                return `Field '${f.name}' must have at most ${f.maxBlocks} blocks`;
             for (let i = 0; i < value.length; i++) {
                 const block = value[i];
                 if (
@@ -249,13 +255,13 @@ export function validateFieldValue(
                     block === null ||
                     Array.isArray(block)
                 )
-                    return `Field '${field.name}[${i}]' must be an object`;
+                    return `Field '${f.name}[${i}]' must be an object`;
                 const blockData = block as Record<string, unknown>;
                 const blockComp = blockData["_component"];
                 if (typeof blockComp !== "string")
-                    return `Field '${field.name}[${i}]' must have a '_component' string identifier`;
-                if (!field.allowedComponents.includes(blockComp))
-                    return `Field '${field.name}[${i}]': component '${blockComp}' is not allowed. Allowed: ${field.allowedComponents.join(", ")}`;
+                    return `Field '${f.name}[${i}]' must have a '_component' string identifier`;
+                if (!f.allowedComponents.includes(blockComp))
+                    return `Field '${f.name}[${i}]': component '${blockComp}' is not allowed. Allowed: ${f.allowedComponents.join(", ")}`;
                 // Validate block sub-fields if lookup is available
                 if (lookupComponentFields) {
                     const compFields = lookupComponentFields(blockComp);
@@ -267,7 +273,7 @@ export function validateFieldValue(
                                 lookupComponentFields,
                             );
                             if (error)
-                                return `${field.name}[${i}].${error}`;
+                                return `${f.name}[${i}].${error}`;
                         }
                     }
                 }

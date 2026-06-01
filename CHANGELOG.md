@@ -5,6 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.0.0] - 2026-06-01
+
+### Added
+- **rosmarium-www**: Complete premium aesthetic overhaul of the documentation site, including custom Tailwind CSS, neon gradients, and a new markdown MDX styling architecture.
+- **rosmarium-www**: Global copy-to-clipboard functionality across all documentation code blocks.
+- **rosmarium-www**: Dedicated documentation pages for new V2 features: Content Branching and Visual Live Preview.
+- **rosmarium-admin**: Branching UI components and Live Preview iframe integrations.
+- **rosmarium-server**: Content branching backend APIs (create, merge, three-way diff).
+
+### Fixed
+- **rosmarium-server**: Fixed SSO OAuth/SAML service bugs and GraphQL pubsub issues.
+- **rosmarium-server**: Fixed media processing and RBAC middleware vulnerabilities.
+- **rosmarium-edge**: Resolved edge caching invalidation issues and router configuration.
+- **rosmarium-admin**: Fixed various frontend E2E bugs in AuditLog, ContentEditor, Governance, and Login pages.
+- **rosmarium-www**: Resolved MDX compilation crashes caused by raw JSX curly braces by migrating to standard Markdown code blocks.
+
+### Changed
+- **Global**: Official bump to V2.0.0 marking the stable release of the new AI-native, branchable content architecture.
+
 ## [1.14.0] - 2026-05-31
 
 ### Added

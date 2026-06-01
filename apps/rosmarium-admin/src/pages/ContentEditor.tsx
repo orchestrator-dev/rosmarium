@@ -175,7 +175,8 @@ export function ContentEditorPage() {
       });
 
       if (!res.ok) {
-        const errData = await res.json();
+        let errData = {};
+        try { errData = await res.json(); } catch { /* ignore */ }
         throw new Error(
           (errData as { error?: { message?: string } })?.error?.message || 'Failed to save',
         );
@@ -267,7 +268,8 @@ export function ContentEditorPage() {
       });
 
       if (!res.ok) {
-        const errData = await res.json();
+        let errData = {};
+        try { errData = await res.json(); } catch { /* ignore */ }
         throw new Error((errData as { error?: { message?: string } })?.error?.message || 'Failed to save template');
       }
 

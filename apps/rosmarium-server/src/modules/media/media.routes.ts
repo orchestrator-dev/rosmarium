@@ -42,11 +42,12 @@ export const mediaRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
         reply.header("Cache-Control", "public, max-age=31536000, immutable");
         
         return reply.send(stream);
-      } catch (err: any) {
-        if (err.message.startsWith("Media not found")) {
+      } catch (err: unknown) {
+        const error = err as Error;
+        if (error.message.startsWith("Media not found")) {
           return reply.status(404).send({ error: "Media not found" });
         }
-        return reply.status(500).send({ error: err.message });
+        return reply.status(500).send({ error: error.message });
       }
     }
   );

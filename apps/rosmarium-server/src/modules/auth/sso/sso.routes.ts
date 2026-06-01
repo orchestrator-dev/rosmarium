@@ -5,7 +5,7 @@ import { samlService } from "./saml.service";
 import { lucia } from "../lucia";
 
 export async function ssoRoutes(app: FastifyInstance) {
-    app.get("/providers", async (request, reply) => {
+    app.get("/providers", async () => {
         const providers = await ssoService.getActiveProviders();
         return providers.map(p => ({
             id: p.id,

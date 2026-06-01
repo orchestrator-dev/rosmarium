@@ -25,7 +25,7 @@ function mockDbSelect(returnValue: unknown[] = []) {
         from: vi.fn().mockReturnThis(),
         where: vi.fn().mockReturnThis(),
         limit: vi.fn().mockResolvedValue(returnValue),
-        then: function(resolve: any) { resolve(returnValue); }
+        then: function(resolve: unknown) { resolve(returnValue); }
     };
     (db.select as Mock).mockReturnValue(chain);
     return chain;
@@ -67,7 +67,7 @@ describe("ssoService.processSSOLogin", () => {
     };
 
     it("throws if no email is provided", async () => {
-        await expect(ssoService.processSSOLogin(mockProvider as any, { email: "" }))
+        await expect(ssoService.processSSOLogin(mockProvider as unknown, { email: "" }))
             .rejects.toThrow("SSO profile missing email");
     });
 
@@ -75,7 +75,7 @@ describe("ssoService.processSSOLogin", () => {
         mockDbSelect([]); // No existing user
         mockDbInsert([{ id: "user1", email: "test@example.com", role: "viewer" }]);
 
-        const user = await ssoService.processSSOLogin(mockProvider as any, {
+        const user = await ssoService.processSSOLogin(mockProvider as unknown, {
             email: "test@example.com",
             firstName: "Test",
             lastName: "User"
@@ -89,7 +89,7 @@ describe("ssoService.processSSOLogin", () => {
         mockDbSelect([]); // No existing user
         mockDbInsert([{ id: "user1", email: "admin@example.com", role: "admin" }]);
 
-        const user = await ssoService.processSSOLogin(mockProvider as any, {
+        const user = await ssoService.processSSOLogin(mockProvider as unknown, {
             email: "admin@example.com",
             groups: ["unknown", "admins"]
         });
@@ -101,7 +101,7 @@ describe("ssoService.processSSOLogin", () => {
         mockDbSelect([{ id: "user1", email: "editor@example.com", role: "viewer" }]);
         mockDbUpdate([{ id: "user1", email: "editor@example.com", role: "editor" }]);
 
-        const user = await ssoService.processSSOLogin(mockProvider as any, {
+        const user = await ssoService.processSSOLogin(mockProvider as unknown, {
             email: "editor@example.com",
             groups: ["editors"]
         });
@@ -113,7 +113,7 @@ describe("ssoService.processSSOLogin", () => {
     it("does not update existing user if role matches", async () => {
         mockDbSelect([{ id: "user1", email: "editor@example.com", role: "editor" }]);
         
-        const user = await ssoService.processSSOLogin(mockProvider as any, {
+        const user = await ssoService.processSSOLogin(mockProvider as unknown, {
             email: "editor@example.com",
             groups: ["editors"]
         });

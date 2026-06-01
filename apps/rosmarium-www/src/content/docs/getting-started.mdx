@@ -6,77 +6,134 @@ order: 2
 
 # Getting Started
 
-Rosmarium is a monorepo that uses Turborepo and pnpm. The easiest way to get started is by running the shared infrastructure via Docker Compose and running the Node and Python services locally.
+Rosmarium is a monorepo built on Turborepo and `pnpm`. The absolute fastest way to get started is by spinning up the shared infrastructure via Docker Compose and running the Node and Python services natively on your local machine.
 
-## Prerequisites
+<div class="my-10 bg-dark-surface border border-dark-border rounded-xl p-6 not-prose">
+  <h3 class="text-white font-bold text-lg mb-4 flex items-center gap-2">
+    <span class="text-neon-purple">⚡️</span> Prerequisites
+  </h3>
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+    <div class="bg-dark-bg border border-zinc-800 rounded-lg p-4 text-center">
+      <div class="text-zinc-500 text-xs uppercase tracking-wider mb-1">Runtime</div>
+      <div class="text-white font-semibold">Node.js <span class="text-neon-cyan font-normal text-sm">v22+</span></div>
+    </div>
+    <div class="bg-dark-bg border border-zinc-800 rounded-lg p-4 text-center">
+      <div class="text-zinc-500 text-xs uppercase tracking-wider mb-1">Package Mgr</div>
+      <div class="text-white font-semibold">pnpm <span class="text-neon-cyan font-normal text-sm">v9+</span></div>
+    </div>
+    <div class="bg-dark-bg border border-zinc-800 rounded-lg p-4 text-center">
+      <div class="text-zinc-500 text-xs uppercase tracking-wider mb-1">AI Worker</div>
+      <div class="text-white font-semibold">Python <span class="text-neon-purple font-normal text-sm">v3.12+</span></div>
+    </div>
+    <div class="bg-dark-bg border border-zinc-800 rounded-lg p-4 text-center">
+      <div class="text-zinc-500 text-xs uppercase tracking-wider mb-1">Infrastructure</div>
+      <div class="text-white font-semibold">Docker <span class="text-neon-cyan font-normal text-sm">Engine</span></div>
+    </div>
+  </div>
+</div>
 
-- **Node.js**: v22 LTS or higher
-- **pnpm**: v9.0.0 or higher
-- **Python**: v3.12 or higher with `uv` installed
-- **Docker** or **Podman**: For running PostgreSQL, Redis, and MinIO.
+> [!TIP]
+> **Why Docker?** We use Docker Compose strictly for the infrastructure (PostgreSQL with pgvector, Redis, and MinIO) to guarantee a reproducible, isolated environment without polluting your local machine. The actual core application runs natively for maximum developer velocity.
+
+---
 
 ## Installation
 
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/orchestrator-dev/rosmarium
-   cd rosmarium
-   ```
+Follow these steps to bootstrap the platform on your local machine.
 
-2. **Install dependencies**:
-   ```bash
-   pnpm install
-   ```
+<div class="flex items-start gap-4 mb-6 mt-8 not-prose">
+  <div class="w-10 h-10 rounded-full bg-neon-cyan/10 border border-neon-cyan flex items-center justify-center text-neon-cyan font-bold flex-shrink-0">1</div>
+  <div class="flex-1">
+    <h3 class="text-white font-bold text-lg mb-2">Clone the repository</h3>
+    <pre class="bg-[#0D1117] p-4 rounded-lg border border-dark-border text-zinc-300 text-sm overflow-x-auto"><code class="font-mono">git clone https://github.com/orchestrator-dev/rosmarium
+cd rosmarium</code></pre>
+  </div>
+</div>
 
-3. **Start infrastructure**:
-   ```bash
-   pnpm infra:up
-   pnpm infra:init
-   ```
+<div class="flex items-start gap-4 mb-6 not-prose">
+  <div class="w-10 h-10 rounded-full bg-neon-purple/10 border border-neon-purple flex items-center justify-center text-neon-purple font-bold flex-shrink-0">2</div>
+  <div class="flex-1">
+    <h3 class="text-white font-bold text-lg mb-2">Install dependencies</h3>
+    <p class="text-zinc-400 text-sm mb-2">This will install packages for all apps and packages in the monorepo.</p>
+    <pre class="bg-[#0D1117] p-4 rounded-lg border border-dark-border text-zinc-300 text-sm overflow-x-auto"><code class="font-mono">pnpm install</code></pre>
+  </div>
+</div>
 
-4. **Configure Environment**:
-   Copy the example environment file. Be sure to set `ADMIN_EMAIL` and `ADMIN_PASSWORD`.
-   ```bash
-   cp .env.example .env
-   ```
+<div class="flex items-start gap-4 mb-6 not-prose">
+  <div class="w-10 h-10 rounded-full bg-neon-cyan/10 border border-neon-cyan flex items-center justify-center text-neon-cyan font-bold flex-shrink-0">3</div>
+  <div class="flex-1">
+    <h3 class="text-white font-bold text-lg mb-2">Spin up Infrastructure</h3>
+    <p class="text-zinc-400 text-sm mb-2">Starts PostgreSQL, Redis, and MinIO locally via Docker.</p>
+    <pre class="bg-[#0D1117] p-4 rounded-lg border border-dark-border text-zinc-300 text-sm overflow-x-auto"><code class="font-mono">pnpm infra:up
+pnpm infra:init</code></pre>
+  </div>
+</div>
 
-5. **Database Setup**:
-   Generate migrations and seed the database with the initial admin user.
-   ```bash
-   pnpm db:migrate
-   pnpm db:seed
-   ```
+<div class="flex items-start gap-4 mb-6 not-prose">
+  <div class="w-10 h-10 rounded-full bg-neon-purple/10 border border-neon-purple flex items-center justify-center text-neon-purple font-bold flex-shrink-0">4</div>
+  <div class="flex-1">
+    <h3 class="text-white font-bold text-lg mb-2">Configure Environment & DB</h3>
+    <p class="text-zinc-400 text-sm mb-2">Copy the env file, apply the Drizzle schema migrations, and seed the admin user.</p>
+    <pre class="bg-[#0D1117] p-4 rounded-lg border border-dark-border text-zinc-300 text-sm overflow-x-auto"><code class="font-mono">cp .env.example .env
+pnpm db:migrate
+pnpm db:seed</code></pre>
+  </div>
+</div>
+
+---
 
 ## Running the Services
 
-Rosmarium consists of three core applications that you can run simultaneously.
+Rosmarium consists of three core applications that run simultaneously during development. Open three terminal tabs and run the following:
 
-**1. Start the Node.js API Server**
-```bash
-pnpm --filter @orchestrator.dev/server dev
-```
-*Runs on `http://localhost:3000`*
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6 not-prose my-10">
+  {/* Server */}
+  <div class="bg-dark-surface border border-dark-border rounded-xl overflow-hidden hover:border-neon-cyan transition-colors flex flex-col">
+    <div class="p-4 border-b border-dark-border bg-dark-bg/50 flex justify-between items-center">
+       <span class="text-white font-bold flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-neon-cyan"></span> API Server</span>
+       <span class="text-xs px-2 py-1 bg-zinc-800 rounded-full text-zinc-300">Port 3000</span>
+    </div>
+    <div class="p-4 flex-grow">
+      <p class="text-zinc-500 text-sm mb-3">The core Node.js TypeScript GraphQL / REST server.</p>
+      <pre class="text-xs text-neon-cyan overflow-x-auto p-3 bg-[#0D1117] rounded-lg border border-zinc-800"><code>pnpm --filter @orchestrator.dev/server dev</code></pre>
+    </div>
+  </div>
 
-**2. Start the Python AI Worker**
-```bash
-cd apps/rosmarium-ai-worker
-uv run uvicorn rosmarium_ai_worker.main:app --app-dir src --port 8001 --reload
-```
-*Runs on `http://localhost:8001`*
+  {/* AI Worker */}
+  <div class="bg-dark-surface border border-dark-border rounded-xl overflow-hidden hover:border-neon-purple transition-colors flex flex-col">
+    <div class="p-4 border-b border-dark-border bg-dark-bg/50 flex justify-between items-center">
+       <span class="text-white font-bold flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-neon-purple"></span> AI Worker</span>
+       <span class="text-xs px-2 py-1 bg-zinc-800 rounded-full text-zinc-300">Port 8001</span>
+    </div>
+    <div class="p-4 flex-grow">
+      <p class="text-zinc-500 text-sm mb-3">The Python FastAPI embedding & intelligence pipeline.</p>
+      <pre class="text-xs text-neon-purple overflow-x-auto p-3 bg-[#0D1117] rounded-lg border border-zinc-800"><code>cd apps/rosmarium-ai-worker
+uv run uvicorn rosmarium_ai_worker.main:app --app-dir src --port 8001 --reload</code></pre>
+    </div>
+  </div>
 
-**3. Start the Admin Dashboard**
-```bash
-pnpm --filter @orchestrator.dev/admin dev
-```
-*Runs on `http://localhost:5173`*
+  {/* Admin UI */}
+  <div class="bg-dark-surface border border-dark-border rounded-xl overflow-hidden hover:border-neon-cyan transition-colors flex flex-col">
+    <div class="p-4 border-b border-dark-border bg-dark-bg/50 flex justify-between items-center">
+       <span class="text-white font-bold flex items-center gap-2"><span class="w-2 h-2 rounded-full bg-neon-cyan"></span> Admin UI</span>
+       <span class="text-xs px-2 py-1 bg-zinc-800 rounded-full text-zinc-300">Port 5173</span>
+    </div>
+    <div class="p-4 flex-grow">
+      <p class="text-zinc-500 text-sm mb-3">The React Vite dashboard. Requires API server running.</p>
+      <pre class="text-xs text-neon-cyan overflow-x-auto p-3 bg-[#0D1117] rounded-lg border border-zinc-800"><code>pnpm --filter @orchestrator.dev/admin dev</code></pre>
+    </div>
+  </div>
+</div>
 
-![Admin Content Builder](/docs/admin_content_builder.png)
-*(Screenshot: Creating a new content type in the Admin UI)*
+---
 
-## Demo Dataset
+## Seeding the Demo Dataset
 
-To immediately see Rosmarium's AI features in action, you can seed the demo dataset:
-```bash
-pnpm demo:seed
-```
-This will insert sample articles, trigger embedding generation, and run graph analytics!
+To immediately see Rosmarium's AI features, Knowledge Graph, and Semantic Search in action, you can seed the demo dataset:
+
+<div class="bg-[#0D1117] p-4 rounded-lg border border-dark-border flex items-center gap-4 not-prose mb-8">
+  <div class="flex-shrink-0 text-2xl">🪄</div>
+  <code class="text-neon-purple font-mono text-sm flex-1">pnpm demo:seed</code>
+</div>
+
+This command will automatically insert sample articles, trigger vector embedding generation in the AI Worker, and run initial graph analytics so you have a fully populated, intelligent repository to explore.
