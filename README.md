@@ -7,8 +7,8 @@
   <img src="https://img.shields.io/badge/node-22%20LTS-green" alt="Node" />
   <img src="https://img.shields.io/badge/python-3.12-blue" alt="Python" />
   <img src="https://img.shields.io/badge/postgresql-16%20+%20pgvector-336791" alt="PostgreSQL" />
-  <img src="https://img.shields.io/badge/version-v1.1.1-brightgreen" alt="Version" />
-  <img src="https://img.shields.io/badge/status-Phase%204%20complete%20%C2%B7%20v1.1.1-brightgreen" alt="Status" />
+  <img src="https://img.shields.io/badge/version-v2.0.0-brightgreen" alt="Version" />
+  <img src="https://img.shields.io/badge/status-V2%20Release%20%C2%B7%20v2.0.0-brightgreen" alt="Status" />
   [![CI](https://github.com/orchestrator-dev/rosmarium/actions/workflows/ci.yml/badge.svg)](https://github.com/orchestrator-dev/rosmarium/actions/workflows/ci.yml)
 </p>
 
@@ -18,7 +18,7 @@
 
 **[🚀 Try the Interactive Demo](https://demo.rosmarium.com)** | **[📚 Read the Documentation](https://rosmarium.com/docs)** | **[🌐 Visit Website](https://rosmarium.com)**
 
-Most headless CMS tools treat AI as a plugin. Rosmarium treats it as infrastructure, acting as a true Content Orchestration System (COS). Built on a split-stack architecture, a TypeScript/Fastify core handles content, auth, REST/GraphQL, and a knowledge graph layer. A Python/FastAPI background worker handles LLM embeddings, RAG pipelines, semantic search, auto-tagging, NER, and graph analytics. Both components share PostgreSQL with `pgvector` extension natively.
+Most headless CMS tools treat AI as a plugin. Rosmarium treats it as infrastructure, acting as a true Content Orchestration System (COS). Built on a split-stack architecture, a TypeScript/Fastify core handles content branching, visual live previews, auth, REST/GraphQL, and a knowledge graph layer. A Python/FastAPI background worker handles LLM embeddings, RAG pipelines, semantic search, auto-tagging, NER, and graph analytics. Both components share PostgreSQL with `pgvector` extension natively.
 
 ## Documentation
 
@@ -28,6 +28,8 @@ Please refer to the site for detailed guides on:
 - 🚀 **[Getting Started](https://rosmarium.com/docs/getting-started)**: Installation and Docker compose.
 - 🏗️ **[Architecture](https://rosmarium.com/docs/architecture)**: Understanding the Node/Python decoupled structure.
 - 🧩 **[Content Modeling](https://rosmarium.com/docs/content-modeling)**: Building composite and nested structures using blocks.
+- 🌳 **[Content Branching](https://rosmarium.com/docs/branching)**: Safe collaboration and three-way merging.
+- 👁️ **[Visual Live Preview](https://rosmarium.com/docs/live-preview)**: Real-time iframe SDK previews.
 - 🔌 **[API Reference](https://rosmarium.com/docs/api-reference)**: Comprehensive endpoints for REST and GraphQL.
 - 🤖 **[AI Pipeline](https://rosmarium.com/docs/ai-pipeline)**: Deep dive into chunking, vector embeddings, and semantic tagging.
 - 🕸️ **[Knowledge Graph](https://rosmarium.com/docs/knowledge-graph)**: Typed edges, Cypher queries, and graph analytics.
