@@ -115,7 +115,7 @@
   </g>
 
   <!-- Sci-Fi Rosemary Sprig -->
-  <g transform="translate(850, 40)">
+  <g transform="translate(880, 60) scale(0.85)">
     
     <!-- Central Stem (The branch) -->
     <path d="M 50 300 Q 150 200 250 60" stroke="#3B82F6" stroke-width="4" stroke-opacity="0.3" filter="url(#glow)" fill="none" stroke-linecap="round"/>
