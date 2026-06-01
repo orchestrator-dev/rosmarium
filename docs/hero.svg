@@ -57,17 +57,17 @@
   <!-- Badges -->
   <g transform="translate(325, 300)" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="500" fill="#94A3B8">
     <!-- Row 1 -->
-    <rect x="0" y="0" width="100" height="28" rx="6" fill="#0F172A" stroke="#334155" stroke-width="1"/>
-    <text x="50" y="19" text-anchor="middle">TypeScript</text>
+    <rect x="0" y="0" width="110" height="28" rx="6" fill="#0F172A" stroke="#A855F7" stroke-width="1"/>
+    <text x="55" y="19" text-anchor="middle" fill="#E9D5FF">Generative AI</text>
 
-    <rect x="110" y="0" width="76" height="28" rx="6" fill="#0F172A" stroke="#334155" stroke-width="1"/>
-    <text x="148" y="19" text-anchor="middle">Python</text>
+    <rect x="120" y="0" width="130" height="28" rx="6" fill="#0F172A" stroke="#22D3EE" stroke-width="1"/>
+    <text x="185" y="19" text-anchor="middle" fill="#CFFAFE">Semantic Search</text>
 
-    <rect x="196" y="0" width="180" height="28" rx="6" fill="#0F172A" stroke="#334155" stroke-width="1"/>
-    <text x="286" y="19" text-anchor="middle">PostgreSQL + pgvector</text>
+    <rect x="260" y="0" width="130" height="28" rx="6" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+    <text x="325" y="19" text-anchor="middle">Knowledge Graph</text>
 
-    <rect x="386" y="0" width="80" height="28" rx="6" fill="#0F172A" stroke="#334155" stroke-width="1"/>
-    <text x="426" y="19" text-anchor="middle">FastAPI</text>
+    <rect x="400" y="0" width="130" height="28" rx="6" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+    <text x="465" y="19" text-anchor="middle">Visual Workflows</text>
 
     <!-- Row 2 -->
     <g transform="translate(0, 38)">
@@ -77,8 +77,8 @@
       <rect x="156" y="0" width="150" height="28" rx="6" fill="#083344" stroke="#22D3EE" stroke-width="1"/>
       <text x="231" y="19" text-anchor="middle" fill="#CFFAFE">Visual Live Preview</text>
 
-      <rect x="316" y="0" width="150" height="28" rx="6" fill="#0F172A" stroke="#334155" stroke-width="1"/>
-      <text x="391" y="19" text-anchor="middle">Knowledge Graph</text>
+      <rect x="316" y="0" width="130" height="28" rx="6" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+      <text x="381" y="19" text-anchor="middle">Enterprise RBAC</text>
     </g>
   </g>
 
