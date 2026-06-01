@@ -82,20 +82,35 @@
     </g>
   </g>
 
-  <!-- Node Network Graphic on the Right -->
-  <g transform="translate(900, 0)">
-    <!-- Connections -->
-    <path d="M 150 100 L 250 150 L 180 280 L 100 200 Z" stroke="#3B82F6" stroke-width="2" stroke-opacity="0.4" fill="none"/>
-    <path d="M 250 150 L 320 80 L 280 250 L 180 280" stroke="#A855F7" stroke-width="2" stroke-opacity="0.4" fill="none"/>
-    <path d="M 100 200 L 50 300 L 180 280" stroke="#22D3EE" stroke-width="2" stroke-opacity="0.4" fill="none"/>
+  <!-- Node Network Graphic (Rosemary Leaf Pattern) on the Right -->
+  <g transform="translate(930, 0)">
+    <!-- Edge Paths (Blades) -->
+    <path d="M 200 80 L 180 100 L 140 140 L 100 190 L 70 240 L 80 280" stroke="#A855F7" stroke-width="2" stroke-opacity="0.4" fill="none"/>
+    <path d="M 200 80 L 210 120 L 180 170 L 140 220 L 110 260 L 80 280" stroke="#3B82F6" stroke-width="2" stroke-opacity="0.4" fill="none"/>
     
-    <!-- Nodes -->
-    <circle cx="150" cy="100" r="10" fill="#22D3EE" filter="url(#glow)"/>
-    <circle cx="250" cy="150" r="14" fill="#A855F7" filter="url(#glow)"/>
-    <circle cx="180" cy="280" r="12" fill="#3B82F6" filter="url(#glow)"/>
-    <circle cx="100" cy="200" r="8" fill="#A855F7" filter="url(#glow)"/>
-    <circle cx="320" cy="80" r="8" fill="#3B82F6" filter="url(#glow)"/>
-    <circle cx="280" cy="250" r="10" fill="#22D3EE" filter="url(#glow)"/>
-    <circle cx="50" cy="300" r="6" fill="#3B82F6" filter="url(#glow)"/>
+    <!-- Central Vein -->
+    <path d="M 200 80 L 170 130 L 140 180 L 110 230 L 80 280" stroke="#22D3EE" stroke-width="3" stroke-opacity="0.6" fill="none"/>
+
+    <!-- Cross Connections (Veins) -->
+    <path d="M 170 130 L 180 100 M 140 180 L 140 140 M 110 230 L 100 190 M 170 130 L 210 120 M 140 180 L 180 170 M 110 230 L 140 220 M 140 140 L 180 100 M 140 140 L 100 190 M 180 170 L 210 120 M 180 170 L 140 220" stroke="#FFFFFF" stroke-width="1.5" stroke-opacity="0.2" fill="none"/>
+    
+    <!-- Central Vein Nodes -->
+    <circle cx="200" cy="80" r="6" fill="#22D3EE" filter="url(#glow)"/>
+    <circle cx="170" cy="130" r="10" fill="#22D3EE" filter="url(#glow)"/>
+    <circle cx="140" cy="180" r="12" fill="#22D3EE" filter="url(#glow)"/>
+    <circle cx="110" cy="230" r="10" fill="#22D3EE" filter="url(#glow)"/>
+    <circle cx="80" cy="280" r="6" fill="#22D3EE" filter="url(#glow)"/>
+
+    <!-- Left Blade Nodes -->
+    <circle cx="180" cy="100" r="5" fill="#A855F7" filter="url(#glow)"/>
+    <circle cx="140" cy="140" r="8" fill="#A855F7" filter="url(#glow)"/>
+    <circle cx="100" cy="190" r="7" fill="#A855F7" filter="url(#glow)"/>
+    <circle cx="70" cy="240" r="5" fill="#A855F7" filter="url(#glow)"/>
+
+    <!-- Right Blade Nodes -->
+    <circle cx="210" cy="120" r="5" fill="#3B82F6" filter="url(#glow)"/>
+    <circle cx="180" cy="170" r="8" fill="#3B82F6" filter="url(#glow)"/>
+    <circle cx="140" cy="220" r="7" fill="#3B82F6" filter="url(#glow)"/>
+    <circle cx="110" cy="260" r="5" fill="#3B82F6" filter="url(#glow)"/>
   </g>
 </svg>
