@@ -3,6 +3,9 @@ import { describe, it, expect, vi, beforeAll, afterAll } from "vitest";
 import { pubsub } from "./pubsub.js";
 import { config } from "../config.js";
 import Redis from "ioredis";
+import { getSchema } from "./index.js";
+import type { GraphQLContext } from "./context.js";
+import { createYoga } from "graphql-yoga";
 
 // Verify Redis is running for integration tests
 const testClient = new Redis(config.REDIS_URL);
@@ -60,6 +63,10 @@ describe("Redis PubSub Integration", () => {
     });
 
     it("should subscribe to and receive comment.added events", async () => {
+        const yoga = createYoga({
+            schema: getSchema(),
+            context: () => ({ user: { id: "user-1", role: "admin" } } as unknown as GraphQLContext)
+        });
         const payload = [{ id: "comment-1", entryId: "test-1", content: "test" }] as any;
         const iterator = pubsub.subscribe("comment.added.test-1")[Symbol.asyncIterator]();
         const nextPromise = iterator.next();

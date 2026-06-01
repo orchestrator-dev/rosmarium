@@ -27,7 +27,7 @@ vi.mock("../config.js", () => ({
     },
 }));
 
-import { schema } from "./index.js";
+import { getSchema } from "./index.js";
 import type { GraphQLContext } from "./context.js";
 import { createDataloaders } from "./dataloaders/index.js";
 
@@ -120,13 +120,13 @@ function makeContext(user: GraphQLContext["user"] = null): GraphQLContext {
 }
 
 const yoga = createYoga({
-    schema,
+    schema: getSchema(),
     context: () => makeContext(),
     maskedErrors: false,
 });
 
 const authYoga = createYoga({
-    schema,
+    schema: getSchema(),
     context: () => makeContext({ id: "user-1", email: "test@example.com", firstName: "Test", lastName: "User", isActive: true, role: "editor" }),
     maskedErrors: false,
 });
@@ -139,7 +139,8 @@ describe("GraphQL — contentTypes query", () => {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ query: "{ contentTypes { id name displayName } }" }),
         });
-        const json = await res.json() as { data: { contentTypes: Array<{ id: string; name: string }> } };
+        const json = await res.json() as any;
+        if (json.errors) console.error(json.errors);
         expect(json.data.contentTypes).toHaveLength(1);
         expect(json.data.contentTypes[0]?.name).toBe("article");
     });

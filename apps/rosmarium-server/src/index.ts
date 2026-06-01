@@ -3,7 +3,7 @@ import { buildApp } from "./app.js";
 import { config } from "./config.js";
 import { WebSocketServer } from "ws";
 import { useServer } from "graphql-ws/use/ws";
-import { schema } from "./graphql/index.js";
+import { getSchema } from "./graphql/index.js";
 import { createContext } from "./graphql/context.js";
 
 const start = async () => {
@@ -17,7 +17,7 @@ const start = async () => {
         const wsServer = new WebSocketServer({ server: app.server, path: "/graphql" });
         useServer(
             {
-                schema,
+                schema: getSchema(),
                 context: (ctx) => createContext(ctx.extra.request as unknown as Request),
             },
             wsServer,

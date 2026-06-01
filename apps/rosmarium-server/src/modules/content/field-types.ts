@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { blockDocumentSchema } from "@orchestrator.dev/types";
+import { pluginRegistry } from "../../plugins/plugin-registry.js";
 
 const baseField = z.object({
     name: z.string().regex(/^[a-z][a-zA-Z0-9]*$/, {
@@ -18,8 +19,7 @@ const baseField = z.object({
 });
 
 // Use z.lazy for recursive field schemas (group contains sub-fields)
-export const fieldSchema: z.ZodType<FieldDefinition, z.ZodTypeDef, unknown> = z.lazy(() =>
-    z.discriminatedUnion("type", [
+const builtInFieldSchema = z.discriminatedUnion("type", [
         baseField.extend({
             type: z.literal("text"),
             minLength: z.number().int().nonnegative().optional(),
@@ -67,7 +67,14 @@ export const fieldSchema: z.ZodType<FieldDefinition, z.ZodTypeDef, unknown> = z.
             minBlocks: z.number().int().nonnegative().optional(),
             maxBlocks: z.number().int().positive().optional(),
         }),
-    ]),
+    ]);
+
+export const fieldSchema: z.ZodType<FieldDefinition, z.ZodTypeDef, unknown> = z.lazy(() =>
+    z.union([
+        builtInFieldSchema,
+        // Catch-all for custom field types registered by plugins
+        baseField.extend({ type: z.string() }).passthrough() as unknown as z.ZodType<any>,
+    ])
 );
 
 /** Explicit type for field definitions including nested/composite types. */
@@ -99,6 +106,7 @@ export type FieldDefinition = z.infer<typeof baseField> &
               minBlocks?: number;
               maxBlocks?: number;
           }
+        | { type: string; [key: string]: any }
     );
 
 export const fieldsArraySchema: z.ZodType<FieldDefinition[], z.ZodTypeDef, unknown> = z.lazy(() =>
@@ -266,7 +274,14 @@ export function validateFieldValue(
             }
             return null;
         }
-        default:
+        default: {
+            // Check if it's a registered custom field type
+            const customType = pluginRegistry.getFieldType(field.type);
+            if (customType && customType.validate) {
+                const isValid = customType.validate(value);
+                if (!isValid) return `Field '${field.name}' failed custom validation for type '${field.type}'`;
+            }
             return null;
+        }
     }
 }

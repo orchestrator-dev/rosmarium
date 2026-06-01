@@ -39,4 +39,26 @@ describe("PluginRegistry", () => {
 
         expect(registry.getAll().length).toBe(1);
     });
+
+    it("registers custom field types", () => {
+        const plugin: RosmariumPlugin = {
+            name: "test-plugin-fields",
+            version: "1.0.0",
+            fieldTypes: [
+                {
+                    name: "Stripe Product",
+                    type: "stripeProduct",
+                    component: "StripeProductEditor",
+                    validate: (val) => typeof val === "string" && val.startsWith("prod_")
+                }
+            ]
+        };
+
+        registry.register(plugin);
+        const ft = registry.getFieldType("stripeProduct");
+        expect(ft).toBeDefined();
+        expect(ft?.name).toBe("Stripe Product");
+        expect(ft?.validate?.("prod_123")).toBe(true);
+        expect(ft?.validate?.("invalid")).toBe(false);
+    });
 });

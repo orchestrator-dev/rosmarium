@@ -1,8 +1,9 @@
-import type { RosmariumPlugin } from "@orchestrator.dev/types";
+import type { RosmariumPlugin, CustomFieldType } from "@orchestrator.dev/types";
 import { hookEngine } from "./hook-engine.js";
 
 export class PluginRegistry {
     private plugins: Map<string, RosmariumPlugin> = new Map();
+    private fieldTypes: Map<string, CustomFieldType> = new Map();
 
     register(plugin: RosmariumPlugin) {
         if (this.plugins.has(plugin.name)) {
@@ -26,6 +27,17 @@ export class PluginRegistry {
             }
         }
 
+        // Register custom field types
+        if (plugin.fieldTypes) {
+            for (const ft of plugin.fieldTypes) {
+                if (this.fieldTypes.has(ft.type)) {
+                    console.warn(`[PluginRegistry] Custom field type '${ft.type}' is already registered by another plugin. Skipping.`);
+                    continue;
+                }
+                this.fieldTypes.set(ft.type, ft);
+            }
+        }
+
         console.log(`[PluginRegistry] Registered plugin '${plugin.name}@${plugin.version}'`);
     }
 
@@ -37,8 +49,13 @@ export class PluginRegistry {
         return Array.from(this.plugins.values());
     }
 
+    getFieldType(type: string): CustomFieldType | undefined {
+        return this.fieldTypes.get(type);
+    }
+
     clear() {
         this.plugins.clear();
+        this.fieldTypes.clear();
         hookEngine.clear();
     }
 }

@@ -3,6 +3,7 @@ import type { FastifyInstance } from "fastify";
 import fp from "fastify-plugin";
 import { config } from "../config.js";
 import { createContext } from "./context.js";
+import { pluginRegistry } from "../plugins/plugin-registry.js";
 
 // ─── Import order is critical for Pothos ─────────────────────────────────────
 import { builder } from "./builder.js";
@@ -19,10 +20,26 @@ import "./mutations/content-entries.js";
 import "./subscriptions/content.js";
 // ─────────────────────────────────────────────────────────────────────────────
 
-export const schema = builder.toSchema();
+let _schema: any = null;
+
+export function getSchema() {
+    if (!_schema) {
+        // Let plugins extend graphql builder
+        for (const plugin of pluginRegistry.getAll()) {
+            if (plugin.graphql) {
+                if (plugin.graphql.types) plugin.graphql.types(builder);
+                if (plugin.graphql.queries) plugin.graphql.queries(builder);
+                if (plugin.graphql.mutations) plugin.graphql.mutations(builder);
+            }
+        }
+        _schema = builder.toSchema();
+    }
+    return _schema;
+}
 
 const graphqlPlugin = fp(
     async (app: FastifyInstance) => {
+        const schema = getSchema();
         const yoga = createYoga({
             schema,
             // createContext receives the YogaInitialContext which has a request property
