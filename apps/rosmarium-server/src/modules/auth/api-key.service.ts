@@ -34,6 +34,7 @@ export const apiKeyService = {
     async create(input: {
         name: string;
         userId: string;
+        workspaceId?: string;
         scopes: string[];
         expiresAt?: Date;
     }): Promise<{ apiKey: ApiKey; rawKey: string }> {
@@ -49,6 +50,7 @@ export const apiKeyService = {
                 keyHash,
                 keyPrefix,
                 userId: input.userId,
+                workspaceId: input.workspaceId,
                 scopes: input.scopes,
                 expiresAt: input.expiresAt,
             })
@@ -160,6 +162,7 @@ export const apiKeyService = {
                 name: apiKeys.name,
                 keyPrefix: apiKeys.keyPrefix,
                 userId: apiKeys.userId,
+                workspaceId: apiKeys.workspaceId,
                 scopes: apiKeys.scopes,
                 expiresAt: apiKeys.expiresAt,
                 lastUsedAt: apiKeys.lastUsedAt,

@@ -17,6 +17,8 @@ import { AccessControlPage } from './pages/settings/AccessControl';
 import { WorkflowsPage } from './pages/settings/Workflows';
 import BranchesPage from './pages/Branches';
 import MergePage from './pages/MergePage';
+import { GovernancePage } from './pages/Governance';
+import { AuditLogPage } from './pages/AuditLog';
 
 import { LoginPage } from './pages/Login';
 
@@ -35,6 +37,8 @@ export function App() {
             <Route path="content/:type/new" element={<ContentEditorPage />} />
             <Route path="content/:type/:id/edit" element={<ContentEditorPage />} />
             <Route path="media" element={<MediaLibraryPage />} />
+            <Route path="governance" element={<GovernancePage />} />
+            <Route path="audit-log" element={<AuditLogPage />} />
             
             <Route path="settings/content-types" element={<ContentTypesPage />} />
             <Route path="settings/webhooks" element={<WebhooksPage />} />

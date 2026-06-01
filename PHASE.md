@@ -82,7 +82,18 @@
   - [x] Role mapping from SSO groups/claims
   - [x] Admin UI: SSO provider configuration
 
+### Month 16: Workspaces & Governance (G23, G24, G25)
+- [x] **Task 16.1: Workspaces & Isolation (G23)**
+  - [x] DB schema updates for workspace separation
+  - [x] API routes and service layer logic
+  - [x] RBAC middleware injection
+- [x] **Task 16.2: Content Governance & Audit (G24, G25)**
+  - [x] Freshness decay and ROT detection logic
+  - [x] Governance API routes
+  - [x] Governance & Audit Admin UIs
+
 ## Notes
 Phase 4 (AI-Native Content Intelligence) is officially completed.
 Phase 5 (Edge Delivery & Scale) is fully completed in v1.13.0.
+Phase 6 (Enterprise & Governance) is fully completed in v1.15.0.
 Current priority: **Phase 3 — Developer Experience & Extensibility** (Resume Tasks 7.2).

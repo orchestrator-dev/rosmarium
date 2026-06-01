@@ -5,6 +5,7 @@ import { rbacService, ForbiddenError } from "./rbac.service.js";
 import { lucia } from "../auth/lucia.js";
 import type { Permission } from "./permissions.js";
 import type { UserRole, AuthenticatedUser } from "../auth/auth.service.js";
+import { workspaceService } from "../workspaces/workspace.service.js";
 
 // ─── Fastify type augmentation ─────────────────────────────────────────────────
 
@@ -12,6 +13,8 @@ declare module "fastify" {
     interface FastifyRequest {
         user: AuthenticatedUser | null;
         sessionId: string | null;
+        workspaceId?: string;
+        workspaceRole?: UserRole;
     }
 }
 
@@ -30,6 +33,15 @@ async function resolveUser(
             if (user && session) {
                 request.user = user;
                 request.sessionId = sessionId;
+
+                const wsId = request.headers["x-workspace-id"] as string | undefined;
+                if (wsId) {
+                    const wsRole = await workspaceService.getMemberRole(wsId, user.id);
+                    if (wsRole) {
+                        request.workspaceId = wsId;
+                        request.workspaceRole = wsRole as UserRole;
+                    }
+                }
 
                 // Refresh cookie if session was extended by Lucia
                 if (session.fresh) {
@@ -52,6 +64,16 @@ async function resolveUser(
         if (result.valid && result.user) {
             request.user = result.user;
             request.sessionId = null; // API key auth — no session
+            
+            const apiKey = (result as any).apiKey;
+            const wsId = apiKey?.workspaceId || (request.headers["x-workspace-id"] as string | undefined);
+            if (wsId) {
+                const wsRole = await workspaceService.getMemberRole(wsId, request.user.id);
+                if (wsRole) {
+                    request.workspaceId = wsId;
+                    request.workspaceRole = wsRole as UserRole;
+                }
+            }
             return true;
         }
     }

@@ -42,7 +42,7 @@ describe('Edge Worker', () => {
     expect(res.status).toBe(200);
     expect(res.headers.get('X-Edge-Cache')).toBe('HIT');
     
-    const body = await res.json();
+    const body = await res.json() as any;
     expect(body.title).toBe('Cached Content');
     expect(global.fetch).not.toHaveBeenCalled();
   });
@@ -56,7 +56,7 @@ describe('Edge Worker', () => {
     expect(res.status).toBe(200);
     expect(res.headers.get('X-Edge-Cache')).toBe('MISS');
     
-    const body = await res.json();
+    const body = await res.json() as any;
     expect(body.title).toBe('Origin Content');
     expect(global.fetch).toHaveBeenCalledWith('http://test.origin/api/content/test-123', expect.any(Object));
     expect(mockCtx.waitUntil).toHaveBeenCalled();
@@ -75,7 +75,7 @@ describe('Edge Worker', () => {
     const res = await worker.fetch(req, mockEnv, mockCtx);
     expect(res.status).toBe(200);
 
-    const body = await res.json();
+    const body = await res.json() as any;
     expect(body.success).toBe(true);
     expect(mockKV.delete).toHaveBeenCalledWith('content:en:main:test-123');
   });

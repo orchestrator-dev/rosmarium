@@ -1,6 +1,7 @@
 import { pgTable, text, timestamp, index } from "drizzle-orm/pg-core";
 import { createId } from "@paralleldrive/cuid2";
 import { users } from "./users";
+import { workspaces } from "./workspaces";
 
 export const apiKeys = pgTable(
     "api_keys",
@@ -12,6 +13,8 @@ export const apiKeys = pgTable(
         userId: text("user_id")
             .notNull()
             .references(() => users.id, { onDelete: "cascade" }),
+        workspaceId: text("workspace_id")
+            .references(() => workspaces.id, { onDelete: "cascade" }),
         scopes: text("scopes").array().notNull().default([]),
         expiresAt: timestamp("expires_at", { withTimezone: true }),
         lastUsedAt: timestamp("last_used_at", { withTimezone: true }),

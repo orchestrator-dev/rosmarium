@@ -18,6 +18,9 @@ import { generationRoutes } from "../modules/intelligence/generation.routes.js";
 import { translationRoutes } from "../modules/i18n/translation.routes.js";
 import { aiGovernanceRoutes } from "../modules/intelligence/ai-governance.routes.js";
 import { mediaRoutes } from "../modules/media/media.routes.js";
+import { workspaceRoutes } from "../modules/workspaces/workspace.routes.js";
+import { governanceRoutes } from "../modules/governance/governance.routes.js";
+import { auditRoutes } from "../modules/audit/audit.routes.js";
 
 export const registerRoutes = async (app: FastifyInstance) => {
     await app.register(healthRoutes);
@@ -39,4 +42,7 @@ export const registerRoutes = async (app: FastifyInstance) => {
     await app.register(translationRoutes, { prefix: "/api/ai" });
     await app.register(aiGovernanceRoutes, { prefix: "/api/ai/governance" });
     await app.register(mediaRoutes, { prefix: "/api/media" });
+    await app.register(workspaceRoutes, { prefix: "/api/workspaces" });
+    await app.register(governanceRoutes, { prefix: "/api/governance" });
+    await app.register(auditRoutes, { prefix: "/api/audit" });
 };

@@ -60,7 +60,7 @@ export const processingService = {
 
       // Resize and Fit
       if (options.w || options.h) {
-        let resizeOpts: sharp.ResizeOptions = {
+        const resizeOpts: sharp.ResizeOptions = {
           width: options.w,
           height: options.h,
           fit: options.fit,

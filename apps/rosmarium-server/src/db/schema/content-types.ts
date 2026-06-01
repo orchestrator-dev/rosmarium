@@ -11,6 +11,7 @@ export const contentTypes = pgTable("content_types", {
     settings: jsonb("settings").notNull().default({}),
     isSystem: boolean("is_system").notNull().default(false),
     isComponent: boolean("is_component").notNull().default(false),
+    isWorkspaceIsolated: boolean("is_workspace_isolated").notNull().default(true),
     archivedAt: timestamp("archived_at", { withTimezone: true }),
     createdBy: text("created_by").references(() => users.id, {
         onDelete: "set null",

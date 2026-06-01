@@ -2,6 +2,7 @@ import { pgTable, text, timestamp, jsonb, index } from "drizzle-orm/pg-core";
 import { createId } from "@paralleldrive/cuid2";
 import { users } from "./users";
 import { contentTypes } from "./content-types";
+import { workspaces } from "./workspaces";
 
 export const contentEntries = pgTable(
     "content_entries",
@@ -12,6 +13,7 @@ export const contentEntries = pgTable(
             .references(() => contentTypes.id, { onDelete: "cascade" }),
         locale: text("locale").notNull().default("en"),
         localizationGroupId: text("localization_group_id"),
+        workspaceId: text("workspace_id").references(() => workspaces.id, { onDelete: "cascade" }),
         status: text("status", {
             enum: ["draft", "published", "archived"],
         })
