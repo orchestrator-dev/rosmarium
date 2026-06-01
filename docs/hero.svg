@@ -47,15 +47,16 @@
   <!-- Typography -->
   <text x="320" y="195" font-family="system-ui, -apple-system, sans-serif" font-size="84" font-weight="800" fill="#FFFFFF" letter-spacing="-2">ROSMARIUM</text>
   
-  <!-- "COS" Badge -->
-  <rect x="880" y="135" width="90" height="56" rx="12" fill="#22D3EE" fill-opacity="0.1" stroke="#22D3EE" stroke-width="2"/>
-  <text x="925" y="176" font-family="system-ui, -apple-system, sans-serif" font-size="32" font-weight="700" fill="#22D3EE" text-anchor="middle">COS</text>
+  <!-- "COS" Badge (Superscript) -->
+  <rect x="800" y="110" width="76" height="38" rx="8" fill="#22D3EE" fill-opacity="0.1" stroke="#22D3EE" stroke-width="2"/>
+  <text x="838" y="137" font-family="system-ui, -apple-system, sans-serif" font-size="22" font-weight="700" fill="#22D3EE" text-anchor="middle">COS</text>
 
   <!-- Tagline -->
   <text x="325" y="255" font-family="system-ui, -apple-system, sans-serif" font-size="28" font-weight="300" fill="#94A3B8" letter-spacing="1.5">The <tspan fill="#22D3EE" font-weight="600">AI-Native</tspan> Content Infrastructure</text>
 
   <!-- Badges -->
   <g transform="translate(325, 300)" font-family="system-ui, -apple-system, sans-serif" font-size="13" font-weight="500" fill="#94A3B8">
+    <!-- Row 1 -->
     <rect x="0" y="0" width="100" height="28" rx="6" fill="#0F172A" stroke="#334155" stroke-width="1"/>
     <text x="50" y="19" text-anchor="middle">TypeScript</text>
 
@@ -64,10 +65,25 @@
 
     <rect x="196" y="0" width="180" height="28" rx="6" fill="#0F172A" stroke="#334155" stroke-width="1"/>
     <text x="286" y="19" text-anchor="middle">PostgreSQL + pgvector</text>
+
+    <rect x="386" y="0" width="80" height="28" rx="6" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+    <text x="426" y="19" text-anchor="middle">FastAPI</text>
+
+    <!-- Row 2 -->
+    <g transform="translate(0, 38)">
+      <rect x="0" y="0" width="146" height="28" rx="6" fill="#1E1B4B" stroke="#A855F7" stroke-width="1"/>
+      <text x="73" y="19" text-anchor="middle" fill="#E9D5FF">Content Branching</text>
+
+      <rect x="156" y="0" width="150" height="28" rx="6" fill="#083344" stroke="#22D3EE" stroke-width="1"/>
+      <text x="231" y="19" text-anchor="middle" fill="#CFFAFE">Visual Live Preview</text>
+
+      <rect x="316" y="0" width="150" height="28" rx="6" fill="#0F172A" stroke="#334155" stroke-width="1"/>
+      <text x="391" y="19" text-anchor="middle">Knowledge Graph</text>
+    </g>
   </g>
 
   <!-- Node Network Graphic on the Right -->
-  <g transform="translate(850, 0)">
+  <g transform="translate(900, 0)">
     <!-- Connections -->
     <path d="M 150 100 L 250 150 L 180 280 L 100 200 Z" stroke="#3B82F6" stroke-width="2" stroke-opacity="0.4" fill="none"/>
     <path d="M 250 150 L 320 80 L 280 250 L 180 280" stroke="#A855F7" stroke-width="2" stroke-opacity="0.4" fill="none"/>
