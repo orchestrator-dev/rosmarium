@@ -50,6 +50,13 @@ dev = [
     "ruff>=0.8",
     "testcontainers[postgres,redis]>=4.8",
 ]
+ingestor = [
+    "crawl4ai>=0.5",
+    "playwright>=1.44",
+    "readability-lxml>=0.8",
+    "trafilatura>=1.12",
+    "langdetect>=1.0",
+]
 
 [tool.ruff]
 target-version = "py312"
@@ -71,6 +78,9 @@ ignore = ["ANN401", "E501"]
 "src/rosmarium_ai_worker/intelligence/**/*.py" = ["N815", "S608", "S101"]
 "src/rosmarium_ai_worker/api/routes/intelligence.py" = ["N815", "S608"]
 "src/rosmarium_ai_worker/workers/intelligence_worker.py" = ["N815", "S608", "S101"]
+# Ingestor modules — camelCase fields for API wire compat, raw SQL for content_set_items
+"src/rosmarium_ai_worker/ingestor/**/*.py" = ["N815", "S608", "S101"]
+"src/rosmarium_ai_worker/workers/ingestion_worker.py" = ["N815", "S608", "S101"]
 "tests/test_ner.py" = ["E402", "S101"]
 "tests/test_summarizer.py" = ["F841"]
 

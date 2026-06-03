@@ -204,22 +204,31 @@ intelligence_consumer = QueueConsumer(
     concurrency=2,
 )
 
+ingestion_consumer = QueueConsumer(
+    queue_name="ingestion-jobs",
+    concurrency=1,  # Headless browser crawling is resource-intensive
+)
+
 
 async def start_consumer() -> None:
-    """Initialise and start both queue consumers with registered handlers."""
+    """Initialise and start all queue consumers with registered handlers."""
     from .embedding_worker import process_embedding_job
     from .graph_worker import process_analytics_job
     from .intelligence_worker import process_intelligence_job
+    from .ingestion_worker import process_ingestion_job
 
     consumer.register_handler("embed-content", process_embedding_job)
     intelligence_consumer.register_handler("analyse-content", process_intelligence_job)
     intelligence_consumer.register_handler("compute-graph-analytics", process_analytics_job)
+    ingestion_consumer.register_handler("ingest-website", process_ingestion_job)
 
     await consumer.start()
     await intelligence_consumer.start()
+    await ingestion_consumer.start()
 
 
 async def stop_consumer() -> None:
     """Stop all queue consumers gracefully."""
     await consumer.stop()
     await intelligence_consumer.stop()
+    await ingestion_consumer.stop()

@@ -26,6 +26,7 @@ import {
   Schema as SchemaIcon,
   AccountTree as AccountTreeIcon,
   CallSplit as CallSplitIcon,
+  Download as DownloadIcon,
 } from '@mui/icons-material';
 import { Outlet, useNavigate, useLocation, Link as RouterLink } from 'react-router-dom';
 import { BranchSwitcher } from './branches/BranchSwitcher';
@@ -33,6 +34,7 @@ import { BranchSwitcher } from './branches/BranchSwitcher';
 const drawerWidth = 240;
 
 const menuItems = [
+  { text: 'Import', icon: <DownloadIcon />, path: '/ingestor' },
   { text: 'Media', icon: <MediaIcon />, path: '/media' },
   { text: 'Search', icon: <SearchIcon />, path: '/search' },
   { text: 'AI Dashboard', icon: <AIIcon />, path: '/intelligence' },

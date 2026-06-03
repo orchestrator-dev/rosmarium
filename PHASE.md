@@ -96,6 +96,16 @@
   - [x] Governance API routes
   - [x] Governance & Audit Admin UIs
 
+## V2 Phase 4 Checklist (In Progress)
+
+### Month 10: Generative AI Content Studio (G15)
+- [x] **Task 10.1: Intelligent Web Ingestion Pipeline**
+  - [x] `apps/rosmarium-ai-worker/src/rosmarium_ai_worker/ingestor` (Crawler, Classifier, Mapper, DuplicateGuard)
+  - [x] Database Schema: `content_sets` and `content_set_items` tables
+  - [x] `apps/rosmarium-server/src/routes/ingestor.ts` API endpoints and SSE progress stream
+  - [x] `apps/rosmarium-admin/src/pages/Ingestor.tsx` Admin UI with live metrics and real-time logs
+  - [x] Background processing with BullMQ integration
+
 ## Notes
 V1 (including all scaling and edge features) is now officially complete.
 Current priority: **V2 Phase 1 Kickoff!** Preparing for structured rich text and block editor.

@@ -134,6 +134,13 @@
       "when": 1780258751800,
       "tag": "0019_outgoing_vivisector",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1780514077685,
+      "tag": "0020_fantastic_grandmaster",
+      "breakpoints": true
     }
   ]
 }
