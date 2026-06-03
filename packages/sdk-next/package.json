@@ -1,6 +1,6 @@
 {
   "name": "@orchestrator.dev/rosmarium-sdk-next",
-  "version": "1.2.1",
+  "version": "2.1.0",
   "publishConfig": {
     "access": "public"
   },
