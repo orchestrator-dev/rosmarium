@@ -44,6 +44,40 @@ When these conditions are met, the Node API pushes a job to BullMQ, and the Pyth
 
 ---
 
+## Intelligent Web Ingestion
+
+Rosmarium includes a fully autonomous web ingestion pipeline capable of crawling websites, extracting content, and mapping it to your structured Content Types.
+
+When an ingestion job is triggered, the AI worker performs a sequence of intelligent operations:
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-10 not-prose">
+  <div class="bg-dark-surface border border-dark-border p-6 rounded-xl hover:border-neon-cyan transition-colors">
+    <div class="text-neon-cyan mb-4 text-2xl">✦</div>
+    <h3 class="text-white font-bold text-lg mb-2">Asynchronous Crawling</h3>
+    <p class="text-zinc-400 text-sm leading-relaxed">Uses <code>crawl4ai</code> to scrape URLs, extracting clean Markdown while respecting rate limits, max depths, and pagination rules.</p>
+  </div>
+  
+  <div class="bg-dark-surface border border-dark-border p-6 rounded-xl hover:border-neon-purple transition-colors">
+    <div class="text-neon-purple mb-4 text-2xl">✦</div>
+    <h3 class="text-white font-bold text-lg mb-2">LLM Classification</h3>
+    <p class="text-zinc-400 text-sm leading-relaxed">If no target content type is specified, the pipeline dynamically determines the most appropriate Content Type using semantic similarity between the page and your schema.</p>
+  </div>
+  
+  <div class="bg-dark-surface border border-dark-border p-6 rounded-xl hover:border-neon-cyan transition-colors">
+    <div class="text-neon-cyan mb-4 text-2xl">✦</div>
+    <h3 class="text-white font-bold text-lg mb-2">Field Mapping</h3>
+    <p class="text-zinc-400 text-sm leading-relaxed">Uses structured LLM outputs to parse the raw Markdown and map it perfectly into the rigid schema fields required by the destination Content Type.</p>
+  </div>
+  
+  <div class="bg-dark-surface border border-dark-border p-6 rounded-xl hover:border-neon-purple transition-colors">
+    <div class="text-neon-purple mb-4 text-2xl">✦</div>
+    <h3 class="text-white font-bold text-lg mb-2">Duplicate Prevention</h3>
+    <p class="text-zinc-400 text-sm leading-relaxed">Employs hybrid vector search (comparing embeddings and URLs) to silently skip pages that are semantically identical to already-ingested content.</p>
+  </div>
+</div>
+
+---
+
 ## Intelligence Operations
 
 Rosmarium automatically enhances your unstructured data with the following operations on publish:

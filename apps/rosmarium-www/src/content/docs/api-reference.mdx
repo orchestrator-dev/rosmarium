@@ -124,4 +124,42 @@ You can use a **Session Cookie** (for browser contexts) or an **API Key** (for s
       </div>
     </div>
   </div>
+
+  {/* Ingestor POST */}
+  <div class="bg-dark-surface border border-dark-border rounded-xl overflow-hidden hover:border-neon-purple transition-colors">
+    <div class="p-4 border-b border-dark-border bg-dark-bg/50 flex items-center gap-3">
+      <span class="px-2 py-1 bg-neon-purple/20 text-neon-purple text-xs font-bold rounded">POST</span>
+      <code class="text-white font-mono text-sm">/api/ingestor/jobs</code>
+    </div>
+    <div class="p-5">
+      <p class="text-zinc-400 text-sm mb-4">Start a new intelligent web crawl and content ingestion job.</p>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <h4 class="text-white text-xs uppercase tracking-widest mb-2">Body payload</h4>
+```json
+{
+  "startUrl": "https://example.com/blog",
+  "maxDepth": 2,
+  "maxPages": 100,
+  "contentSetName": "Blog Migration",
+  "importAs": "draft",
+  "apiKey": "ctx_live_..."
+}
+```
+        </div>
+        <div>
+          <h4 class="text-white text-xs uppercase tracking-widest mb-2">Response</h4>
+```json
+{
+  "data": {
+    "jobId": "test-job-id",
+    "contentSetId": "set-123",
+    "status": "queued"
+  }
+}
+```
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
