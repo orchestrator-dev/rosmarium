@@ -23,6 +23,11 @@ const schema = z.object({
     OTEL_EXPORTER_OTLP_ENDPOINT: z.string().url().optional(),
     OTEL_SERVICE_NAME: z.string().default("rosmarium-server"),
     PLUGINS: z.string().optional().transform(val => val ? val.split(',').map(s => s.trim()) : []),
+    CORS_ORIGIN: z.string().optional(),
 });
 
 export const config = schema.parse(process.env);
+
+if (config.NODE_ENV === "production" && config.AI_WORKER_SECRET === "change-this-in-production") {
+    throw new Error("AI_WORKER_SECRET must be changed in production");
+}

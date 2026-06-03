@@ -20,7 +20,7 @@ from ...vector.index_manager import VectorIndexManager
 
 logger = structlog.get_logger(__name__)
 
-router = APIRouter()
+router = APIRouter(dependencies=[Depends(require_worker_secret)])
 
 index_manager = VectorIndexManager()
 
@@ -75,7 +75,7 @@ class EmbedBatchResponse(BaseModel):
 # ─── /search/embed ─────────────────────────────────────────────────────────────
 
 
-@router.post("/embed", response_model=EmbedResponse, dependencies=[Depends(require_worker_secret)])
+@router.post("/embed", response_model=EmbedResponse)
 async def embed_query(request: EmbedRequest) -> EmbedResponse:
     """Embed a single search query string at request time (sync, not queued).
 
@@ -115,7 +115,6 @@ _MAX_BATCH_SIZE = 500
 @router.post(
     "/embed-batch",
     response_model=EmbedBatchResponse,
-    dependencies=[Depends(require_worker_secret)],
 )
 async def embed_batch(request: EmbedBatchRequest) -> EmbedBatchResponse:
     """Embed multiple texts in one call (used for backfill operations).
@@ -185,7 +184,7 @@ class SearchResponse(BaseModel):
     content_type: str
 
 
-@router.post("", response_model=SearchResponse, dependencies=[Depends(require_worker_secret)])
+@router.post("", response_model=SearchResponse)
 async def semantic_search(
     request: SearchRequest,
     conn: Any = Depends(get_db),

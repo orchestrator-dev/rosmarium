@@ -1,6 +1,6 @@
 {
   "name": "@orchestrator.dev/admin",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -38,7 +38,8 @@
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-i18next": "^17.0.8",
-    "react-router-dom": "^7.15.1"
+    "react-router-dom": "^7.15.1",
+    "@orchestrator.dev/types": "workspace:*"
   },
   "devDependencies": {
     "@playwright/test": "^1.60.0",

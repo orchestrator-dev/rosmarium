@@ -43,20 +43,10 @@ import { ContentTreePage } from './ContentTree';
 import { ToggleButtonGroup, ToggleButton, Checkbox } from '@mui/material';
 import { ViewList as ViewListIcon, AccountTree as TreeIcon } from '@mui/icons-material';
 
-interface ContentEntry {
-  id: string;
-  contentTypeId: string;
-  contentTypeName: string;
-  status: 'draft' | 'published' | 'archived';
-  data: Record<string, unknown>;
-  createdAt: string;
-  updatedAt: string;
-}
+import type { ContentType, ContentEntry as BaseContentEntry } from '@orchestrator.dev/types';
 
-interface ContentType {
-  id: string;
-  name: string;
-  displayName: string;
+interface ContentEntry extends BaseContentEntry {
+  contentTypeName: string;
 }
 
 interface Template {

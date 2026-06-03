@@ -70,5 +70,12 @@ class Settings(BaseSettings):
             return v.replace("postgresql://", "postgres://", 1)
         return v
 
+    @field_validator("worker_secret")
+    @classmethod
+    def validate_worker_secret(cls, v: str, info) -> str:
+        if info.data.get("environment") == "production" and v == "change-this-in-production":
+            raise ValueError("worker_secret must be changed in production")
+        return v
+
 
 settings = Settings()

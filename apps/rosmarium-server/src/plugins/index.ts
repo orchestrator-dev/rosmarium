@@ -2,6 +2,7 @@ import type { FastifyInstance } from "fastify";
 import fp from "fastify-plugin";
 import sensible from "@fastify/sensible";
 import cookie from "@fastify/cookie";
+import csrfProtection from "@fastify/csrf-protection";
 import corsPlugin from "./cors.js";
 import helmetPlugin from "./helmet.js";
 import rateLimitPlugin from "./rate-limit.js";
@@ -11,6 +12,7 @@ export const registerPlugins = fp(async (app: FastifyInstance) => {
     await app.register(sensible);
     // Cookie plugin must be registered before any auth middleware reads cookies
     await app.register(cookie);
+    await app.register(csrfProtection, { cookieOpts: { signed: true } });
     await app.register(corsPlugin);
     await app.register(helmetPlugin);
     await app.register(rateLimitPlugin);

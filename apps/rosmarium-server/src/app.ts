@@ -90,40 +90,33 @@ export async function buildApp() {
         getWebhookWorker();
     }
 
-    // ─── Bridge rosmariumEvents → GraphQL PubSub ──────────────────────────────
+    // ─── Consolidated Event Dispatcher ──────────────────────────────
     rosmariumEvents.on("content.created", (entry) => {
         const ct = registry.getAll().find((t) => t.id === entry.contentTypeId);
-        if (ct) pubsub.publish(`entry.created.${ct.name}`, entry);
+        if (!ct) return;
+        
+        pubsub.publish(`entry.created.${ct.name}`, entry);
+        webhookService.trigger("entry.created", ct.name, entry).catch(console.error);
     });
+
     rosmariumEvents.on("content.updated", (entry) => {
         const ct = registry.getAll().find((t) => t.id === entry.contentTypeId);
-        if (ct) pubsub.publish(`entry.updated.${ct.name}`, entry);
+        if (!ct) return;
+
+        pubsub.publish(`entry.updated.${ct.name}`, entry);
+        webhookService.trigger("entry.updated", ct.name, entry).catch(console.error);
     });
+
     rosmariumEvents.on("content.deleted", (id, contentType) => {
         pubsub.publish(`entry.deleted.${contentType}`, { id, contentType });
-    });
-
-    // ─── Bridge rosmariumEvents → Webhook delivery ────────────────────────────
-    rosmariumEvents.on("content.created", (entry) => {
-        const ct = registry.getAll().find((t) => t.id === entry.contentTypeId);
-        if (ct) webhookService.trigger("entry.created", ct.name, entry).catch(console.error);
-    });
-    rosmariumEvents.on("content.updated", (entry) => {
-        const ct = registry.getAll().find((t) => t.id === entry.contentTypeId);
-        if (ct) webhookService.trigger("entry.updated", ct.name, entry).catch(console.error);
-    });
-    rosmariumEvents.on("content.deleted", (id, contentType) => {
         webhookService.trigger("entry.deleted", contentType, { id, contentType }).catch(console.error);
     });
-    rosmariumEvents.on("content.published", (entry) => {
-        const ct = registry.getAll().find((t) => t.id === entry.contentTypeId);
-        if (ct) webhookService.trigger("entry.published", ct.name, entry).catch(console.error);
-    });
 
-    // ─── Bridge rosmariumEvents → Intelligence jobs ───────────────────────────
     rosmariumEvents.on("content.published", (entry) => {
         const ct = registry.getAll().find((t) => t.id === entry.contentTypeId);
         if (!ct) return;
+
+        webhookService.trigger("entry.published", ct.name, entry).catch(console.error);
 
         const aiSettings = ct.settings["aiIntelligence"] as
             | {

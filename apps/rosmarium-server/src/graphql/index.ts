@@ -4,6 +4,7 @@ import fp from "fastify-plugin";
 import { config } from "../config.js";
 import { createContext } from "./context.js";
 import { pluginRegistry } from "../plugins/plugin-registry.js";
+import { useDepthLimit } from "@envelop/depth-limit";
 
 // ─── Import order is critical for Pothos ─────────────────────────────────────
 import { builder } from "./builder.js";
@@ -47,6 +48,7 @@ const graphqlPlugin = fp(
             context: (yogaCtx) => createContext(yogaCtx.request),
             graphiql: config.NODE_ENV !== "production",
             logging: false,
+            plugins: [useDepthLimit({ maxDepth: 10 })], // Add depth limit to prevent DoS attacks
         });
 
         app.route({
@@ -56,7 +58,7 @@ const graphqlPlugin = fp(
                 const response = await yoga.handleNodeRequest(req, {
                     req,
                     reply,
-                });
+                } as any);
                 response.headers.forEach((value, key) => {
                     reply.header(key, value);
                 });

@@ -4,8 +4,9 @@ import { config } from "../config.js";
 import type { FastifyInstance } from "fastify";
 
 export default fp<FastifyCorsOptions>(async (fastify: FastifyInstance) => {
+    const origin = config.NODE_ENV === "development" ? "*" : (config.CORS_ORIGIN || false);
     await fastify.register(cors, {
-        origin: config.NODE_ENV === "development" ? "*" : true,
+        origin,
         credentials: true,
     });
 });
