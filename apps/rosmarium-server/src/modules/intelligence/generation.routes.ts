@@ -1,7 +1,7 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { config } from "../../config.js";
 import { z } from "zod";
-
+import { requireAuth } from "../rbac/rbac.middleware.js";
 const generationBodySchema = z.object({
     prompt: z.string(),
     context: z.record(z.unknown()).optional(),
@@ -75,22 +75,22 @@ export async function generationRoutes(fastify: FastifyInstance) {
         }
     }
 
-    fastify.post("/generate", async (request, reply) => {
+    fastify.post("/generate", { preHandler: requireAuth() }, async (request, reply) => {
         const body = generationBodySchema.parse(request.body);
         return proxyToWorker("/generation/generate", body, reply, "generate", request);
     });
 
-    fastify.post("/rewrite", async (request, reply) => {
+    fastify.post("/rewrite", { preHandler: requireAuth() }, async (request, reply) => {
         const body = rewriteBodySchema.parse(request.body);
         return proxyToWorker("/generation/rewrite", body, reply, "rewrite", request);
     });
 
-    fastify.post("/seo-optimize", async (request, reply) => {
+    fastify.post("/seo-optimize", { preHandler: requireAuth() }, async (request, reply) => {
         const body = seoBodySchema.parse(request.body);
         return proxyToWorker("/generation/seo-optimize", body, reply, "seo-optimize", request);
     });
 
-    fastify.post("/alt-text", async (request, reply) => {
+    fastify.post("/alt-text", { preHandler: requireAuth() }, async (request, reply) => {
         const body = altTextBodySchema.parse(request.body);
         return proxyToWorker("/generation/alt-text", body, reply, "alt-text", request);
     });

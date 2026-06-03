@@ -21,6 +21,7 @@ import { mediaRoutes } from "../modules/media/media.routes.js";
 import { workspaceRoutes } from "../modules/workspaces/workspace.routes.js";
 import { governanceRoutes } from "../modules/governance/governance.routes.js";
 import { auditRoutes } from "../modules/audit/audit.routes.js";
+import { assetsRoutes } from "./assets.js";
 
 export const registerRoutes = async (app: FastifyInstance) => {
     await app.register(healthRoutes);
@@ -45,4 +46,5 @@ export const registerRoutes = async (app: FastifyInstance) => {
     await app.register(workspaceRoutes, { prefix: "/api/workspaces" });
     await app.register(governanceRoutes, { prefix: "/api/governance" });
     await app.register(auditRoutes, { prefix: "/api/audit" });
+    await app.register(assetsRoutes, { prefix: "/api/assets" });
 };

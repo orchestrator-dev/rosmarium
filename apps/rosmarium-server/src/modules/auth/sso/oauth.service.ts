@@ -60,7 +60,7 @@ export const oauthService = {
             }
             tokens = await client.validateAuthorizationCode(config.tokenEndpoint, code, codeVerifier);
         } else {
-            const genericClient = client as { validateAuthorizationCode: (c: string, cv: string) => Promise<any> };
+            const genericClient = client as { validateAuthorizationCode: (c: string, cv: string) => Promise<unknown> };
             tokens = await genericClient.validateAuthorizationCode(code, codeVerifier);
         }
 

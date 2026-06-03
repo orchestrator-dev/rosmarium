@@ -9,7 +9,7 @@ describe('Invalidation Service', () => {
   beforeEach(() => {
     vi.resetAllMocks();
     mockAdd = vi.fn().mockResolvedValue({});
-    vi.spyOn(webhookQueue, 'getWebhookQueue').mockReturnValue({ add: mockAdd } as any);
+    vi.spyOn(webhookQueue, 'getWebhookQueue').mockReturnValue({ add: mockAdd } as unknown as ReturnType<typeof webhookQueue.getWebhookQueue>);
   });
 
   it('should invalidate content via webhook queue', async () => {

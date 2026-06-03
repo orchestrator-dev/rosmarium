@@ -1,8 +1,8 @@
 import { FastifyInstance } from "fastify";
-import { ssoService } from "./sso.service";
-import { oauthService } from "./oauth.service";
-import { samlService } from "./saml.service";
-import { lucia } from "../lucia";
+import { ssoService, type SSOProfile } from "./sso.service.js";
+import { oauthService } from "./oauth.service.js";
+import { samlService } from "./saml.service.js";
+import { lucia } from "../lucia.js";
 
 export async function ssoRoutes(app: FastifyInstance) {
     app.get("/providers", async () => {
@@ -56,7 +56,7 @@ export async function ssoRoutes(app: FastifyInstance) {
             return reply.status(400).send({ error: "Invalid provider" });
         }
 
-        const query = request.query as any;
+        const query = request.query as Record<string, string>;
         const code = query.code;
         const state = query.state;
         const storedState = request.cookies.sso_state;
@@ -71,23 +71,23 @@ export async function ssoRoutes(app: FastifyInstance) {
         try {
             const tokens = await oauthService.validateCallback(provider, redirectUri, code, storedCodeVerifier || "");
             
-            let profile: any = {};
-            if ((tokens as any).idToken) {
-                const claims = oauthService.decodeIdToken((tokens as any).idToken) as any;
+            let profile: Partial<SSOProfile> = {};
+            if ((tokens as Record<string, unknown>).idToken) {
+                const claims = oauthService.decodeIdToken((tokens as Record<string, string>).idToken) as Record<string, unknown>;
                 profile = {
-                    email: claims.email,
-                    firstName: claims.given_name,
-                    lastName: claims.family_name,
-                    groups: claims.groups || [],
+                    email: claims.email as string,
+                    firstName: claims.given_name as string,
+                    lastName: claims.family_name as string,
+                    groups: (claims.groups as string[]) || [],
                 };
-            } else if ((tokens as any).accessToken) {
+            } else if ((tokens as Record<string, unknown>).accessToken) {
                 // Simplified fallback if no id_token. Real implementation should fetch /userinfo
                 throw new Error("OIDC requires id_token to auto-provision users");
             } else {
                 throw new Error("Invalid tokens returned from provider");
             }
 
-            const user = await ssoService.processSSOLogin(provider, profile);
+            const user = await ssoService.processSSOLogin(provider, profile as SSOProfile);
             if (!user) throw new Error("Failed to provision user");
             
             const session = await lucia.createSession(user.id, {});
@@ -95,9 +95,10 @@ export async function ssoRoutes(app: FastifyInstance) {
             reply.setCookie(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
             
             return reply.redirect("/");
-        } catch (err: any) {
-            request.log.error(err);
-            return reply.status(500).send({ error: err.message || "SSO login failed" });
+        } catch (err: unknown) {
+            const error = err as Error;
+            request.log.error(error);
+            return reply.status(500).send({ error: error.message || "SSO login failed" });
         }
     });
 
@@ -111,7 +112,7 @@ export async function ssoRoutes(app: FastifyInstance) {
         const redirectUri = `${request.protocol}://${request.hostname}/api/auth/sso/callback/${provider.id}`;
         
         try {
-            const { profile: samlProfile } = await samlService.validatePostResponse(provider, redirectUri, request.body as any);
+            const { profile: samlProfile } = await samlService.validatePostResponse(provider, redirectUri, request.body as Record<string, unknown>);
             
             const profile = {
                 email: samlProfile?.email || samlProfile?.nameID,
@@ -120,7 +121,7 @@ export async function ssoRoutes(app: FastifyInstance) {
                 groups: samlProfile?.groups || []
             };
 
-            const user = await ssoService.processSSOLogin(provider, profile as any);
+            const user = await ssoService.processSSOLogin(provider, profile as SSOProfile);
             if (!user) throw new Error("Failed to provision user");
             
             const session = await lucia.createSession(user.id, {});
@@ -128,9 +129,10 @@ export async function ssoRoutes(app: FastifyInstance) {
             reply.setCookie(sessionCookie.name, sessionCookie.value, sessionCookie.attributes);
             
             return reply.redirect("/");
-        } catch (err: any) {
-            request.log.error(err);
-            return reply.status(500).send({ error: err.message || "SAML login failed" });
+        } catch (err: unknown) {
+            const error = err as Error;
+            request.log.error(error);
+            return reply.status(500).send({ error: error.message || "SAML login failed" });
         }
     });
 }
