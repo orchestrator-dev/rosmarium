@@ -13,6 +13,7 @@ declare module "fastify" {
     interface FastifyRequest {
         user: AuthenticatedUser | null;
         sessionId: string | null;
+        apiKey?: { id: string; scopes: string[]; workspaceId?: string };
         workspaceId?: string;
         workspaceRole?: UserRole;
     }
@@ -65,7 +66,8 @@ async function resolveUser(
             request.user = result.user;
             request.sessionId = null; // API key auth — no session
             
-            const apiKey = (result as { apiKey?: { workspaceId?: string } }).apiKey;
+            const apiKey = (result as any).apiKey;
+            if (apiKey) request.apiKey = apiKey;
             const wsId = apiKey?.workspaceId || (request.headers["x-workspace-id"] as string | undefined);
             if (wsId) {
                 const wsRole = await workspaceService.getMemberRole(wsId, request.user.id);
@@ -128,6 +130,11 @@ export function requirePermission(permission: Permission) {
 
         try {
             rbacService.canOrThrow(user, permission);
+            if (request.apiKey) {
+                if (!request.apiKey.scopes.includes(permission)) {
+                    throw new ForbiddenError(`API Key missing required scope: ${permission}`);
+                }
+            }
         } catch (err) {
             if (err instanceof ForbiddenError) {
                 return reply.status(403).send({

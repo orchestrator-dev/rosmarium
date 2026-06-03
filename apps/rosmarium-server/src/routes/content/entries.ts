@@ -34,7 +34,7 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     }>(
         "/api/content",
         {
-            preHandler: requireAuth(),
+            onRequest: requireAuth(),
             schema: {
                 tags: ["Content Entries"],
                 summary: "List content entries across all types",
@@ -122,7 +122,7 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     }>(
         "/api/content/:type",
         {
-            preHandler: requireAuth(),
+            onRequest: requireAuth(),
             schema: {
                 tags: ["Content Entries"],
                 summary: "List content entries for a given type",
@@ -211,7 +211,7 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     }>(
         "/api/content/:type",
         {
-            preHandler: requirePermission(PERMISSIONS.CONTENT_CREATE),
+            onRequest: requirePermission(PERMISSIONS.CONTENT_CREATE),
             schema: {
                 tags: ["Content Entries"],
                 summary: "Create a content entry",
@@ -262,7 +262,7 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     }>(
         "/api/content/:type/from-template/:templateId",
         {
-            preHandler: requirePermission(PERMISSIONS.CONTENT_CREATE),
+            onRequest: requirePermission(PERMISSIONS.CONTENT_CREATE),
             schema: {
                 tags: ["Content Entries"],
                 summary: "Create a content entry from a template",
@@ -322,7 +322,7 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     }>(
         "/api/content/:type/:id",
         {
-            preHandler: requireAuth(),
+            onRequest: requireAuth(),
             schema: {
                 tags: ["Content Entries"],
                 summary: "Get a single content entry",
@@ -368,7 +368,7 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     }>(
         "/api/content/:type/:id",
         {
-            preHandler: requireAuth(),
+            onRequest: requireAuth(),
             schema: {
                 tags: ["Content Entries"],
                 summary: "Update a content entry (merges data)",
@@ -435,7 +435,7 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     }>(
         "/api/content/:type/:id",
         {
-            preHandler: requireAuth(),
+            onRequest: requireAuth(),
             schema: {
                 tags: ["Content Entries"],
                 summary: "Delete a content entry",
@@ -464,6 +464,11 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
                         error: { code: "FORBIDDEN", message: "Insufficient permissions to delete this entry" },
                     });
                 }
+                if (request.apiKey && !request.apiKey.scopes.includes("content:delete:any") && !request.apiKey.scopes.includes("content:delete:own")) {
+                    return reply.status(403).send({
+                        error: { code: "FORBIDDEN", message: "API Key missing delete scope" },
+                    });
+                }
                 await contentCrudService.delete(
                     request.params.id,
                     request.params.type,
@@ -487,7 +492,7 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     }>(
         "/api/content/:type/:id/publish",
         {
-            preHandler: requirePermission(PERMISSIONS.CONTENT_PUBLISH),
+            onRequest: requirePermission(PERMISSIONS.CONTENT_PUBLISH),
             schema: {
                 tags: ["Content Entries"],
                 summary: "Publish a content entry",
@@ -523,7 +528,7 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     }>(
         "/api/content/:type/:id/unpublish",
         {
-            preHandler: requirePermission(PERMISSIONS.CONTENT_PUBLISH),
+            onRequest: requirePermission(PERMISSIONS.CONTENT_PUBLISH),
             schema: {
                 tags: ["Content Entries"],
                 summary: "Unpublish a content entry",
@@ -556,7 +561,7 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     app.get<{ Params: { type: string; id: string } }>(
         "/api/content/:type/:id/versions",
         {
-            preHandler: requireAuth(),
+            onRequest: requireAuth(),
             schema: {
                 tags: ["Content Entries"],
                 summary: "List versions of a content entry",
@@ -583,7 +588,7 @@ const contentEntryRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     }>(
         "/api/content/:type/:id/versions/:versionId/restore",
         {
-            preHandler: requireAuth(),
+            onRequest: requireAuth(),
             schema: {
                 tags: ["Content Entries"],
                 summary: "Restore a content entry to a previous version",

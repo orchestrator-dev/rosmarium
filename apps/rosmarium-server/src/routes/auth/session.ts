@@ -136,7 +136,7 @@ const sessionRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     app.post(
         "/api/auth/logout",
         {
-            preHandler: requireAuth(),
+            onRequest: requireAuth(),
             schema: {
                 tags: ["Auth"],
                 summary: "Invalidate the current session",
@@ -158,7 +158,7 @@ const sessionRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     app.get(
         "/api/auth/me",
         {
-            preHandler: requireAuth(),
+            onRequest: requireAuth(),
             schema: {
                 tags: ["Auth"],
                 summary: "Get the currently authenticated user",
@@ -182,7 +182,7 @@ const sessionRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     app.patch(
         "/api/auth/me/password",
         {
-            preHandler: requireAuth(),
+            onRequest: requireAuth(),
             schema: {
                 tags: ["Auth"],
                 summary: "Change the authenticated user's password",

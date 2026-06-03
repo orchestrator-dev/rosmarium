@@ -44,6 +44,7 @@ export function getWebhookWorker(): Worker<WebhookJobData> {
     _worker = new Worker<WebhookJobData>(
         "webhook-deliveries",
         async (job) => {
+            console.log(`[webhook-worker] Executing job ${job.id}`);
             const { webhookId, systemWebhook, event, contentType, payload, attempt } = job.data;
 
             let url = "";
@@ -99,8 +100,10 @@ export function getWebhookWorker(): Worker<WebhookJobData> {
                 responseCode = res.status;
                 responseBody = (await res.text()).substring(0, 2000);
                 success = res.status >= 200 && res.status < 300;
+                console.log(`[webhook-worker] Delivery success: ${success}, status: ${res.status}`);
             } catch (err) {
                 responseBody = err instanceof Error ? err.message : String(err);
+                console.error(`[webhook-worker] Delivery error: ${responseBody}`);
             }
 
             const durationMs = Date.now() - startMs;

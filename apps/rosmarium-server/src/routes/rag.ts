@@ -38,7 +38,7 @@ const ragRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     app.post<{ Body: RagRetrieveBody }>(
         "/api/rag/retrieve",
         {
-            preHandler: requireAuth(),
+            onRequest: requireAuth(),
             schema: {
                 tags: ["RAG"],
                 summary: "Retrieve semantically relevant chunks for a query",
@@ -100,7 +100,7 @@ const ragRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     app.post<{ Body: RagStreamBody }>(
         "/api/rag/retrieve/stream",
         {
-            preHandler: requireAuth(),
+            onRequest: requireAuth(),
             schema: {
                 tags: ["RAG"],
                 summary: "Stream RAG retrieval as Server-Sent Events",

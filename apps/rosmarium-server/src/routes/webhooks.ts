@@ -15,7 +15,7 @@ const webhookRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     app.post<{ Body: { name: string; url: string; events: string[]; contentTypes?: string[]; secret?: string } }>(
         "/api/webhooks",
         {
-            preHandler: requireRole("admin", "super_admin"),
+            onRequest: requireRole("admin", "super_admin"),
             schema: {
                 tags: ["Webhooks"],
                 summary: "Register a webhook",
@@ -56,7 +56,7 @@ const webhookRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     app.patch<{ Params: { id: string }; Body: { name?: string; url?: string; events?: string[]; contentTypes?: string[]; isActive?: boolean } }>(
         "/api/webhooks/:id",
         {
-            preHandler: requireRole("admin", "super_admin"),
+            onRequest: requireRole("admin", "super_admin"),
             schema: { tags: ["Webhooks"], summary: "Update a webhook" },
         },
         async (request, reply) => {
@@ -73,7 +73,7 @@ const webhookRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
 
     // DELETE /api/webhooks/:id — admin only
     app.delete<{ Params: { id: string } }>("/api/webhooks/:id", {
-        preHandler: requireRole("admin", "super_admin"),
+        onRequest: requireRole("admin", "super_admin"),
         schema: { tags: ["Webhooks"], summary: "Delete a webhook" },
     }, async (request, reply) => {
         try {
@@ -100,7 +100,7 @@ const webhookRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     app.post<{ Params: { id: string; dId: string } }>(
         "/api/webhooks/:id/deliveries/:dId/replay",
         {
-            preHandler: requireRole("admin", "super_admin"),
+            onRequest: requireRole("admin", "super_admin"),
             schema: { tags: ["Webhooks"], summary: "Replay a failed delivery" },
         },
         async (request, reply) => {

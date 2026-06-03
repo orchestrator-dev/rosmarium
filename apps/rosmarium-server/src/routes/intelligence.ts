@@ -50,7 +50,7 @@ export default async function intelligenceRoutes(app: FastifyInstance) {
     // ── POST /api/content/:type/:id/tag ───────────────────────────────────────
     app.post<{ Params: { type: string; id: string } }>(
         "/api/content/:type/:id/tag",
-        { preHandler: requireAuth() },
+        { onRequest: requireAuth() },
         async (request, reply) => {
             const user = request.user as AuthenticatedUser | undefined;
             if (!user || !rbacService.can(user, PERMISSIONS.CONTENT_UPDATE_ANY)) {
@@ -98,7 +98,7 @@ export default async function intelligenceRoutes(app: FastifyInstance) {
     // ── POST /api/content/:type/:id/summarize ─────────────────────────────────
     app.post<{ Params: { type: string; id: string }; Querystring: { save?: string } }>(
         "/api/content/:type/:id/summarize",
-        { preHandler: requireAuth() },
+        { onRequest: requireAuth() },
         async (request, reply) => {
             const user = request.user as AuthenticatedUser | undefined;
             if (!user || !rbacService.can(user, PERMISSIONS.CONTENT_READ_ANY)) {
@@ -137,7 +137,7 @@ export default async function intelligenceRoutes(app: FastifyInstance) {
     // ── GET /api/content/:type/:id/entities ───────────────────────────────────
     app.get<{ Params: { type: string; id: string } }>(
         "/api/content/:type/:id/entities",
-        { preHandler: requireAuth() },
+        { onRequest: requireAuth() },
         async (request, reply) => {
             const user = request.user as AuthenticatedUser | undefined;
             if (!user || !rbacService.can(user, PERMISSIONS.CONTENT_READ_ANY)) {
@@ -181,7 +181,7 @@ export default async function intelligenceRoutes(app: FastifyInstance) {
     // ── GET /api/content/:type/duplicates ─────────────────────────────────────
     app.get<{ Params: { type: string } }>(
         "/api/content/:type/duplicates",
-        { preHandler: requireAuth() },
+        { onRequest: requireAuth() },
         async (request, reply) => {
             const user = request.user as AuthenticatedUser | undefined;
             if (!user || !rbacService.can(user, PERMISSIONS.CONTENT_READ_ANY)) {

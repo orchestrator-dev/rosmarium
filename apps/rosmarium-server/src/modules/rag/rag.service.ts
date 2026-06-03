@@ -197,6 +197,13 @@ export const ragService = {
             resolveAllowedEntryIds(user),
         ]);
 
+        if (contentTypes.length === 0) {
+            const emptyMeta = { query, total: 0, latencyMs: 0, reranked: false, format };
+            if (format === "chunks") return { format: "chunks", chunks: [], meta: emptyMeta };
+            if (format === "json") return { format: "json", chunks: [], meta: emptyMeta };
+            return { format: "context", context: "RETRIEVED CONTEXT\nQuery: " + query + "\n\nNo content found.", chunks: 0, tokens: 0, meta: emptyMeta };
+        }
+
         const workerResponse = await ragClient.retrieve({
             query,
             contentTypes,
@@ -324,6 +331,11 @@ export const ragService = {
             resolveContentTypes(opts.contentTypes),
             resolveAllowedEntryIds(opts.user),
         ]);
+
+        if (contentTypes.length === 0) {
+            yield { type: "done", total: 0, latencyMs: 0, reranked: false };
+            return;
+        }
 
         yield* ragClient.retrieveStream({
             query: opts.query,

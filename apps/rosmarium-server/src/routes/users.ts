@@ -22,7 +22,7 @@ const userRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     app.get(
         "/api/users",
         {
-            preHandler: requireRole("admin", "super_admin"),
+            onRequest: requireRole("admin", "super_admin"),
             schema: {
                 tags: ["Users"],
                 summary: "List all users",
@@ -46,7 +46,7 @@ const userRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     app.post(
         "/api/users",
         {
-            preHandler: requireRole("admin", "super_admin"),
+            onRequest: requireRole("admin", "super_admin"),
             schema: {
                 tags: ["Users"],
                 summary: "Create a new user (Invite)",
@@ -90,7 +90,7 @@ const userRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     app.patch<{ Params: { id: string } }>(
         "/api/users/:id",
         {
-            preHandler: requireRole("admin", "super_admin"),
+            onRequest: requireRole("admin", "super_admin"),
             schema: {
                 tags: ["Users"],
                 summary: "Update user role or active status",

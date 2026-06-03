@@ -37,7 +37,7 @@ const searchRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     app.get<{ Querystring: SuggestQuery }>(
         "/api/search/suggest",
         {
-            preHandler: requireAuth(),
+            onRequest: requireAuth(),
             schema: {
                 tags: ["Search"],
                 summary: "Autocomplete title suggestions",
@@ -94,7 +94,7 @@ const searchRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     app.get<{ Querystring: SearchQuery }>(
         "/api/search",
         {
-            preHandler: requireAuth(),
+            onRequest: requireAuth(),
             schema: {
                 tags: ["Search"],
                 summary: "Hybrid BM25 + vector search with Reciprocal Rank Fusion",

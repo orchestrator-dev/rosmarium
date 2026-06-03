@@ -19,7 +19,7 @@ const apiKeyRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     app.get(
         "/api/auth/api-keys",
         {
-            preHandler: requireAuth(),
+            onRequest: requireAuth(),
             schema: {
                 tags: ["API Keys"],
                 summary: "List your API keys (hash is never returned)",
@@ -48,7 +48,7 @@ const apiKeyRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     app.post(
         "/api/auth/api-keys",
         {
-            preHandler: requireAuth(),
+            onRequest: requireAuth(),
             schema: {
                 tags: ["API Keys"],
                 summary:
@@ -124,7 +124,7 @@ const apiKeyRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     app.delete<{ Params: { id: string } }>(
         "/api/auth/api-keys/:id",
         {
-            preHandler: requireAuth(),
+            onRequest: requireAuth(),
             schema: {
                 tags: ["API Keys"],
                 summary: "Revoke an API key",

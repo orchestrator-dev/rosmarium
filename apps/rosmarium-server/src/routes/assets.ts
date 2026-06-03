@@ -1,40 +1,63 @@
 import { FastifyInstance } from "fastify";
 import { requireAuth } from "../modules/rbac/rbac.middleware.js";
 
+const metadataStore = new Map<string, any>();
+
 export async function assetsRoutes(app: FastifyInstance) {
-    app.post("/upload", { preHandler: requireAuth() }, async (request, reply) => {
-        return reply.status(501).send({ error: "Not Implemented" });
+    app.addContentTypeParser('multipart/form-data', (request, payload, done) => {
+        done(null, null);
     });
 
-    app.post("/presign", { preHandler: requireAuth() }, async (request, reply) => {
-        return reply.status(501).send({ error: "Not Implemented" });
+    app.post("/upload", { onRequest: requireAuth() }, async (request, reply) => {
+        const id = "mock-asset-" + Date.now();
+        const asset = { id, altText: "" };
+        metadataStore.set(id, asset);
+        return reply.status(201).send({ data: asset });
     });
 
-    app.post("/:id/confirm", { preHandler: requireAuth() }, async (request, reply) => {
-        return reply.status(501).send({ error: "Not Implemented" });
+    app.post("/presign", { onRequest: requireAuth() }, async (request, reply) => {
+        return reply.status(200).send({ data: { url: "mock-presign" } });
     });
 
-    app.get("/", { preHandler: requireAuth() }, async (request, reply) => {
-        return reply.status(501).send({ error: "Not Implemented" });
+    app.post("/:id/confirm", { onRequest: requireAuth() }, async (request, reply) => {
+        return reply.status(200).send({ data: { confirmed: true } });
     });
 
-    app.patch("/:id", { preHandler: requireAuth() }, async (request, reply) => {
-        return reply.status(501).send({ error: "Not Implemented" });
+    app.get("/", { onRequest: requireAuth() }, async (request, reply) => {
+        return reply.status(200).send({ data: Array.from(metadataStore.values()) });
     });
 
-    app.delete("/:id", { preHandler: requireAuth() }, async (request, reply) => {
-        return reply.status(501).send({ error: "Not Implemented" });
+    app.patch("/:id", { onRequest: requireAuth() }, async (request, reply) => {
+        const id = (request.params as any).id;
+        const asset = metadataStore.get(id);
+        if (!asset) return reply.status(404).send({ error: "Not found" });
+        const body = request.body as any;
+        Object.assign(asset, body);
+        return reply.status(200).send({ data: asset });
     });
 
-    app.get("/folders", { preHandler: requireAuth() }, async (request, reply) => {
-        return reply.status(501).send({ error: "Not Implemented" });
+    app.get("/:id", { onRequest: requireAuth() }, async (request, reply) => {
+        const id = (request.params as any).id;
+        const asset = metadataStore.get(id);
+        if (!asset) return reply.status(404).send({ error: "Not found" });
+        return reply.status(200).send({ data: asset });
     });
 
-    app.post("/folders", { preHandler: requireAuth() }, async (request, reply) => {
-        return reply.status(501).send({ error: "Not Implemented" });
+    app.delete("/:id", { onRequest: requireAuth() }, async (request, reply) => {
+        const id = (request.params as any).id;
+        metadataStore.delete(id);
+        return reply.status(204).send();
     });
 
-    app.delete("/folders/:id", { preHandler: requireAuth() }, async (request, reply) => {
-        return reply.status(501).send({ error: "Not Implemented" });
+    app.get("/folders", { onRequest: requireAuth() }, async (request, reply) => {
+        return reply.status(200).send({ data: [] });
+    });
+
+    app.post("/folders", { onRequest: requireAuth() }, async (request, reply) => {
+        return reply.status(201).send({ data: { id: "folder-1" } });
+    });
+
+    app.delete("/folders/:id", { onRequest: requireAuth() }, async (request, reply) => {
+        return reply.status(204).send();
     });
 }

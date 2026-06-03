@@ -94,7 +94,7 @@ export default async function graphRoutes(app: FastifyInstance) {
     // POST /api/graph/edges
     app.post(
         "/api/graph/edges",
-        { preHandler: requirePermission(PERMISSIONS.CONTENT_UPDATE_ANY) },
+        { onRequest: requirePermission(PERMISSIONS.CONTENT_UPDATE_ANY) },
         async (request, reply) => {
             const parsed = createEdgeBody.safeParse(request.body);
             if (!parsed.success) {
@@ -125,7 +125,7 @@ export default async function graphRoutes(app: FastifyInstance) {
     // DELETE /api/graph/edges/:id
     app.delete<{ Params: { id: string } }>(
         "/api/graph/edges/:id",
-        { preHandler: requirePermission(PERMISSIONS.CONTENT_UPDATE_ANY) },
+        { onRequest: requirePermission(PERMISSIONS.CONTENT_UPDATE_ANY) },
         async (request, reply) => {
             await graphService.deleteEdge(request.params.id);
             return reply.status(204).send();
@@ -135,7 +135,7 @@ export default async function graphRoutes(app: FastifyInstance) {
     // GET /api/graph/edges/:entryId
     app.get<{ Params: { entryId: string } }>(
         "/api/graph/edges/:entryId",
-        { preHandler: requireAuth() },
+        { onRequest: requireAuth() },
         async (request, reply) => {
             const parsed = getEdgesQuery.safeParse(request.query);
             if (!parsed.success) {
@@ -156,7 +156,7 @@ export default async function graphRoutes(app: FastifyInstance) {
     // POST /api/graph/edges/:id/accept
     app.post<{ Params: { id: string } }>(
         "/api/graph/edges/:id/accept",
-        { preHandler: requirePermission(PERMISSIONS.CONTENT_UPDATE_ANY) },
+        { onRequest: requirePermission(PERMISSIONS.CONTENT_UPDATE_ANY) },
         async (request, reply) => {
             const edge = await graphService.acceptEdge(request.params.id);
             if (!edge) {
@@ -171,7 +171,7 @@ export default async function graphRoutes(app: FastifyInstance) {
     // POST /api/graph/edges/:id/reject
     app.post<{ Params: { id: string } }>(
         "/api/graph/edges/:id/reject",
-        { preHandler: requirePermission(PERMISSIONS.CONTENT_UPDATE_ANY) },
+        { onRequest: requirePermission(PERMISSIONS.CONTENT_UPDATE_ANY) },
         async (request, reply) => {
             const edge = await graphService.rejectEdge(request.params.id);
             if (!edge) {
@@ -186,7 +186,7 @@ export default async function graphRoutes(app: FastifyInstance) {
     // GET /api/graph/pending
     app.get<{ Querystring: { limit?: string } }>(
         "/api/graph/pending",
-        { preHandler: requireRole("editor", "admin", "super_admin") },
+        { onRequest: requireRole("editor", "admin", "super_admin") },
         async (request, reply) => {
             const limit = Math.min(
                 200,
@@ -200,7 +200,7 @@ export default async function graphRoutes(app: FastifyInstance) {
     // GET /api/graph/entities
     app.get(
         "/api/graph/entities",
-        { preHandler: requireAuth() },
+        { onRequest: requireAuth() },
         async (request, reply) => {
             const parsed = getEntitiesQuery.safeParse(request.query);
             if (!parsed.success) {
@@ -217,7 +217,7 @@ export default async function graphRoutes(app: FastifyInstance) {
     // GET /api/graph/entities/:entryId/mentions
     app.get<{ Params: { entryId: string } }>(
         "/api/graph/entities/:entryId/mentions",
-        { preHandler: requireAuth() },
+        { onRequest: requireAuth() },
         async (request, reply) => {
             const mentions = await graphService.getEntityMentions(
                 request.params.entryId,
@@ -229,7 +229,7 @@ export default async function graphRoutes(app: FastifyInstance) {
     // GET /api/graph/traverse
     app.get(
         "/api/graph/traverse",
-        { preHandler: requireAuth() },
+        { onRequest: requireAuth() },
         async (request, reply) => {
             const parsed = traverseQuery.safeParse(request.query);
             if (!parsed.success) {
@@ -256,7 +256,7 @@ export default async function graphRoutes(app: FastifyInstance) {
     // GET /api/graph/neighbors
     app.get(
         "/api/graph/neighbors",
-        { preHandler: requireAuth() },
+        { onRequest: requireAuth() },
         async (request, reply) => {
             const parsed = z.object({ id: z.string(), edgeType: z.string().optional(), direction: z.enum(["outbound", "inbound", "both"]).optional(), populate: z.enum(["true", "false"]).transform(v => v === "true").optional() }).safeParse(request.query);
             if (!parsed.success) return reply.status(400).send({ error: parsed.error.message });
@@ -276,7 +276,7 @@ export default async function graphRoutes(app: FastifyInstance) {
     // GET /api/graph/path
     app.get(
         "/api/graph/path",
-        { preHandler: requireAuth() },
+        { onRequest: requireAuth() },
         async (request, reply) => {
             const parsed = pathQuery.safeParse(request.query);
             if (!parsed.success) return reply.status(400).send({ error: parsed.error.message });
@@ -289,7 +289,7 @@ export default async function graphRoutes(app: FastifyInstance) {
     // GET /api/graph/recommend
     app.get(
         "/api/graph/recommend",
-        { preHandler: requireAuth() },
+        { onRequest: requireAuth() },
         async (request, reply) => {
             const parsed = recommendQuery.safeParse(request.query);
             if (!parsed.success) return reply.status(400).send({ error: parsed.error.message });
@@ -303,7 +303,7 @@ export default async function graphRoutes(app: FastifyInstance) {
     // POST /api/graph/query
     app.post(
         "/api/graph/query",
-        { preHandler: requireAuth() },
+        { onRequest: requireAuth() },
         async (request, reply) => {
             const parsed = queryBody.safeParse(request.body);
             if (!parsed.success) return reply.status(400).send({ error: parsed.error.message });
@@ -320,7 +320,7 @@ export default async function graphRoutes(app: FastifyInstance) {
     // GET /api/graph/visualize
     app.get(
         "/api/graph/visualize",
-        { preHandler: requireAuth() },
+        { onRequest: requireAuth() },
         async (request, reply) => {
             const parsed = visualizeQuery.safeParse(request.query);
             if (!parsed.success) return reply.status(400).send({ error: parsed.error.message });
@@ -337,7 +337,7 @@ export default async function graphRoutes(app: FastifyInstance) {
     // POST /api/graph/analytics/compute
     app.post(
         "/api/graph/analytics/compute",
-        { preHandler: requireRole("admin", "super_admin") },
+        { onRequest: requireRole("admin", "super_admin") },
         async (request, reply) => {
             const parsed = z.object({ contentType: z.string().optional() }).safeParse(request.body);
             if (!parsed.success) return reply.status(400).send({ error: parsed.error.message });
@@ -350,7 +350,7 @@ export default async function graphRoutes(app: FastifyInstance) {
     // GET /api/graph/analytics/:entryId
     app.get<{ Params: { entryId: string } }>(
         "/api/graph/analytics/:entryId",
-        { preHandler: requireAuth() },
+        { onRequest: requireAuth() },
         async (request, reply) => {
             const analytics = await analyticsClient.getEntryAnalytics(request.params.entryId);
             if (!analytics) return reply.status(404).send({ error: { code: "NOT_FOUND", message: "Analytics not found" } });
@@ -361,7 +361,7 @@ export default async function graphRoutes(app: FastifyInstance) {
     // GET /api/graph/export
     app.get(
         "/api/graph/export",
-        { preHandler: requireRole("admin", "super_admin") },
+        { onRequest: requireRole("admin", "super_admin") },
         async (request, reply) => {
             const parsed = exportQuery.safeParse(request.query);
             if (!parsed.success) return reply.status(400).send({ error: parsed.error.message });
@@ -388,7 +388,7 @@ export default async function graphRoutes(app: FastifyInstance) {
     // GET /api/graph/communities/:contentType
     app.get<{ Params: { contentType: string } }>(
         "/api/graph/communities/:contentType",
-        { preHandler: requireAuth() },
+        { onRequest: requireAuth() },
         async (request, reply) => {
             const result = await db.execute(sql`
                 SELECT 
@@ -409,7 +409,7 @@ export default async function graphRoutes(app: FastifyInstance) {
     // GET /api/graph/influential/:contentType
     app.get<{ Params: { contentType: string } }>(
         "/api/graph/influential/:contentType",
-        { preHandler: requireAuth() },
+        { onRequest: requireAuth() },
         async (request, reply) => {
             const result = await db.execute(sql`
                 SELECT id, data->>'title' as title, (metadata->'graph'->>'pagerankScore')::float as "pagerankScore"

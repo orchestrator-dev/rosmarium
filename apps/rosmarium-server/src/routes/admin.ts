@@ -16,7 +16,7 @@ export default async function adminRoutes(app: FastifyInstance) {
     // GET /api/admin/queue-stats — admin/super_admin only
     app.get(
         "/api/admin/queue-stats",
-        { preHandler: requireRole("admin", "super_admin") },
+        { onRequest: requireRole("admin", "super_admin") },
         async (_request, reply) => {
             try {
                 const stats = await getQueueStats();
@@ -31,7 +31,7 @@ export default async function adminRoutes(app: FastifyInstance) {
     // POST /api/admin/tenants — super_admin only
     app.post(
         "/api/admin/tenants",
-        { preHandler: requireRole("super_admin") },
+        { onRequest: requireRole("super_admin") },
         async (request, reply) => {
             const schema = z.object({
                 slug: z.string().regex(/^[a-z0-9-]+$/),
@@ -59,7 +59,7 @@ export default async function adminRoutes(app: FastifyInstance) {
     // GET /api/admin/tenants — super_admin only
     app.get(
         "/api/admin/tenants",
-        { preHandler: requireRole("super_admin") },
+        { onRequest: requireRole("super_admin") },
         async (_request, reply) => {
             try {
                 const tenants = await tenantService.listTenants();
