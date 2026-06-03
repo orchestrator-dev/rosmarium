@@ -76,9 +76,15 @@ export const webhookService = {
 
         const matching = candidates.filter((wh) => {
             const hasEvent = wh.events.includes(event);
-            const hasType = wh.contentTypes.length === 0 || wh.contentTypes.includes(contentType);
+            const hasType = !wh.contentTypes || wh.contentTypes.length === 0 || wh.contentTypes.includes(contentType);
+            import('fs').then(fs => fs.appendFileSync('/tmp/wh-debug.log', `wh.id=${wh.id} events=${JSON.stringify(wh.events)} types=${JSON.stringify(wh.contentTypes)} typeOf=${typeof wh.contentTypes} isArray=${Array.isArray(wh.contentTypes)} length=${wh.contentTypes?.length}\n`));
             return hasEvent && hasType;
         });
+
+        console.log(`[webhookService.trigger] candidates: ${candidates.length}, matching: ${matching.length}`);
+        for (const wh of candidates) {
+            console.log(`  wh[${wh.id}]: events=${JSON.stringify(wh.events)} vs ${event}, types=${JSON.stringify(wh.contentTypes)} vs ${contentType}`);
+        }
 
         const queue = getWebhookQueue();
         const { trace } = await import("@opentelemetry/api");

@@ -8,6 +8,7 @@ import { registry } from "./modules/content/registry.js";
 import { rosmariumEvents } from "./lib/events.js";
 import { pubsub } from "./graphql/context.js";
 import { webhookService } from "./modules/webhooks/webhook.service.js";
+import { getWebhookWorker } from "./modules/webhooks/webhook.queue.js";
 import graphqlPlugin from "./graphql/index.js";
 import { dispatchIntelligenceJob, dispatchEmbeddingJob } from "./modules/jobs/intelligence.jobs.js";
 import { tenantMiddleware, tenantStorageHook } from "./modules/tenants/tenant.middleware.js";
@@ -65,6 +66,11 @@ export async function buildApp() {
         if (plugin.routes) {
             plugin.routes(app);
         }
+    }
+
+    // Start the webhook worker
+    if (process.env.NODE_ENV !== "test") {
+        getWebhookWorker();
     }
 
     // ─── Bridge rosmariumEvents → GraphQL PubSub ──────────────────────────────

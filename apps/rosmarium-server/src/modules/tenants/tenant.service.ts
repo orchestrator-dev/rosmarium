@@ -41,11 +41,12 @@ export const tenantService = {
         // 3. Run all migrations against new schema using search_path
         const tenantClient = postgres(config.DATABASE_URL, {
             max: 1,
-            connection: { search_path: schemaName }
+            connection: { search_path: `${schemaName}, public` }
         });
         const tenantDb = drizzle(tenantClient);
         
-        await migrate(tenantDb, { migrationsFolder: "src/db/migrations" });
+        await tenantClient.unsafe(`SET search_path TO "${schemaName}", public`);
+        await migrate(tenantDb, { migrationsFolder: "src/db/migrations", migrationsSchema: schemaName });
 
         // 4. Create admin user in tenant schema
         const passwordHash = await hashPassword(input.adminPassword);
