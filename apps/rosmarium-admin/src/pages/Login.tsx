@@ -17,6 +17,13 @@ export function LoginPage() {
   const [ssoProviders, setSsoProviders] = useState<{ id: string; name: string; providerId: string; type: string }[]>([]);
 
   useEffect(() => {
+    fetch('/api/auth/me')
+      .then(res => res.json())
+      .then(json => {
+        if (json.data?.user) window.location.href = '/';
+      })
+      .catch(() => {});
+
     fetch('/api/auth/sso/providers')
       .then(res => {
         if (!res.ok) throw new Error('Network response was not ok');
@@ -42,7 +49,7 @@ export function LoginPage() {
         window.location.href = '/';
       } else {
         const json = await res.json();
-        setError(json.error || 'Login failed');
+        setError(json.error?.message || (typeof json.error === 'string' ? json.error : 'Login failed'));
       }
     } catch {
       setError('An error occurred during login');
@@ -64,7 +71,7 @@ export function LoginPage() {
         </Box>
         
         {error && (
-          <Typography color="error" variant="body2" sx={{ mb: 2, textAlign: 'center' }}>
+          <Typography color="error" variant="body2" sx={{ mb: 2, textAlign: 'center' }} role="alert">
             {error}
           </Typography>
         )}

@@ -30,29 +30,34 @@ async function resolveUser(
     if (cookieHeader) {
         const sessionId = lucia.readSessionCookie(cookieHeader);
         if (sessionId) {
-            const { user, session } = await authService.validateSession(sessionId);
-            if (user && session) {
-                request.user = user;
-                request.sessionId = sessionId;
+            try {
+                const { user, session } = await authService.validateSession(sessionId);
+                request.log.info(`[RBAC] Validated session ${sessionId}: user=${!!user}, session=${!!session}`);
+                if (user && session) {
+                    request.user = user;
+                    request.sessionId = sessionId;
 
-                const wsId = request.headers["x-workspace-id"] as string | undefined;
-                if (wsId) {
-                    const wsRole = await workspaceService.getMemberRole(wsId, user.id);
-                    if (wsRole) {
-                        request.workspaceId = wsId;
-                        request.workspaceRole = wsRole as UserRole;
+                    const wsId = request.headers["x-workspace-id"] as string | undefined;
+                    if (wsId) {
+                        const wsRole = await workspaceService.getMemberRole(wsId, user.id);
+                        if (wsRole) {
+                            request.workspaceId = wsId;
+                            request.workspaceRole = wsRole as UserRole;
+                        }
                     }
-                }
 
-                // Refresh cookie if session was extended by Lucia
-                if (session.fresh) {
-                    const freshCookie = lucia.createSessionCookie(session.id);
-                    void reply.header(
-                        "Set-Cookie",
-                        freshCookie.serialize()
-                    );
+                    // Refresh cookie if session was extended by Lucia
+                    if (session.fresh) {
+                        const freshCookie = lucia.createSessionCookie(session.id);
+                        void reply.header(
+                            "Set-Cookie",
+                            freshCookie.serialize()
+                        );
+                    }
+                    return true;
                 }
-                return true;
+            } catch (err) {
+                console.error(`[RBAC] Error validating session ${sessionId}:`, err);
             }
         }
     }

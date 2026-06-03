@@ -45,8 +45,8 @@ const healthRoutes: FastifyPluginAsync = async (app) => {
         return {
             status,
             checks: {
-                postgres: isPgUp,
-                redis: isRedisUp,
+                postgres: isPgUp ? "ok" : "unavailable",
+                redis: isRedisUp ? "ok" : "unavailable",
             },
         };
     });

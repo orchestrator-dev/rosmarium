@@ -3,7 +3,9 @@
 from collections.abc import AsyncGenerator
 from contextlib import asynccontextmanager
 
+import logging
 import structlog
+from structlog.types import EventDict
 from fastapi import FastAPI
 from opentelemetry import trace
 from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
@@ -18,6 +20,29 @@ from .config import settings
 from .database import close_pool, create_pool
 from .embedding.registry import init_embedding_provider
 from .workers.consumer import start_consumer, stop_consumer
+
+def redact_sensitive_data(logger: logging.Logger, name: str, event_dict: EventDict) -> EventDict:
+    """Redact sensitive fields from logs."""
+    sensitive_keys = {"query", "embedding", "vectors", "api_key"}
+    for key in sensitive_keys:
+        if key in event_dict:
+            event_dict[key] = "***REDACTED***"
+    return event_dict
+
+structlog.configure(
+    processors=[
+        structlog.stdlib.add_log_level,
+        structlog.stdlib.add_logger_name,
+        structlog.processors.TimeStamper(fmt="iso"),
+        structlog.contextvars.merge_contextvars,
+        redact_sensitive_data,
+        structlog.processors.JSONRenderer()
+    ],
+    wrapper_class=structlog.stdlib.BoundLogger,
+    context_class=dict,
+    logger_factory=structlog.stdlib.LoggerFactory(),
+    cache_logger_on_first_use=True,
+)
 
 if settings.otel_exporter_otlp_endpoint:
     resource = Resource.create({"service.name": settings.otel_service_name})

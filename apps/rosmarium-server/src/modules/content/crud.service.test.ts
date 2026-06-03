@@ -221,4 +221,39 @@ describe("contentCrudService", () => {
 
         expect(entry).toBeDefined();
     });
+
+    it("findOne should return entry if found", async () => {
+        mockDb.select.mockReturnValue({
+            from: vi.fn().mockReturnValue({
+                where: vi.fn().mockReturnValue({
+                    limit: vi.fn().mockResolvedValue([mockEntry]),
+                }),
+            }),
+        });
+
+        const entry = await contentCrudService.findOne({ id: "entry-1", contentTypeName: "article" });
+        expect(entry).toBeDefined();
+        expect(entry?.id).toBe("entry-1");
+    });
+
+    it("unpublish should set status back to draft and emit event", async () => {
+        const listener = vi.fn();
+        rosmariumEvents.on("content.unpublished", listener);
+
+        mockDb.update.mockReturnValue({
+            set: vi.fn().mockReturnValue({
+                where: vi.fn().mockReturnValue({
+                    returning: vi.fn().mockResolvedValue([{
+                        ...mockEntry,
+                        status: "draft",
+                    }]),
+                }),
+            }),
+        });
+
+        const entry = await contentCrudService.unpublish("entry-1", "user-1");
+        expect(entry.status).toBe("draft");
+        expect(listener).toHaveBeenCalled();
+        rosmariumEvents.off("content.unpublished", listener);
+    });
 });

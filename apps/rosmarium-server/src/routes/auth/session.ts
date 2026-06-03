@@ -122,6 +122,7 @@ const sessionRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
                     data: { user: safeUser(user as Record<string, unknown>) },
                 });
             } catch (err) {
+                console.error("[AUTH ERROR]", err);
                 const code = (err as { code?: string }).code ?? "AUTH_ERROR";
                 const message = err instanceof Error ? err.message : "Login failed";
                 const status =
@@ -158,7 +159,6 @@ const sessionRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
     app.get(
         "/api/auth/me",
         {
-            onRequest: requireAuth(),
             schema: {
                 tags: ["Auth"],
                 summary: "Get the currently authenticated user",
@@ -169,9 +169,7 @@ const sessionRoutes: FastifyPluginAsync = async (app: FastifyInstance) => {
         },
         async (request, reply) => {
             if (!request.user) {
-                return reply.status(401).send({
-                    error: { code: "UNAUTHORIZED", message: "Not authenticated" },
-                });
+                return reply.status(200).send({ data: { user: null } });
             }
             // request.user is already the safe projection (no passwordHash)
             return reply.status(200).send({ data: { user: request.user } });

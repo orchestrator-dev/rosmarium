@@ -12,14 +12,8 @@ export const logger = pino({
             traceId: span?.spanContext().traceId,
         };
     },
-    ...(isDevelopment && {
-        transport: {
-            target: "pino-pretty",
-            options: {
-                colorize: true,
-                translateTime: "HH:MM:ss Z",
-                ignore: "pid,hostname",
-            },
-        },
-    }),
+    redact: {
+        paths: ["password", "req.body", "body", "apiKey", "headers.authorization", "req.headers.authorization"],
+        censor: "***"
+    }
 });

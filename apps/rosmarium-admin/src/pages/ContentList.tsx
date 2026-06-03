@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   Box,
   Typography,
@@ -69,12 +69,13 @@ interface Template {
 
 export function ContentListPage() {
   const navigate = useNavigate();
+  const { type } = useParams<{ type: string }>();
   const [entries, setEntries] = useState<ContentEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [contentTypes, setContentTypes] = useState<ContentType[]>([]);
   
   // Filters state
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+  const [selectedTypes, setSelectedTypes] = useState<string[]>(type ? [type] : []);
   const [selectedStatus, setSelectedStatus] = useState<string>('all');
   const [sortBy, setSortBy] = useState<string>('createdAt:desc');
   
@@ -124,6 +125,14 @@ export function ContentListPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (type && !selectedTypes.includes(type)) {
+      setSelectedTypes([type]);
+    } else if (!type && selectedTypes.length > 0) {
+      setSelectedTypes([]);
+    }
+  }, [type]);
 
   useEffect(() => {
     if (viewMode === 'list') {
@@ -249,10 +258,15 @@ export function ContentListPage() {
             actionKey="createEntry"
             variant="contained" 
             startIcon={<AddIcon />} 
-            onClick={(e) => setAnchorElNew(e.currentTarget)}
-            disabled={contentTypes.length === 0}
+            onClick={(e) => {
+              if (type) {
+                navigate(`/content/${type}/new`);
+              } else {
+                setAnchorElNew(e.currentTarget);
+              }
+            }}
           >
-            Create Entry
+            {type ? `New ${contentTypes.find(c => c.name === type)?.displayName || type}` : 'Create Entry'}
           </TooltipButton>
           <Menu
             anchorEl={anchorElNew}

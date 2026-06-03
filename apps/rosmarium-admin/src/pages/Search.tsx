@@ -13,7 +13,9 @@ import {
   ListItemText,
   Paper,
   Skeleton,
-  Button
+  Button,
+  ListSubheader,
+  Link
 } from '@mui/material';
 import { TooltipButton } from '../components/common/TooltipButton';
 
@@ -169,7 +171,10 @@ export function SearchPage() {
       {!loading && !results && !error && (
         <Box sx={{ textAlign: 'center', py: 8 }}>
           <Typography variant="body1" color="text.secondary" gutterBottom>
-            Try: <a href="#" onClick={(e) => { e.preventDefault(); setQuery('vector database'); handleAutocomplete('vector database'); void handleSearch('vector database'); }}>vector database</a> | <a href="#" onClick={(e) => { e.preventDefault(); setQuery('RAG pipeline'); handleAutocomplete('RAG pipeline'); void handleSearch('RAG pipeline'); }}>RAG pipeline</a> | <a href="#" onClick={(e) => { e.preventDefault(); setQuery('knowledge graph'); handleAutocomplete('knowledge graph'); void handleSearch('knowledge graph'); }}>knowledge graph</a>
+            Try:{' '}
+            <Link component="button" variant="body1" onClick={() => { setQuery('vector database'); handleAutocomplete('vector database'); void handleSearch('vector database'); }}>vector database</Link> |{' '}
+            <Link component="button" variant="body1" onClick={() => { setQuery('RAG pipeline'); handleAutocomplete('RAG pipeline'); void handleSearch('RAG pipeline'); }}>RAG pipeline</Link> |{' '}
+            <Link component="button" variant="body1" onClick={() => { setQuery('knowledge graph'); handleAutocomplete('knowledge graph'); void handleSearch('knowledge graph'); }}>knowledge graph</Link>
           </Typography>
         </Box>
       )}

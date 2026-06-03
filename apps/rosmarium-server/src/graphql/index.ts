@@ -53,13 +53,16 @@ const graphqlPlugin = fp(
             url: "/graphql",
             method: ["GET", "POST", "OPTIONS"],
             handler: async (req, reply) => {
-                const response = await yoga.handleNodeRequestAndResponse(
-                    req.raw,
-                    reply.raw,
-                );
+                const response = await yoga.handleNodeRequest(req, {
+                    req,
+                    reply,
+                });
+                response.headers.forEach((value, key) => {
+                    reply.header(key, value);
+                });
                 reply.status(response.status);
-                response.headers.forEach((value, key) => reply.header(key, value));
-                return reply.send(response.body);
+                reply.send(response.body);
+                return reply;
             },
         });
     },

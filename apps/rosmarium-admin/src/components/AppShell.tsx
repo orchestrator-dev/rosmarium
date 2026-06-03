@@ -27,7 +27,7 @@ import {
   AccountTree as AccountTreeIcon,
   CallSplit as CallSplitIcon,
 } from '@mui/icons-material';
-import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import { Outlet, useNavigate, useLocation, Link as RouterLink } from 'react-router-dom';
 import { BranchSwitcher } from './branches/BranchSwitcher';
 
 const drawerWidth = 240;
@@ -35,7 +35,7 @@ const drawerWidth = 240;
 const menuItems = [
   { text: 'Media', icon: <MediaIcon />, path: '/media' },
   { text: 'Search', icon: <SearchIcon />, path: '/search' },
-  { text: 'AI Dashboard', icon: <AIIcon />, path: '/ai-dashboard' },
+  { text: 'AI Dashboard', icon: <AIIcon />, path: '/intelligence' },
   { text: 'Knowledge Graph', icon: <GraphIcon />, path: '/graph' },
 ];
 
@@ -49,14 +49,23 @@ const settingsItems = [
 
 export function AppShell() {
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [contentTypes, setContentTypes] = React.useState<any[]>([]);
   const navigate = useNavigate();
   const location = useLocation();
-
 
   React.useEffect(() => {
     fetch('/api/auth/me').then(res => {
       if (!res.ok) navigate('/login');
     }).catch(() => navigate('/login'));
+
+    fetch('/api/content-types')
+      .then(res => res.json())
+      .then(data => {
+        if (data && Array.isArray(data.data)) {
+          setContentTypes(data.data);
+        }
+      })
+      .catch(console.error);
   }, [navigate]);
 
   const handleDrawerToggle = () => {
@@ -73,38 +82,74 @@ export function AppShell() {
       <Divider sx={{ borderColor: 'rgba(255,255,255,0.05)' }} />
       <List>
         {/* Dynamic Content section */}
-        <ListItem disablePadding>
-          <ListItemButton
-            selected={location.pathname.startsWith('/content')}
-            onClick={() => navigate('/content')}
-            sx={{
-              '&.Mui-selected': {
-                backgroundColor: 'rgba(99, 102, 241, 0.15)',
-                borderRight: '3px solid #6366F1',
-              },
-            }}
-          >
-            <ListItemIcon sx={{ color: location.pathname.startsWith('/content') ? '#6366F1' : '#94a3b8' }}>
-              <DashboardIcon />
-            </ListItemIcon>
-            <ListItemText
-              primary="Content"
+        {contentTypes.length === 0 ? (
+          <ListItem disablePadding>
+            <ListItemButton
+              component={RouterLink}
+              to="/content"
+              selected={location.pathname === '/content'}
+              onClick={(e) => { e.preventDefault(); navigate('/content'); }}
               sx={{
-                '& .MuiListItemText-primary': {
-                  fontWeight: location.pathname.startsWith('/content') ? 600 : 400,
-                  color: location.pathname.startsWith('/content') ? '#f1f5f9' : '#94a3b8',
+                '&.Mui-selected': {
+                  backgroundColor: 'rgba(99, 102, 241, 0.15)',
+                  borderRight: '3px solid #6366F1',
                 },
               }}
-            />
-          </ListItemButton>
-        </ListItem>
+            >
+              <ListItemIcon sx={{ color: location.pathname === '/content' ? '#6366F1' : '#94a3b8' }}>
+                <DashboardIcon />
+              </ListItemIcon>
+              <ListItemText
+                primary="Content"
+                sx={{
+                  '& .MuiListItemText-primary': {
+                    fontWeight: location.pathname === '/content' ? 600 : 400,
+                    color: location.pathname === '/content' ? '#f1f5f9' : '#94a3b8',
+                  },
+                }}
+              />
+            </ListItemButton>
+          </ListItem>
+        ) : (
+          contentTypes.map((ct) => (
+            <ListItem key={ct.name} disablePadding>
+              <ListItemButton
+                component={RouterLink}
+                to={`/content/${ct.name}`}
+                selected={location.pathname.startsWith(`/content/${ct.name}`)}
+                onClick={(e) => { e.preventDefault(); navigate(`/content/${ct.name}`); }}
+                sx={{
+                  '&.Mui-selected': {
+                    backgroundColor: 'rgba(99, 102, 241, 0.15)',
+                    borderRight: '3px solid #6366F1',
+                  },
+                }}
+              >
+                <ListItemIcon sx={{ color: location.pathname.startsWith(`/content/${ct.name}`) ? '#6366F1' : '#94a3b8' }}>
+                  <DashboardIcon />
+                </ListItemIcon>
+                <ListItemText
+                  primary={ct.displayName || ct.name}
+                  sx={{
+                    '& .MuiListItemText-primary': {
+                      fontWeight: location.pathname.startsWith(`/content/${ct.name}`) ? 600 : 400,
+                      color: location.pathname.startsWith(`/content/${ct.name}`) ? '#f1f5f9' : '#94a3b8',
+                    },
+                  }}
+                />
+              </ListItemButton>
+            </ListItem>
+          ))
+        )}
 
         {/* Other menu items */}
         {menuItems.map((item) => (
           <ListItem key={item.text} disablePadding>
             <ListItemButton
+              component={RouterLink}
+              to={item.path}
               selected={location.pathname.startsWith(item.path)}
-              onClick={() => navigate(item.path)}
+              onClick={(e) => { e.preventDefault(); navigate(item.path); }}
               sx={{
                 '&.Mui-selected': {
                   backgroundColor: 'rgba(99, 102, 241, 0.15)',
@@ -133,8 +178,10 @@ export function AppShell() {
         {settingsItems.map((item) => (
           <ListItem key={item.text} disablePadding>
             <ListItemButton
+              component={RouterLink}
+              to={item.path}
               selected={location.pathname.startsWith(item.path)}
-              onClick={() => navigate(item.path)}
+              onClick={(e) => { e.preventDefault(); navigate(item.path); }}
               sx={{
                 '&.Mui-selected': {
                   backgroundColor: 'rgba(99, 102, 241, 0.15)',

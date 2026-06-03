@@ -1,33 +1,33 @@
 # Rosmarium COS — Current Development Phase
 
-## Active Phase: All V2 Phases Complete! 🎉
+## Active Phase: V2 Phase 1 — Content Authoring Revolution
 **Target release:** v2.0.0
-**Duration:** Project Finished
+**Duration:** Months 1-3
 
 ## Completed V1 Phases
 - ✅ V1 Phase 1 — CMS Foundation
 - ✅ V1 Phase 2 — AI Layer
 - ✅ V1 Phase 3 — API Layer & Graph
-- ✅ V1 Phase 4 — Expansion & Scalability (v1.0.1 released)
+- ✅ V1 Phase 4 — Expansion & Scalability (v1.1.1 released)
 
-## Completed V2 Phases
-- ✅ V2 Phase 1 — Content Authoring Revolution (Months 1-3)
+## Planned V2 Phases
+- ⏳ V2 Phase 1 — Content Authoring Revolution (Months 1-3)
   - Month 1: Structured Rich Text Engine (G01, G03)
   - Month 2: Live Preview Engine (G02, G04)
   - Month 3: Admin UI Polish & Content Hierarchy
-- ✅ V2 Phase 2 — Workflow & Collaboration Engine (Months 4-6)
+- ⏳ V2 Phase 2 — Workflow & Collaboration Engine (Months 4-6)
   - Month 4: Workflow Automation Engine (G05)
   - Month 5: Content Branching & Environments (G07)
   - Month 6: Real-Time Collaboration Foundation (G06, G26)
-- ✅ V2 Phase 3 — Developer Experience & Extensibility (Months 7-9)
+- ⏳ V2 Phase 3 — Developer Experience & Extensibility (Months 7-9)
   - Month 7: Plugin/Extension System (G09)
   - Month 8: CLI & Config-as-Code (G10, G11)
   - Month 9: SDK Integrations & i18n (G12, G13)
-- ✅ V2 Phase 4 — AI-Native Content Intelligence (Month 10)
+- ⏳ V2 Phase 4 — AI-Native Content Intelligence (Month 10)
   - Month 10: Generative AI Content Studio (G15)
   - Month 10: AI Governance Framework & Smart Search (G16, G17)
 
-## V2 Phase 3 Checklist (In Progress)
+## V2 Phase 1 Checklist (Starting Soon)
 
 ### Month 7: Plugin/Extension System (G09)
 - [x] **Task 7.1: Plugin Architecture**
@@ -97,8 +97,5 @@
   - [x] Governance & Audit Admin UIs
 
 ## Notes
-Phase 3 (Developer Experience & Extensibility) is fully completed in v1.16.0.
-Phase 4 (AI-Native Content Intelligence) is officially completed.
-Phase 5 (Edge Delivery & Scale) is fully completed in v1.13.0.
-Phase 6 (Enterprise & Governance) is fully completed in v1.15.0.
-Current priority: **V2 Feature Complete!** Preparing for v2.0.0 final release.
+V1 (including all scaling and edge features) is now officially complete.
+Current priority: **V2 Phase 1 Kickoff!** Preparing for structured rich text and block editor.

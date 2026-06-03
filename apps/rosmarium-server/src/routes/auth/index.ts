@@ -8,7 +8,7 @@ const authRoutes = fp(
     async (app: FastifyInstance) => {
         await app.register(sessionRoutes);
         await app.register(apiKeyRoutes);
-        await app.register(ssoRoutes, { prefix: "/sso" });
+        await app.register(ssoRoutes, { prefix: "/api/auth/sso" });
     },
     { name: "auth-routes" }
 );

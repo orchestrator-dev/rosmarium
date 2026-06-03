@@ -73,7 +73,7 @@ export async function ssoRoutes(app: FastifyInstance) {
             
             let profile: Partial<SSOProfile> = {};
             if ((tokens as Record<string, unknown>).idToken) {
-                const claims = oauthService.decodeIdToken((tokens as Record<string, string>).idToken) as Record<string, unknown>;
+                const claims = oauthService.decodeIdToken((tokens as Record<string, string>).idToken!) as Record<string, unknown>;
                 profile = {
                     email: claims.email as string,
                     firstName: claims.given_name as string,
@@ -112,7 +112,7 @@ export async function ssoRoutes(app: FastifyInstance) {
         const redirectUri = `${request.protocol}://${request.hostname}/api/auth/sso/callback/${provider.id}`;
         
         try {
-            const { profile: samlProfile } = await samlService.validatePostResponse(provider, redirectUri, request.body as Record<string, unknown>);
+            const { profile: samlProfile } = await samlService.validatePostResponse(provider, redirectUri, request.body as Record<string, string>);
             
             const profile = {
                 email: samlProfile?.email || samlProfile?.nameID,

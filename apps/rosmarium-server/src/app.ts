@@ -2,6 +2,7 @@
 import Fastify, { FastifyRequest } from "fastify";
 import websocket from "@fastify/websocket";
 import { logger } from "./lib/logger.js";
+import { config } from "./config.js";
 import { registerPlugins } from "./plugins/index.js";
 import { registerRoutes } from "./routes/index.js";
 import { registry } from "./modules/content/registry.js";
@@ -42,6 +43,22 @@ export async function buildApp() {
     app.addHook("onRequest", tenantStorageHook);
     app.addHook("onRequest", branchStorageHook);
     app.addHook("onRequest", i18nMiddleware);
+
+    // Global Error Handler
+    app.setErrorHandler((error, request, reply) => {
+        request.log.error(error);
+        const isProd = config.NODE_ENV === "production";
+        const code = error.code || "INTERNAL_SERVER_ERROR";
+        const message = isProd && !error.statusCode ? "Internal Server Error" : error.message;
+        const statusCode = error.statusCode || 500;
+        
+        reply.status(statusCode).send({
+            error: {
+                code,
+                message
+            }
+        });
+    });
 
     await registerPlugins(app);
 

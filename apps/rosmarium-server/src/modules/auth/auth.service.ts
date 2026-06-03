@@ -128,6 +128,7 @@ export const authService = {
         const hashToVerify = user?.passwordHash ?? dummyHash;
         const isValid = await verifyPassword(hashToVerify, input.password);
 
+        console.error("[AUTH DEBUG]", { email: input.email, pwdLength: input.password.length, foundUser: !!user, hashLength: hashToVerify?.length, isValid, hashToVerify });
         if (!user || !isValid) {
             throw new AuthError(AUTH_ERRORS.INVALID_CREDENTIALS, "Invalid email or password");
         }

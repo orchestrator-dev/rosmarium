@@ -79,8 +79,8 @@ describe("Health Routes", () => {
         expect(response.json()).toEqual({
             status: "ready",
             checks: {
-                postgres: true,
-                redis: true,
+                postgres: "ok",
+                redis: "ok",
             },
         });
     });

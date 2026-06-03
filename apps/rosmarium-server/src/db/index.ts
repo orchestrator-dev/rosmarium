@@ -3,6 +3,14 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import { config } from "../config.js";
 import * as schema from "./schema/index.js";
 import { AsyncLocalStorage } from "node:async_hooks";
+import { logger } from "../lib/logger.js";
+import type { Logger } from "drizzle-orm/logger";
+
+class DrizzlePinoLogger implements Logger {
+    logQuery(query: string, params: unknown[]): void {
+        logger.debug({ query, params }, "Database query");
+    }
+}
 
 export const tenantStorage = new AsyncLocalStorage<string>();
 export const branchStorage = new AsyncLocalStorage<string>();
@@ -15,7 +23,7 @@ const client = postgres(config.DATABASE_URL, {
 
 const defaultDb = drizzle(client, {
     schema,
-    logger: config.NODE_ENV === "development",
+    logger: new DrizzlePinoLogger(),
 });
 
 const tenantPools = new Map<string, postgres.Sql>();
@@ -32,7 +40,7 @@ function getTenantDb(slug: string) {
     }
     return drizzle(tenantPools.get(slug)!, {
         schema,
-        logger: config.NODE_ENV === "development",
+        logger: new DrizzlePinoLogger(),
     });
 }
 

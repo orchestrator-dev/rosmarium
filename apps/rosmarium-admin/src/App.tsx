@@ -31,9 +31,10 @@ export function App() {
           <Route path="/" element={<AppShell />}>
             <Route index element={<Navigate to="/search" replace />} />
             <Route path="search" element={<SearchPage />} />
-            <Route path="ai-dashboard" element={<AIDashboardPage />} />
+            <Route path="intelligence" element={<AIDashboardPage />} />
             <Route path="graph" element={<GraphPage />} />
             <Route path="content" element={<ContentListPage />} />
+            <Route path="content/:type" element={<ContentListPage />} />
             <Route path="content/:type/new" element={<ContentEditorPage />} />
             <Route path="content/:type/:id/edit" element={<ContentEditorPage />} />
             <Route path="media" element={<MediaLibraryPage />} />
