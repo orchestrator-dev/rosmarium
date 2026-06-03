@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
@@ -107,38 +107,30 @@ class TestRBACFiltering:
             },
         ]
 
-        async def fake_search(**_: object) -> list[dict]:  # type: ignore[type-arg]
-            return mock_results
-
         with (
             patch("rosmarium_ai_worker.rag.pipeline.get_provider") as mock_provider_fn,
             patch("rosmarium_ai_worker.rag.pipeline.index_manager") as mock_index,
-            patch("rosmarium_ai_worker.rag.pipeline.get_pool"),
         ):
             mock_provider = AsyncMock()
             mock_provider.embed_one = AsyncMock(return_value=[0.1] * 768)
             mock_provider_fn.return_value = mock_provider
-            mock_index.search = AsyncMock(return_value=mock_results)
+            
+            async def fake_search(*args: object, **kwargs: object) -> list[dict[str, object]]:
+                allowed = kwargs.get("allowed_entry_ids")
+                if allowed is not None:
+                    return [r for r in mock_results if r["content_entry_id"] in allowed]
+                return mock_results
+            
+            mock_index.search = AsyncMock(side_effect=fake_search)
 
-            # Patch _retrieve_for_type directly to bypass pool setup
-            async def fake_retrieve_for_type(
-                request: object, content_type: str
-            ) -> list:  # type: ignore[type-arg]
-                return [
-                    RetrievedChunk(
-                        content_entry_id=str(r["content_entry_id"]),
-                        content_type=content_type,
-                        chunk_index=0,
-                        chunk_text=str(r["chunk_text"]),
-                        score=float(str(r["score"])),
-                        freshness_score=float(str(r["score"])),
-                        metadata={},
-                        published_at=None,
-                    )
-                    for r in mock_results
-                ]
-
-            pipeline._retrieve_for_type = fake_retrieve_for_type  # type: ignore[method-assign]
+            # We don't patch _retrieve_for_type, we let it run and mock the DB pool
+            mock_conn = AsyncMock()
+            mock_pool = AsyncMock()
+            class MockAcquire:
+                async def __aenter__(self) -> AsyncMock: return mock_conn
+                async def __aexit__(self, exc_type: object, exc_val: object, exc_tb: object) -> None: pass
+            mock_pool.acquire = MagicMock(return_value=MockAcquire())
+            patch("rosmarium_ai_worker.rag.pipeline.get_pool", return_value=mock_pool).start()
 
             request = _make_request(allowed_entry_ids=allowed)
             response = await pipeline.retrieve(request)

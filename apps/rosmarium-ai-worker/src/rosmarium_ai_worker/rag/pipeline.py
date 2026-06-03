@@ -93,11 +93,8 @@ class RAGPipeline:
                 continue
             all_chunks.extend(result)  # type: ignore[arg-type]
 
-        # RBAC enforcement — filter to permitted entry IDs
+        # RBAC enforcement — filter to permitted entry IDs is handled in the SQL query
         # An empty allowed_entry_ids list means no restriction (CONTENT_READ_ANY)
-        if request.allowed_entry_ids:
-            allowed_set = set(request.allowed_entry_ids)
-            all_chunks = [c for c in all_chunks if c.content_entry_id in allowed_set]
 
         # Rerank or freshness-score
         reranked = False

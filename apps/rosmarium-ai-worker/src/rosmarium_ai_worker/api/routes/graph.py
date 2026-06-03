@@ -45,7 +45,7 @@ async def compute_analytics(request: ComputeAnalyticsRequest) -> dict[str, Any]:
         "opts": "{}",
     })
     
-    await redis.lpush(f"bull:{queue}:wait", job_id)  # type: ignore[misc]
+    await redis.lpush(f"bull:{queue}:waiting", job_id)  # type: ignore[misc]
     await redis.aclose()
     
     return {"status": "queued", "message": "Graph analytics computation queued."}

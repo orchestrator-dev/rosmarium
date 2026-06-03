@@ -1,6 +1,6 @@
 """Tests for the VectorIndexManager."""
 
-from unittest.mock import AsyncMock
+from unittest.mock import AsyncMock, patch
 
 import pytest
 
@@ -25,7 +25,8 @@ class TestEnsureTable:
     async def test_table_name_follows_convention(
         self, manager: VectorIndexManager, mock_conn: AsyncMock
     ) -> None:
-        await manager.ensure_table("product", 1024, mock_conn)
+        with patch("rosmarium_ai_worker.config.settings.embedding_dimensions", 1024):
+            await manager.ensure_table("product", 1024, mock_conn)
         first_call_sql = mock_conn.execute.call_args_list[0][0][0]
         assert "rosmarium_product_embeddings" in first_call_sql
 

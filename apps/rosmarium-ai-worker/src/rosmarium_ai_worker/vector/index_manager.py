@@ -21,6 +21,10 @@ class VectorIndexManager:
         conn: asyncpg.Connection,
     ) -> None:
         """Create the embedding table and HNSW index if they don't exist."""
+        from ..config import settings
+        if dimensions != settings.embedding_dimensions:
+            raise ValueError(f"Dimension mismatch: provider={dimensions}, settings={settings.embedding_dimensions}")
+
         table = f"rosmarium_{content_type}_embeddings"
 
         await conn.execute(f"""
