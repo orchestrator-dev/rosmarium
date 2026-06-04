@@ -57,7 +57,15 @@ class FieldMapper:
     LLM extraction is used for remaining fields that cannot be mapped
     deterministically (batched in one prompt).
     """
-
+    def __init__(
+        self,
+        system_prompt: str | None = None,
+        user_prompt: str | None = None,
+        model: str | None = None,
+    ) -> None:
+        self._system_prompt = system_prompt
+        self._user_prompt = user_prompt
+        self._model = model
     async def map(
         self,
         page: CrawledPage,
@@ -181,16 +189,24 @@ class FieldMapper:
             for f in fields
         )
 
-        prompt = (
-            "Extract the following fields from this web page content.\n\n"
-            f"Fields to extract:\n{field_specs}\n\n"
-            f"Page URL: {page.url}\n"
-            f"Page title: {page.title or 'unknown'}\n"
-            f"Content:\n{page.markdown[:1000]}\n\n"
+        sys_part = self._system_prompt or "Extract the following fields from this web page content."
+        usr_part = self._user_prompt or (
+            "Fields to extract:\n{field_specs}\n\n"
+            "Page URL: {url}\n"
+            "Page title: {title}\n"
+            "Content:\n{content}\n\n"
             "Respond with JSON only, mapping field names to extracted values.\n"
             "Use null for fields you cannot find.\n"
             "Example: {\"author\": \"Jane Smith\", \"category\": \"Technology\"}"
         )
+
+        # Always use str.replace() — the template may contain JSON examples with { } that break str.format()
+        usr_part = usr_part.replace("{field_specs}", field_specs)
+        usr_part = usr_part.replace("{url}", page.url)
+        usr_part = usr_part.replace("{title}", page.title or "unknown")
+        usr_part = usr_part.replace("{content}", page.markdown[:1000])
+
+        prompt = f"{sys_part}\n\n{usr_part}"
 
         try:
             if settings.embedding_provider == "openai" and settings.openai_api_key:
@@ -243,7 +259,7 @@ class FieldMapper:
             resp = await client.post(
                 f"{settings.ollama_base_url}/api/generate",
                 json={
-                    "model": settings.summarization_model,
+                    "model": self._model or settings.summarization_model,
                     "prompt": prompt,
                     "stream": False,
                 },
@@ -257,7 +273,7 @@ class FieldMapper:
                 "https://api.openai.com/v1/chat/completions",
                 headers={"Authorization": f"Bearer {settings.openai_api_key}"},
                 json={
-                    "model": "gpt-4o-mini",
+                    "model": self._model or "gpt-4o-mini",
                     "messages": [{"role": "user", "content": prompt}],
                     "response_format": {"type": "json_object"},
                 },

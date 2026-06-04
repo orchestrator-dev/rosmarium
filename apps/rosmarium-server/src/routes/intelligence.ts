@@ -196,4 +196,19 @@ export default async function intelligenceRoutes(app: FastifyInstance) {
             return reply.send(result);
         }
     );
+
+    // ── GET /api/intelligence/models ──────────────────────────────────────────
+    app.get(
+        "/api/intelligence/models",
+        { onRequest: requireAuth() },
+        async (request, reply) => {
+            const user = request.user as AuthenticatedUser | undefined;
+            if (!user) {
+                return reply.status(403).send({ error: "Forbidden" });
+            }
+
+            const result = await intelligenceService.getModels();
+            return reply.send(result);
+        }
+    );
 }

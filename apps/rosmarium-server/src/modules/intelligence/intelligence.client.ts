@@ -88,6 +88,39 @@ async function workerPost<T>(
     }
 }
 
+async function workerGet<T>(path: string): Promise<T> {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), INTELLIGENCE_TIMEOUT_MS);
+
+    try {
+        const res = await fetch(`${config.AI_WORKER_URL}${path}`, {
+            method: "GET",
+            headers: {
+                "X-Worker-Secret": config.AI_WORKER_SECRET,
+            },
+            signal: controller.signal,
+        });
+
+        if (!res.ok) {
+            const text = await res.text().catch(() => "");
+            throw new IntelligenceError(
+                `AI worker returned ${res.status}: ${text}`,
+                res.status
+            );
+        }
+
+        return res.json() as Promise<T>;
+    } catch (err) {
+        if ((err as Error).name === "AbortError") {
+            throw new IntelligenceError(`Intelligence request timed out: ${path}`);
+        }
+        if (err instanceof IntelligenceError) throw err;
+        throw new IntelligenceError(`Intelligence request failed: ${String(err)}`);
+    } finally {
+        clearTimeout(timer);
+    }
+}
+
 // ─── Client ───────────────────────────────────────────────────────────────────
 
 export const intelligenceClient = {
@@ -148,5 +181,12 @@ export const intelligenceClient = {
         contentType: string
     ): Promise<{ pairs: DuplicatePair[]; total: number }> {
         return workerPost("/intelligence/scan-duplicates", { contentType });
+    },
+
+    /**
+     * GET /intelligence/models — list available hardware-aware models.
+     */
+    async getModels(): Promise<{ data: string[]; recommended: string }> {
+        return workerGet("/intelligence/models");
     },
 };

@@ -20,6 +20,7 @@ class Settings(BaseSettings):
     host: str = "0.0.0.0"  # noqa: S104
     environment: Literal["development", "production", "test"] = "development"
     worker_secret: str = "change-this-in-production"
+    rosmarium_server_url: str | None = None
 
     # Database
     database_url: str = "postgresql://rosmarium:rosmarium@localhost:5432/rosmarium"
@@ -29,9 +30,9 @@ class Settings(BaseSettings):
 
     # Embedding
     embedding_provider: Literal[
-        "openai", "ollama", "cohere", "huggingface", "openai-compatible"
-    ] = "ollama"
-    embedding_model: str = "nomic-embed-text"
+        "openai", "ollama", "cohere", "huggingface", "openai-compatible", "local"
+    ] = "local"
+    embedding_model: str = "all-MiniLM-L6-v2"
     embedding_dimensions: int = 768
     embedding_batch_size: int = 32
     embedding_queue_concurrency: int = 4

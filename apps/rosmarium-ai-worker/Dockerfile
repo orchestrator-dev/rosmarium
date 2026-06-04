@@ -7,7 +7,8 @@ RUN pip install --no-cache-dir uv
 
 FROM base AS deps
 COPY pyproject.toml uv.lock README.md ./
-RUN uv sync --frozen --no-dev --extra embeddings --extra rag
+RUN uv sync --frozen --no-dev --extra embeddings --extra rag --extra ingestor
+RUN uv run playwright install --with-deps chromium
 RUN uv run python -m spacy download en_core_web_sm
 
 FROM deps AS production

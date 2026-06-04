@@ -23,20 +23,54 @@ import type { AuthenticatedUser } from "../modules/auth/auth.service.js";
 
 // ─── Validation ───────────────────────────────────────────────────────────────
 
-const createJobSchema = z.object({
+const webSourceSchema = z.object({
+    type: z.literal("web"),
     startUrl: z.string().url("Must be a valid URL"),
     maxDepth: z.number().int().min(1).max(5).default(2),
-    maxPages: z.number().int().min(1).max(500).default(100),
     includePatterns: z.array(z.string()).default([]),
     excludePatterns: z.array(z.string()).default([]),
-    targetContentType: z.string().nullable().optional(),
     respectRobotsTxt: z.boolean().default(true),
+});
+
+const fileSourceSchema = z.object({
+    type: z.literal("file"),
+    path: z.string().min(1),
+    format: z.enum(["json", "xml", "text"]),
+});
+
+const dbSourceSchema = z.object({
+    type: z.literal("database"),
+    provider: z.enum(["postgres", "mongo"]),
+    connectionString: z.string().min(1),
+    queryOrCollection: z.string().min(1),
+});
+
+const cloudSourceSchema = z.object({
+    type: z.literal("cloud"),
+    provider: z.literal("s3"),
+    bucket: z.string().min(1),
+    prefix: z.string().optional(),
+    endpoint: z.string().optional(),
+});
+
+const createJobSchema = z.object({
+    source: z.discriminatedUnion("type", [
+        webSourceSchema,
+        fileSourceSchema,
+        dbSourceSchema,
+        cloudSourceSchema,
+    ]),
+    maxPages: z.number().int().min(1).max(5000).default(100),
+    targetContentType: z.string().nullable().optional(),
     importAs: z.enum(["draft", "published"]).default("draft"),
     tenantId: z.string().nullable().optional(),
     contentSetName: z.string().min(1, "Content set name is required"),
     apiKey: z.string().min(1, "API key is required"),
     apiBaseUrl: z.string().url().default("http://localhost:3000"),
     duplicateThreshold: z.number().min(0).max(1).default(0.92),
+    classificationModel: z.string().optional(),
+    systemPrompt: z.string().nullable().optional(),
+    userPrompt: z.string().nullable().optional(),
 });
 
 // ─── Routes ───────────────────────────────────────────────────────────────────

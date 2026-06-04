@@ -185,9 +185,12 @@ describe("Ingestor Routes", () => {
                 "Content-Type": "application/json",
             },
             payload: {
-                startUrl: "https://example.com/blog",
+                source: {
+                    type: "web",
+                    startUrl: "https://example.com/blog",
+                    maxDepth: 2,
+                },
                 contentSetName: "Example Blog Import",
-                maxDepth: 2,
                 maxPages: 50,
                 importAs: "draft",
                 apiKey: "test-api-key",

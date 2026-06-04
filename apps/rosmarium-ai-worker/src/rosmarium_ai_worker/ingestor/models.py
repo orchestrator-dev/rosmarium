@@ -3,27 +3,57 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, Literal
+from typing import Annotated, Any, Literal, Union
 
 from pydantic import BaseModel, Field
 
 
+class WebSourceConfig(BaseModel):
+    type: Literal["web"] = "web"
+    startUrl: str
+    maxDepth: int = Field(default=2, ge=1, le=5)
+    includePatterns: list[str] = []
+    excludePatterns: list[str] = []
+    respectRobotsTxt: bool = True
+
+class FileSourceConfig(BaseModel):
+    type: Literal["file"] = "file"
+    path: str
+    format: Literal["json", "xml", "text"]
+
+class DatabaseSourceConfig(BaseModel):
+    type: Literal["database"] = "database"
+    provider: Literal["postgres", "mongo"]
+    connectionString: str
+    queryOrCollection: str
+
+class CloudSourceConfig(BaseModel):
+    type: Literal["cloud"] = "cloud"
+    provider: Literal["s3"] = "s3"
+    bucket: str
+    prefix: str | None = None
+    endpoint: str | None = None
+
+SourceConfig = Annotated[
+    Union[WebSourceConfig, FileSourceConfig, DatabaseSourceConfig, CloudSourceConfig],
+    Field(discriminator="type")
+]
+
 class IngestorConfig(BaseModel):
     """Full configuration for a single crawl-and-import job."""
 
-    startUrl: str
-    maxDepth: int = Field(default=3, ge=1, le=5)
-    maxPages: int = Field(default=500, ge=1, le=500)
-    includePatterns: list[str] = []
-    excludePatterns: list[str] = []
+    source: SourceConfig
+    maxPages: int = Field(default=500, ge=1, le=5000)
     targetContentType: str | None = None
-    respectRobotsTxt: bool = True
     importAs: Literal["draft", "published"] = "draft"
     tenantId: str | None = None
     contentSetName: str
     apiKey: str
     apiBaseUrl: str = "http://localhost:3000"
     duplicateThreshold: float = Field(default=0.92, ge=0.0, le=1.0)
+    classificationModel: str | None = None
+    systemPrompt: str | None = None
+    userPrompt: str | None = None
 
 
 class CrawledPage(BaseModel):
@@ -78,7 +108,7 @@ class ContentSetStatus(BaseModel):
     jobId: str
     contentSetId: str | None = None
     contentSetName: str
-    startUrl: str
+    sourceUrl: str
     status: Literal[
         "queued",
         "crawling",

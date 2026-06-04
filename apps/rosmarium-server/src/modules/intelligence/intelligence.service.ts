@@ -119,4 +119,11 @@ export const intelligenceService = {
     async scanDuplicates(contentType: string): Promise<{ pairs: DuplicatePair[]; total: number }> {
         return intelligenceClient.scanDuplicates(contentType);
     },
+
+    /**
+     * Get available intelligence classification models.
+     */
+    async getModels(): Promise<{ data: string[]; recommended: string }> {
+        return intelligenceClient.getModels();
+    },
 };

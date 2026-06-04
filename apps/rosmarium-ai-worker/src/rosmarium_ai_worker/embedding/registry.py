@@ -5,6 +5,7 @@ import structlog
 from ..config import settings
 from .base import EmbeddingProvider
 from .cohere import CohereEmbeddingProvider
+from .local import LocalEmbeddingProvider
 from .ollama import OllamaEmbeddingProvider
 from .openai import OpenAIEmbeddingProvider
 
@@ -36,6 +37,10 @@ async def init_embedding_provider() -> None:
             _provider = CohereEmbeddingProvider(
                 api_key=settings.cohere_api_key,
                 model=settings.embedding_model,
+            )
+        case "local":
+            _provider = LocalEmbeddingProvider(
+                model_name=settings.embedding_model or "all-MiniLM-L6-v2"
             )
         case _:
             raise ValueError(

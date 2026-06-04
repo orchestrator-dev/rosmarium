@@ -70,11 +70,13 @@ class RosmaCrawler:
 
     def __init__(self, config: IngestorConfig) -> None:
         self._config = config
-        self._base_domain = urlparse(config.startUrl).netloc
+        self._source = getattr(config, "source", config)  # Fallback for old tests if any
+        self._startUrl = getattr(self._source, "startUrl", "")
+        self._base_domain = urlparse(self._startUrl).netloc
 
     async def crawl(
         self,
-        progress_callback: Callable[[CrawledPage], Awaitable[None]],
+        progress_callback: Callable[[CrawledPage], Awaitable[None]] | None = None,
     ) -> AsyncGenerator[CrawledPage, None]:
         """Recursively crawl startUrl up to maxDepth.
 
@@ -105,16 +107,17 @@ class RosmaCrawler:
             verbose=False,
         )
         run_config = CrawlerRunConfig(
-            only_main_content=True,
             markdown_generator=DefaultMarkdownGenerator(
                 content_filter=PruningContentFilter()
             ),
-            wait_for="networkidle",
-            respect_robots_txt=self._config.respectRobotsTxt,
+            wait_until="domcontentloaded",
+            check_robots_txt=getattr(self._source, "respectRobotsTxt", True),
+            excluded_tags=["nav", "footer", "header", "aside"],
+            remove_forms=True,
         )
 
         visited: set[str] = set()
-        queue: list[tuple[str, int]] = [(self._config.startUrl, 0)]
+        queue: list[tuple[str, int]] = [(self._startUrl, 0)]
         page_count = 0
 
         async with AsyncWebCrawler(config=browser_config) as crawler:
@@ -169,11 +172,13 @@ class RosmaCrawler:
                     )
 
                     yield page
-                    await progress_callback(page)
+                    if progress_callback is not None:
+                        await progress_callback(page)
                     page_count += 1
 
                     # Discover internal links for next depth
-                    if depth < self._config.maxDepth and hasattr(result, "links"):
+                    max_depth = getattr(self._source, "maxDepth", 3)
+                    if depth < max_depth and hasattr(result, "links"):
                         for link in result.links.get("internal", []):
                             href = link.get("href", "")
                             if not href:
@@ -195,15 +200,17 @@ class RosmaCrawler:
             return False
 
         # Must match at least one includePattern (if any)
-        if self._config.includePatterns:
+        include_patterns = getattr(self._source, "includePatterns", [])
+        if include_patterns:
             if not any(
-                re.search(p, url) for p in self._config.includePatterns
+                re.search(p, url) for p in include_patterns
             ):
                 return False
 
         # Must not match any excludePattern
-        if self._config.excludePatterns:
-            if any(re.search(p, url) for p in self._config.excludePatterns):
+        exclude_patterns = getattr(self._source, "excludePatterns", [])
+        if exclude_patterns:
+            if any(re.search(p, url) for p in exclude_patterns):
                 return False
 
         return True

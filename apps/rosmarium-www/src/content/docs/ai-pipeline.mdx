@@ -44,9 +44,15 @@ When these conditions are met, the Node API pushes a job to BullMQ, and the Pyth
 
 ---
 
-## Intelligent Web Ingestion
+## Multi-Source Content Ingestion
 
-Rosmarium includes a fully autonomous web ingestion pipeline capable of crawling websites, extracting content, and mapping it to your structured Content Types.
+Rosmarium includes a fully autonomous content ingestion pipeline capable of extracting content from multiple sources and mapping it to your structured Content Types.
+
+Sources supported in v2.1.0+:
+- **Web Crawling**: Recursively crawls websites, extracting clean Markdown while respecting rate limits, max depths, and pagination rules.
+- **File System**: Ingest local JSON arrays, XML, or raw text files directly from the server.
+- **Databases**: Execute SQL or MongoDB queries to import raw database rows into Rosmarium.
+- **Cloud Storage**: Ingest files directly from S3 or MinIO buckets.
 
 <div class="my-10 p-1 rounded-xl bg-gradient-to-r from-neon-cyan/20 to-neon-purple/20 shadow-2xl not-prose">
   <img src="/docs/ingestor_ui.png" alt="Ingestor Admin Dashboard UI" class="rounded-lg w-full bg-[#0B0D17]" />
@@ -57,8 +63,8 @@ When an ingestion job is triggered, the AI worker performs a sequence of intelli
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 my-10 not-prose">
   <div class="bg-dark-surface border border-dark-border p-6 rounded-xl hover:border-neon-cyan transition-colors">
     <div class="text-neon-cyan mb-4 text-2xl">✦</div>
-    <h3 class="text-white font-bold text-lg mb-2">Asynchronous Crawling</h3>
-    <p class="text-zinc-400 text-sm leading-relaxed">Uses <code>crawl4ai</code> to scrape URLs, extracting clean Markdown while respecting rate limits, max depths, and pagination rules.</p>
+    <h3 class="text-white font-bold text-lg mb-2">Pluggable Extraction</h3>
+    <p class="text-zinc-400 text-sm leading-relaxed">Uses specialized extractors for Web (crawl4ai), Files, Databases, and Cloud Storage to unify varied unstructured data into standard Markdown representations.</p>
   </div>
   
   <div class="bg-dark-surface border border-dark-border p-6 rounded-xl hover:border-neon-purple transition-colors">
@@ -76,7 +82,13 @@ When an ingestion job is triggered, the AI worker performs a sequence of intelli
   <div class="bg-dark-surface border border-dark-border p-6 rounded-xl hover:border-neon-purple transition-colors">
     <div class="text-neon-purple mb-4 text-2xl">✦</div>
     <h3 class="text-white font-bold text-lg mb-2">Duplicate Prevention</h3>
-    <p class="text-zinc-400 text-sm leading-relaxed">Employs hybrid vector search (comparing embeddings and URLs) to silently skip pages that are semantically identical to already-ingested content.</p>
+    <p class="text-zinc-400 text-sm leading-relaxed">Employs hybrid vector search (comparing embeddings and source URLs) to silently skip content that is semantically identical to already-ingested entries.</p>
+  </div>
+
+  <div class="bg-dark-surface border border-dark-border p-6 rounded-xl hover:border-neon-cyan transition-colors">
+    <div class="text-neon-cyan mb-4 text-2xl">✦</div>
+    <h3 class="text-white font-bold text-lg mb-2">AI Configuration</h3>
+    <p class="text-zinc-400 text-sm leading-relaxed">Choose your preferred classification model (e.g., <code>gpt-4o-mini</code>) based on hardware capability and override System/User Prompts to tailor the extraction.</p>
   </div>
 </div>
 

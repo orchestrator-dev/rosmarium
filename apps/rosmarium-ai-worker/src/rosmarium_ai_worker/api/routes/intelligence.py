@@ -98,7 +98,40 @@ class ScanDuplicatesResponse(BaseModel):
     total: int
 
 
+class ModelsResponse(BaseModel):
+    data: list[str]
+    recommended: str
+
 # ─── Routes ───────────────────────────────────────────────────────────────────
+
+@router.get(
+    "/models",
+    response_model=ModelsResponse,
+    dependencies=[Depends(require_worker_secret)],
+    summary="List available AI models",
+)
+async def list_models() -> ModelsResponse:
+    """Return a list of available models for classification based on config."""
+    try:
+        import torch
+        vram_gb = 0
+        if torch.cuda.is_available():
+            vram_gb = torch.cuda.get_device_properties(0).total_memory / (1024**3)
+
+        if vram_gb > 16:
+            models = ["llama3:8b", "mistral", "gpt-4o", "claude-3-sonnet", "local-fallback"]
+            recommended = "llama3:8b"
+        elif vram_gb > 8:
+            models = ["llama3:8b", "gpt-4o-mini", "claude-3-haiku", "local-fallback"]
+            recommended = "gpt-4o-mini"
+        else:
+            models = ["local-fallback", "gpt-4o-mini"]
+            recommended = "local-fallback"
+    except Exception:
+        models = ["local-fallback", "gpt-4o-mini", "llama3:8b"]
+        recommended = "local-fallback"
+
+    return ModelsResponse(data=models, recommended=recommended)
 
 
 @router.post(

@@ -15,20 +15,25 @@ import type { ContentSet, ContentSetItem } from "../../db/schema/index.js";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
+export type SourceConfig =
+    | { type: "web"; startUrl: string; maxDepth: number; includePatterns: string[]; excludePatterns: string[]; respectRobotsTxt: boolean; }
+    | { type: "file"; path: string; format: "json" | "xml" | "text"; }
+    | { type: "database"; provider: "postgres" | "mongo"; connectionString: string; queryOrCollection: string; }
+    | { type: "cloud"; provider: "s3"; bucket: string; prefix?: string; endpoint?: string; };
+
 export interface IngestorJobConfig {
-    startUrl: string;
-    maxDepth: number;
+    source: SourceConfig;
     maxPages: number;
-    includePatterns: string[];
-    excludePatterns: string[];
     targetContentType?: string | null;
-    respectRobotsTxt: boolean;
     importAs: "draft" | "published";
     tenantId?: string | null;
     contentSetName: string;
     apiKey: string;
     apiBaseUrl: string;
     duplicateThreshold: number;
+    classificationModel?: string;
+    systemPrompt?: string | null;
+    userPrompt?: string | null;
 }
 
 export interface CreateJobOpts {
@@ -45,13 +50,18 @@ export const ingestorService = {
     async createJob(opts: CreateJobOpts): Promise<{ jobId: string; contentSetId: string }> {
         const jobId = createId();
 
+        const sourceStr = opts.config.source.type === 'web' ? opts.config.source.startUrl :
+            opts.config.source.type === 'file' ? opts.config.source.path :
+            opts.config.source.type === 'database' ? `db://${opts.config.source.provider}` :
+            `cloud://${opts.config.source.provider}/${opts.config.source.bucket}`;
+
         // Create content_sets record
         const [set] = await db
             .insert(contentSets)
             .values({
                 name: opts.config.contentSetName,
                 description: null,
-                sourceUrl: opts.config.startUrl,
+                sourceUrl: sourceStr,
                 jobId,
                 status: "queued",
                 config: opts.config as unknown as Record<string, unknown>,

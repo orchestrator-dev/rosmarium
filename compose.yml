@@ -20,7 +20,7 @@ services:
     container_name: rosmarium-pgvector-init
     profiles: [ "init" ]
     image: docker.io/pgvector/pgvector:pg16
-    restart: no
+    restart: "no"
     depends_on:
       postgres:
         condition: service_healthy
@@ -63,7 +63,7 @@ services:
     container_name: rosmarium-minio-init
     profiles: [ "init" ]
     image: docker.io/minio/mc:latest
-    restart: no
+    restart: "no"
     depends_on:
       minio:
         condition: service_healthy
@@ -80,8 +80,8 @@ services:
     environment:
       DATABASE_URL: postgresql://rosmarium:rosmarium@rosmarium-postgres:5432/rosmarium
       REDIS_URL: redis://rosmarium-redis:6379
-      EMBEDDING_PROVIDER: ${EMBEDDING_PROVIDER:-ollama}
-      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-nomic-embed-text}
+      EMBEDDING_PROVIDER: ${EMBEDDING_PROVIDER:-local}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-all-MiniLM-L6-v2}
       OLLAMA_BASE_URL: ${OLLAMA_BASE_URL:-http://host.docker.internal:11434}
       WORKER_SECRET: ${AI_WORKER_SECRET:-change-this-in-production}
       ENVIRONMENT: ${NODE_ENV:-development}

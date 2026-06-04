@@ -112,8 +112,9 @@ export const rbacService = {
 
     /**
      * Check if an API key includes the required permission in its scopes array.
+     * The wildcard scope '*' grants all permissions.
      */
     scopeApiKey(apiKey: ApiKey, permission: Permission): boolean {
-        return apiKey.scopes.includes(permission);
+        return apiKey.scopes.includes("*") || apiKey.scopes.includes(permission);
     },
 };

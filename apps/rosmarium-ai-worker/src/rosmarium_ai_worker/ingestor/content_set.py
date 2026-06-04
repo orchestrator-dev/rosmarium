@@ -6,6 +6,7 @@ It can be reviewed, bulk-published, or rolled back as a unit.
 
 from __future__ import annotations
 
+from datetime import datetime
 from typing import Any
 
 import structlog
@@ -60,7 +61,7 @@ class ContentSetManager:
         job_id: str,
         status: str,
         stats: dict[str, Any],
-        completed_at: str | None = None,
+        completed_at: datetime | None = None,
     ) -> None:
         """Update the status and stats of a content set."""
         pool = await get_pool()

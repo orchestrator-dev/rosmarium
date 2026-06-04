@@ -20,12 +20,6 @@ from ...vector.index_manager import VectorIndexManager
 
 logger = structlog.get_logger(__name__)
 
-router = APIRouter(dependencies=[Depends(require_worker_secret)])
-
-index_manager = VectorIndexManager()
-
-# ─── Auth dependency ───────────────────────────────────────────────────────────
-
 _WORKER_SECRET_HEADER = "x-worker-secret"  # noqa: S105 — header name, not a credential
 
 
@@ -35,6 +29,11 @@ async def require_worker_secret(
     """Validate X-Worker-Secret header.  Returns 403 if missing or incorrect."""
     if x_worker_secret is None or x_worker_secret != settings.worker_secret:
         raise HTTPException(status_code=403, detail="Invalid or missing X-Worker-Secret")
+
+
+router = APIRouter(dependencies=[Depends(require_worker_secret)])
+
+index_manager = VectorIndexManager()
 
 
 # ─── Embed endpoint models ─────────────────────────────────────────────────────

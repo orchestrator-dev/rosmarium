@@ -136,7 +136,7 @@ export function requirePermission(permission: Permission) {
         try {
             rbacService.canOrThrow(user, permission);
             if (request.apiKey) {
-                if (!request.apiKey.scopes.includes(permission)) {
+                if (!request.apiKey.scopes.includes("*") && !request.apiKey.scopes.includes(permission)) {
                     throw new ForbiddenError(`API Key missing required scope: ${permission}`);
                 }
             }

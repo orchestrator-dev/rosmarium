@@ -33,10 +33,19 @@ class ContentTypeClassifier:
     3. Fallback: if confidence < 0.6, use embedding similarity against CT descriptions
     """
 
-    def __init__(self, content_types: list[dict[str, Any]]) -> None:
+    def __init__(
+        self,
+        content_types: list[dict[str, Any]],
+        system_prompt: str | None = None,
+        user_prompt: str | None = None,
+        model: str | None = None,
+    ) -> None:
         self._content_types = [
             ct for ct in content_types if not ct.get("isComponent", False)
         ]
+        self._system_prompt = system_prompt
+        self._user_prompt = user_prompt
+        self._model = model
         self._ct_summary = self._build_ct_summary()
 
     def _build_ct_summary(self) -> str:
@@ -61,12 +70,14 @@ class ContentTypeClassifier:
                 alternativeTypes=[],
             )
 
-        prompt = (
+        sys_part = self._system_prompt or (
             "You are classifying a web page into one of these content types:\n\n"
             f"{self._ct_summary}\n\n"
-            f"Page URL: {page.url}\n"
-            f"Page title: {page.title or 'unknown'}\n"
-            f"Content (first 500 chars):\n{page.markdown[:500]}\n\n"
+        )
+        usr_part = self._user_prompt or (
+            "Page URL: {url}\n"
+            "Page title: {title}\n"
+            "Content (first 500 chars):\n{content}\n\n"
             "Respond with JSON only:\n"
             '{\n'
             '  "contentTypeName": "<exact name from list above>",\n'
@@ -76,6 +87,14 @@ class ContentTypeClassifier:
             '}\n\n'
             "If no content type matches well, use the closest one with low confidence."
         )
+
+        # Always use str.replace() — never .format() — because the JSON schema
+        # embedded in usr_part contains literal { } braces that would confuse str.format().
+        usr_part = usr_part.replace("{url}", page.url)
+        usr_part = usr_part.replace("{title}", page.title or "unknown")
+        usr_part = usr_part.replace("{content}", page.markdown[:500])
+
+        prompt = f"{sys_part}\n{usr_part}"
 
         try:
             response_text = await self._call_llm(prompt)
@@ -188,7 +207,7 @@ class ContentTypeClassifier:
             resp = await client.post(
                 f"{settings.ollama_base_url}/api/generate",
                 json={
-                    "model": settings.summarization_model,
+                    "model": self._model or settings.summarization_model,
                     "prompt": prompt,
                     "stream": False,
                 },
@@ -202,7 +221,7 @@ class ContentTypeClassifier:
                 "https://api.openai.com/v1/chat/completions",
                 headers={"Authorization": f"Bearer {settings.openai_api_key}"},
                 json={
-                    "model": "gpt-4o-mini",
+                    "model": self._model or "gpt-4o-mini",
                     "messages": [{"role": "user", "content": prompt}],
                     "response_format": {"type": "json_object"},
                 },

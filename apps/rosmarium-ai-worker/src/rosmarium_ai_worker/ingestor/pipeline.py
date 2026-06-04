@@ -18,7 +18,7 @@ from ..config import settings
 from ..database import get_pool
 from .classifier import ContentTypeClassifier
 from .content_set import content_set_manager
-from .crawler import RosmaCrawler
+from .extractors import ExtractorFactory
 from .duplicate_guard import DuplicateGuard
 from .field_mapper import FieldMapper
 from .models import (
@@ -50,11 +50,20 @@ class IngestionPipeline:
         status_callback: Callable[[ContentSetStatus], Awaitable[None]],
     ) -> ContentSetStatus:
         """Execute the full ingestor pipeline and return final status."""
+        base_url = settings.rosmarium_server_url or config.apiBaseUrl
+        if not settings.rosmarium_server_url and ("localhost" in base_url or "127.0.0.1" in base_url):
+            base_url = "http://host.containers.internal:3000"
+        config.apiBaseUrl = base_url
+
+        source_url = getattr(config.source, "startUrl", getattr(config.source, "path", ""))
+        if not source_url and hasattr(config.source, "connectionString"):
+            source_url = f"db://{getattr(config.source, 'provider')}"
+
         status = ContentSetStatus(
             jobId=job_id,
             contentSetId=content_set_id,
             contentSetName=config.contentSetName,
-            startUrl=config.startUrl,
+            sourceUrl=source_url,
             status="crawling",
             startedAt=datetime.now(tz=UTC),
         )
@@ -65,11 +74,17 @@ class IngestionPipeline:
         try:
             # Step 1: Fetch content types
             content_types = await self._fetch_content_types(config)
-            classifier = ContentTypeClassifier(content_types)
+            classifier = ContentTypeClassifier(
+                content_types,
+                system_prompt=config.systemPrompt,
+                user_prompt=config.userPrompt,
+                model=config.classificationModel
+            )
 
-            # Step 2: Crawl
-            crawler = RosmaCrawler(config)
+            # Step 2: Crawl / Extract
             crawled_pages: list[CrawledPage] = []
+            
+            extractor = ExtractorFactory.get_extractor(config)
 
             async def on_page_crawled(page: CrawledPage) -> None:
                 crawled_pages.append(page)
@@ -77,7 +92,9 @@ class IngestionPipeline:
                 status.totalPages = len(crawled_pages)
                 await status_callback(status)
 
-            async for _page in crawler.crawl(on_page_crawled):
+            async for _page in extractor.extract():
+                await on_page_crawled(_page)
+                
                 # Check cancellation flag
                 cancelled = await redis_client.exists(f"{_CANCEL_KEY_PREFIX}{job_id}")
                 if cancelled:
@@ -114,7 +131,11 @@ class IngestionPipeline:
 
             results: list[IngestionResult] = []
             guard = DuplicateGuard(similarity_threshold=config.duplicateThreshold)
-            mapper = FieldMapper()
+            mapper = FieldMapper(
+                system_prompt=config.systemPrompt,
+                user_prompt=config.userPrompt,
+                model=config.classificationModel
+            )
 
             pool = await get_pool()
 
@@ -126,15 +147,12 @@ class IngestionPipeline:
                     break
 
                 try:
-                    # Skip very low confidence
-                    if classification.confidence < 0.5:
-                        logger.warning(
-                            "low_confidence_skip",
-                            url=page.url,
-                            confidence=classification.confidence,
-                        )
-                        status.failedPages += 1
-                        continue
+                    # If confidence is 0 and contentTypeName is empty/unknown, use first content type
+                    if not classification.contentTypeName and content_types:
+                        classification = classification.model_copy(update={
+                            "contentTypeName": content_types[0]["name"],
+                            "reasoning": "No classifier available — defaulted to first content type",
+                        })
 
                     async with pool.acquire() as conn:
                         is_dup, _dup_id, _dup_score = await guard.check(
@@ -247,13 +265,13 @@ class IngestionPipeline:
                 job_id,
                 status.status,
                 self._stats(status),
-                completed_at=status.completedAt.isoformat(),
+                completed_at=status.completedAt,
             )
             await status_callback(status)
             return status
 
         except Exception as e:
-            logger.error("ingestion_pipeline_failed", job_id=job_id, error=str(e))
+            logger.exception("ingestion_pipeline_failed", job_id=job_id, error=str(e))
             status.status = "failed"
             status.completedAt = datetime.now(tz=UTC)
             status.errors.append(str(e))
@@ -261,7 +279,7 @@ class IngestionPipeline:
                 job_id,
                 "failed",
                 self._stats(status),
-                completed_at=status.completedAt.isoformat(),
+                completed_at=status.completedAt,
             )
             await status_callback(status)
             return status
@@ -276,6 +294,7 @@ class IngestionPipeline:
             headers = {"Authorization": f"Bearer {config.apiKey}"}
             if config.tenantId:
                 headers["X-Tenant-Id"] = config.tenantId
+            
             resp = await client.get(
                 f"{config.apiBaseUrl}/api/content-types", headers=headers
             )
