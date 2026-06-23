@@ -5,8 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.0.0] - 2026-06-01
+## [2.1.0] - 2026-06-23
 
+### Added
+- **rosmarium-server**: Content Federation System. Introduced `remote_sources` schema to store external APIs and integrated `@graphql-tools/stitch` in Pothos schema definition to automatically federate remote APIs.
+- **rosmarium-server**: Redis-based federated query cache via `cache.service.ts` for rate-limit protection on remote APIs.
+- **rosmarium-server**: Invalidation webhook routes to flush federated caches.
+- **rosmarium-admin**: Federation configuration UI (`Federation.tsx`) for managing remote data sources visually.
+- **rosmarium-edge**: Edge caching definitions for federated queries.
+
+## [2.0.0] - 2026-06-01
 ### Added
 - **rosmarium-www**: Complete premium aesthetic overhaul of the documentation site, including custom Tailwind CSS, neon gradients, and a new markdown MDX styling architecture.
 - **rosmarium-www**: Global copy-to-clipboard functionality across all documentation code blocks.

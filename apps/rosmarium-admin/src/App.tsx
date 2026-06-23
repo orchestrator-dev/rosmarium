@@ -20,6 +20,7 @@ import MergePage from './pages/MergePage';
 import { GovernancePage } from './pages/Governance';
 import { AuditLogPage } from './pages/AuditLog';
 import { IngestorPage } from './pages/Ingestor';
+import { Federation as FederationPage } from './pages/Federation';
 
 import { LoginPage } from './pages/Login';
 
@@ -45,6 +46,7 @@ export function App() {
               <Route path="governance" element={<GovernancePage />} />
               <Route path="audit-log" element={<AuditLogPage />} />
               <Route path="ingestor" element={<IngestorPage />} />
+              <Route path="federation" element={<FederationPage />} />
               
               <Route path="settings/content-types" element={<ContentTypesPage />} />
               <Route path="settings/webhooks" element={<WebhooksPage />} />

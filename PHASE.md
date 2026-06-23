@@ -1,8 +1,8 @@
 # Rosmarium COS — Current Development Phase
 
-## Active Phase: V2 Phase 1 — Content Authoring Revolution
-**Target release:** v2.0.0
-**Duration:** Months 1-3
+## Active Phase: V3 Phase 0 — MCP Server & AI Agent Infrastructure
+**Target release:** v3.0.0
+**Duration:** Month 1 (of 12-month V3 cycle)
 
 ## Completed V1 Phases
 - ✅ V1 Phase 1 — CMS Foundation
@@ -10,102 +10,59 @@
 - ✅ V1 Phase 3 — API Layer & Graph
 - ✅ V1 Phase 4 — Expansion & Scalability (v1.1.1 released)
 
-## Planned V2 Phases
-- ⏳ V2 Phase 1 — Content Authoring Revolution (Months 1-3)
-  - Month 1: Structured Rich Text Engine (G01, G03)
-  - Month 2: Live Preview Engine (G02, G04)
-  - Month 3: Admin UI Polish & Content Hierarchy
-- ⏳ V2 Phase 2 — Workflow & Collaboration Engine (Months 4-6)
-  - Month 4: Workflow Automation Engine (G05)
-  - Month 5: Content Branching & Environments (G07)
-  - Month 6: Real-Time Collaboration Foundation (G06, G26)
-- ⏳ V2 Phase 3 — Developer Experience & Extensibility (Months 7-9)
-  - Month 7: Plugin/Extension System (G09)
-  - Month 8: CLI & Config-as-Code (G10, G11)
-  - Month 9: SDK Integrations & i18n (G12, G13)
-- ⏳ V2 Phase 4 — AI-Native Content Intelligence (Month 10)
-  - Month 10: Generative AI Content Studio (G15)
-  - Month 10: AI Governance Framework & Smart Search (G16, G17)
+## Completed V2 Phases (ALL COMPLETE — v2.0.0 released)
+- ✅ V2 Phase 1 — Content Authoring Revolution (Months 1-3)
+  - ✅ Block Editor (Tiptap/ProseMirror) — G01
+  - ✅ Visual Live Preview — G02
+  - ✅ Content Templates — G03
+  - ✅ Conditional Fields — G04
+  - ✅ Content Tree View & Bulk Operations — G20
+- ✅ V2 Phase 2 — Workflow & Collaboration Engine (Months 4-6)
+  - ✅ Workflow Automation Engine — G05
+  - ✅ Scheduled Publishing — G19
+  - ✅ Content Branching (Git-like) — G07
+  - ✅ Real-Time Collaboration & Redis PubSub — G06, G26
+  - ✅ Commenting & Annotations — G08
+- ✅ V2 Phase 3 — Developer Experience & Extensibility (Months 7-9)
+  - ✅ Plugin/Extension System — G09
+  - ✅ CLI Tool (TypeScript + Commander.js) — G10
+  - ✅ Config-as-Code & Migrations — G11
+  - ✅ SDK Integrations (React, Next.js, Astro, Nuxt) — G12
+  - ✅ Full i18n Framework — G13
+- ✅ V2 Phase 4 — AI-Native Content Intelligence (Months 10-11)
+  - ✅ Generative AI Content Studio — G15
+  - ✅ AI-Powered Translation — G15b
+  - ✅ AI Governance Framework — G16
+  - ✅ Enhanced Semantic Search — G17
+- ✅ V2 Phase 5 — Edge Delivery & Scale (Months 12-14)
+  - ✅ Edge Content API (Cloudflare Workers) — G18
+  - ✅ Media Processing Pipeline (Sharp) — G21
+  - ✅ Query Performance (DataLoader + Redis Cache) — G14
+- ✅ V2 Phase 6 — Enterprise & Governance (Months 15-16)
+  - ✅ SSO/OAuth/OIDC (SAML 2.0) — G22
+  - ✅ Workspaces & Isolation — G23
+  - ✅ Content Governance Dashboard — G24
+  - ✅ Audit Dashboard — G25
 
-## V2 Phase 1 Checklist (Starting Soon)
+## Completed V2.1 Extensions
+- ✅ Intelligent Web Ingestion Pipeline (v2.1.0)
+  - ✅ Crawler, Classifier, Mapper, DuplicateGuard
+  - ✅ Content Sets schema & API
+  - ✅ Admin UI with live metrics
 
-### Month 7: Plugin/Extension System (G09)
-- [x] **Task 7.1: Plugin Architecture**
-  - [x] `packages/types/src/plugin.ts` Plugin interface definitions
-  - [x] Plugin registry, discovery, loading, and validation
-  - [x] Hook engine execution with priority ordering
-  - [x] Admin UI plugin loader
-- [x] **Task 7.2: Custom Field Types & Routes**
-  - [x] Allow plugins to register custom REST routes
-  - [x] Allow plugins to register custom field types
-  - [x] Allow plugins to extend GraphQL schema
-
-### Month 8: CLI & Config-as-Code (G10, G11)
-- [x] **Task 8.1: CLI Implementation**
-  - [x] Rewrite CLI in TypeScript with Commander.js
-  - [x] `rosmarium init`, `dev`, `migrate` commands
-  - [x] `rosmarium content export/import` commands
-- [x] **Task 8.2: Config-as-Code System**
-  - [x] `rosmarium schema pull/push/diff` commands
-  - [x] Bidirectional schema sync (DB ↔ YAML files)
-
-### Month 9: SDK Integrations & i18n (G12, G13)
-- [x] **Task 9.1: SDK/Framework Integrations**
-- [x] **Task 9.2: Full i18n Framework**
-
-## V2 Phase 5 Checklist (In Progress)
-
-### Month 12: Edge Delivery Network (G18)
-- [x] **Task 12.1: Edge Content API**
-  - [x] `apps/rosmarium-edge/` Edge worker application
-  - [x] `apps/rosmarium-edge/src/worker.ts` Cloudflare Worker entry point
-  - [x] `apps/rosmarium-edge/src/cache.ts` Tiered cache (edge KV → origin)
-  - [x] `apps/rosmarium-edge/src/router.ts` Edge API routing
-  - [x] `apps/rosmarium-server/src/modules/cache/invalidation.service.ts` Cache invalidation via webhooks
-
-### Month 13: Media Processing Pipeline (G21)
-- [x] **Task 13.1: Image Processing**
-  - [x] `apps/rosmarium-server/src/modules/media/processing.service.ts` Image processing with Sharp
-  - [x] `apps/rosmarium-server/src/modules/media/transforms.ts` Transformation definitions
-  - [x] `apps/rosmarium-server/src/modules/media/media.routes.ts` Transformation query parameters
-
-### Month 14: Performance & Horizontal Scale
-- [x] **Task 14.1: Query Performance Optimization**
-  - [x] `apps/rosmarium-server/src/modules/content/query.builder.ts` Optimize relation loading
-  - [x] `apps/rosmarium-server/src/modules/content/dataloader.ts` DataLoader for batched relation resolution
-  - [x] `apps/rosmarium-server/src/modules/content/cache.service.ts` Redis caching layer
-
-## V2 Phase 6 Checklist (In Progress)
-
-### Month 15: SSO & Advanced Auth (G22)
-- [x] **Task 15.1: SSO/OAuth/OIDC Integration**
-  - [x] OAuth 2.0 authorization code flow with PKCE
-  - [x] OIDC discovery
-  - [x] SAML 2.0 SP-initiated flow
-  - [x] Auto-provision users from SSO claims
-  - [x] Role mapping from SSO groups/claims
-  - [x] Admin UI: SSO provider configuration
-
-### Month 16: Workspaces & Governance (G23, G24, G25)
-- [x] **Task 16.1: Workspaces & Isolation (G23)**
-  - [x] DB schema updates for workspace separation
-  - [x] API routes and service layer logic
-  - [x] RBAC middleware injection
-- [x] **Task 16.2: Content Governance & Audit (G24, G25)**
-  - [x] Freshness decay and ROT detection logic
-  - [x] Governance API routes
-  - [x] Governance & Audit Admin UIs
-
-## V2 Phase 4 Checklist (In Progress)
-
-### Month 10: Generative AI Content Studio (G15)
-- [x] **Task 10.1: Intelligent Web Ingestion Pipeline**
-  - [x] `apps/rosmarium-ai-worker/src/rosmarium_ai_worker/ingestor` (Crawler, Classifier, Mapper, DuplicateGuard)
-  - [x] Database Schema: `content_sets` and `content_set_items` tables
-  - [x] `apps/rosmarium-server/src/routes/ingestor.ts` API endpoints and SSE progress stream
-  - [x] `apps/rosmarium-admin/src/pages/Ingestor.tsx` Admin UI with live metrics and real-time logs
-  - [x] Background processing with BullMQ integration
+## Planned V3 Phases (Enterprise DXP)
+- ⏳ V3 Phase 0 — MCP Server & AI Agent Infrastructure (Month 1) ← **CURRENT**
+- ⏳ V3 Phase 1 — Unified GraphQL Mesh / Content Federation (Months 2-4)
+- ⏳ V3 Phase 2 — Visual Experience Orchestration (Months 5-7)
+- ⏳ V3 Phase 3 — Edge Personalization & Analytics (Months 8-9)
+- ⏳ V3 Phase 4 — Agentic Enterprise Operations (Months 10-11)
+- ⏳ V3 Phase 5 — Ecosystem & Plugin Marketplace (Month 12)
 
 ## Notes
-V1 (including all scaling and edge features) is now officially complete.
-Current priority: **V2 Phase 1 Kickoff!** Preparing for structured rich text and block editor.
+V1 and V2 (including all 26 gap items, scaling, edge, enterprise features) are now
+officially complete. V2.1 added the intelligent web ingestion pipeline. V2.2.0
+delivered structural and security improvements.
+
+Current priority: **V3 Phase 0 — MCP Server!** This is the #1 competitive gap.
+Strapi v5.47 and Sanity already ship native MCP servers. Rosmarium must match this
+to maintain its "AI-native" positioning.

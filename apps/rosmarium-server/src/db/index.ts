@@ -1,7 +1,6 @@
 import postgres from "postgres";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { config } from "../config.js";
-import * as schema from "./schema/index.js";
 import { AsyncLocalStorage } from "node:async_hooks";
 import { logger } from "../lib/logger.js";
 import type { Logger } from "drizzle-orm/logger";
@@ -20,6 +19,11 @@ const client = postgres(config.DATABASE_URL, {
     idle_timeout: 20,
     connect_timeout: 10,
 });
+
+import * as coreSchema from "./schema/index.js";
+import { remoteSources } from "./schema/remote-sources.js";
+
+const schema = { ...coreSchema, remoteSources };
 
 const defaultDb = drizzle(client, {
     schema,

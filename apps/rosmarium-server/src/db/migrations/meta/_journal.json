@@ -141,6 +141,13 @@
       "when": 1780514077685,
       "tag": "0020_fantastic_grandmaster",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1782190023976,
+      "tag": "0021_careful_tenebrous",
+      "breakpoints": true
     }
   ]
 }

@@ -23,6 +23,7 @@ import { governanceRoutes } from "../modules/governance/governance.routes.js";
 import { auditRoutes } from "../modules/audit/audit.routes.js";
 import { assetsRoutes } from "./assets.js";
 import ingestorRoutes from "./ingestor.js";
+import { sourceRoutes } from "../modules/federation/source.routes.js";
 
 export const registerRoutes = async (app: FastifyInstance) => {
     await app.register(healthRoutes);
@@ -49,4 +50,5 @@ export const registerRoutes = async (app: FastifyInstance) => {
     await app.register(auditRoutes, { prefix: "/api/audit" });
     await app.register(assetsRoutes, { prefix: "/api/assets" });
     await app.register(ingestorRoutes);
+    await app.register(sourceRoutes, { prefix: "/api/federation/sources" });
 };

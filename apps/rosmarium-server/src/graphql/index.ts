@@ -24,7 +24,7 @@ import type { GraphQLSchema } from "graphql";
 
 let _schema: GraphQLSchema | null = null;
 
-export function getSchema() {
+export async function getSchema() {
     if (!_schema) {
         // Let plugins extend graphql builder
         for (const plugin of pluginRegistry.getAll()) {
@@ -35,13 +35,17 @@ export function getSchema() {
             }
         }
         _schema = builder.toSchema();
+        
+        // Dynamically import stitcher to avoid circular deps
+        const { stitcherService } = await import("../modules/federation/stitcher.js");
+        _schema = await stitcherService.stitch(_schema);
     }
     return _schema;
 }
 
 const graphqlPlugin = fp(
     async (app: FastifyInstance) => {
-        const schema = getSchema();
+        const schema = await getSchema();
         const yoga = createYoga({
             schema,
             // createContext receives the YogaInitialContext which has a request property

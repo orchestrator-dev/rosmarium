@@ -47,6 +47,7 @@ const settingsItems = [
   { text: 'Access Control', icon: <SecurityIcon />, path: '/settings/access' },
   { text: 'Workflows', icon: <AccountTreeIcon />, path: '/settings/workflows' },
   { text: 'Branches', icon: <CallSplitIcon />, path: '/settings/branches' },
+  { text: 'Federation', icon: <GraphIcon />, path: '/federation' },
 ];
 
 export function AppShell() {
