@@ -1,6 +1,6 @@
 {
   "name": "rosmarium-cos",
-  "version": "2.1.0",
+  "version": "3.0.0",
   "private": true,
   "description": "Rosmarium COS - an open-source, AI-native headless content repository",
   "scripts": {
