@@ -18,3 +18,5 @@ export * from "./ai-audit";
 export * from "./saved-searches";
 export * from "./content-sets";
 export * from "./remote-sources";
+export * from "./pages";
+export * from "./personalization";

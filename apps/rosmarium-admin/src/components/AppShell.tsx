@@ -39,6 +39,8 @@ const menuItems = [
   { text: 'Search', icon: <SearchIcon />, path: '/search' },
   { text: 'AI Dashboard', icon: <AIIcon />, path: '/intelligence' },
   { text: 'Knowledge Graph', icon: <GraphIcon />, path: '/graph' },
+  { text: 'Page Builder', icon: <DashboardIcon />, path: '/pages' },
+  { text: 'Personalization', icon: <CallSplitIcon />, path: '/personalization' },
 ];
 
 const settingsItems = [
