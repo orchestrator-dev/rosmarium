@@ -1,8 +1,9 @@
 {
-  "name": "rosmarium-edge",
-  "version": "3.0.0",
+  "name": "@orchestrator.dev/edge",
+  "version": "3.0.1",
   "private": true,
   "type": "module",
+  "description": "Rosmarium COS Edge Runtime — lightweight content delivery and personalization for Cloudflare Workers / Fastly Compute",
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",

@@ -1,7 +1,7 @@
 [project]
 name = "rosmarium-ai-worker"
-version = "3.0.0"
-description = "AI pipeline worker for Rosmarium COS"
+version = "3.0.1"
+description = "AI Worker for Rosmarium COS — embedding generation, zero-shot classification, and semantic search"
 readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [

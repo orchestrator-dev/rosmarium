@@ -11,7 +11,7 @@ import { mcpAuth } from "./auth.js";
 
 export const server = new McpServer({
     name: "rosmarium",
-    version: "3.0.0",
+    version: "3.0.1",
 });
 
 // Register all tool groups
@@ -26,7 +26,7 @@ registerPluginMcpTools(server);
 export const startMcpServer = async () => {
     // Validate environment
     const context = mcpAuth.getDefaultContext();
-    console.error(`[MCP] Starting Rosmarium MCP server v3.0.0`);
+    console.error(`[MCP] Starting Rosmarium MCP server v3.0.1`);
     console.error(`[MCP] User: ${context.userId}, Tenant: ${context.tenantId}`);
     console.error(`[MCP] API key configured: ${context.apiKey ? 'yes' : 'no'}`);
 
