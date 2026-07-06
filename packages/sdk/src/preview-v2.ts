@@ -1,11 +1,11 @@
 // Bidirectional Preview Protocol V2
 
 export type PreviewMessage = 
-  | { type: 'ROSMARIUM_FIELD_UPDATE'; payload: { field: string; value: any; path?: string } }
-  | { type: 'ROSMARIUM_SECTION_ADD'; payload: { section: any; index: number } }
+  | { type: 'ROSMARIUM_FIELD_UPDATE'; payload: { field: string; value: unknown; path?: string } }
+  | { type: 'ROSMARIUM_SECTION_ADD'; payload: { section: unknown; index: number } }
   | { type: 'ROSMARIUM_SECTION_REORDER'; payload: { sourceIndex: number; destinationIndex: number } }
   | { type: 'ROSMARIUM_ELEMENT_CLICK'; payload: { fieldId: string; componentId?: string } }
-  | { type: 'ROSMARIUM_INIT'; payload: { initialData: any; locale: string } };
+  | { type: 'ROSMARIUM_INIT'; payload: { initialData: unknown; locale: string } };
 
 export class PreviewV2Client {
   private listeners: Set<(msg: PreviewMessage) => void> = new Set();

@@ -47,6 +47,15 @@ export interface DashboardWidget {
     gridSize?: number;
 }
 
+export interface McpToolDefinition {
+    name: string;
+    description: string;
+    inputSchema: Record<string, unknown>;
+    handler: (params: Record<string, unknown>) => Promise<{
+        content: Array<{ type: "text"; text: string }>;
+    }>;
+}
+
 export interface RosmariumPlugin {
     name: string;
     version: string;
@@ -100,4 +109,7 @@ export interface RosmariumPlugin {
         widgets?: DashboardWidget[];
         fieldEditors?: Record<string, string>; // fieldType → component path
     };
+
+    // MCP tool extensions
+    mcpTools?: McpToolDefinition[];
 }

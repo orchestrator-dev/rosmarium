@@ -5,9 +5,19 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [3.0.0] - 2026-06-23
+## [3.0.0] - 2026-07-06
 
 ### Added
+- **rosmarium-server**: Completed native Model Context Protocol (MCP) server implementation with stdio transport (`@modelcontextprotocol/sdk@^1.29.0`).
+- **rosmarium-server**: Added 7 Content CRUD tools (`content_list`, `content_get`, `content_create`, `content_update`, `content_publish`, `content_unpublish`, `content_delete`).
+- **rosmarium-server**: Added 2 Schema tools (`schema_list`, `schema_get`) and 2 Search tools (`search_hybrid`, `search_graph`).
+- **rosmarium-server**: Added 4 AI tools (`ai_summarize`, `ai_tag`, `ai_translate`, `ai_generate`) wired to the AI worker.
+- **rosmarium-server**: Added 6 Workflow & Scheduling tools (`workflow_status`, `workflow_transition`, `workflow_list`, `schedule_publish`, `schedule_cancel`, `schedule_list`).
+- **rosmarium-server**: Added 3 MCP Resources (`rosmarium://content-types`, `rosmarium://locales`, `rosmarium://workflows`).
+- **rosmarium-server**: Added MCP authentication module (`mcpAuth`) with API key validation and context provider.
+- **rosmarium-server**: Added MCP Plugin Bridge (`registerPluginMcpTools`) allowing plugins to register custom MCP tools dynamically.
+- **rosmarium-cli**: Fixed `mcpCommand` dynamic import path to `@orchestrator.dev/server/mcp/server.js`.
+- **rosmarium-types**: Added `McpToolDefinition` interface and `mcpTools` property to `RosmariumPlugin` type definition.
 - **rosmarium-admin**: Visual Experience Orchestration (Page Builder) UI for dragging and dropping components.
 - **rosmarium-server**: Page schema, Component Registry, and Page routing APIs.
 - **rosmarium-sdk**: Bidirectional live preview synchronization protocol for the visual builder.

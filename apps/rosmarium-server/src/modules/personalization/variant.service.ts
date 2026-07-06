@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "../../db/index.js";
 import { contentVariants } from "../../db/schema/personalization.js";
-import { ContentVariant } from "@orchestrator.dev/types/personalization";
+import { ContentVariant } from "@orchestrator.dev/types";
 
 export const variantService = {
     async createVariant(data: Omit<ContentVariant, "id" | "metrics">) {

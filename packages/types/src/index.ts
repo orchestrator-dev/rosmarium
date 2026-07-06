@@ -5,3 +5,6 @@ export * from "./workflow.js";
 export * from "./plugin.js";
 export * from "./i18n.js";
 export * from "./content.js";
+export * from "./federation.js";
+export * from "./personalization.js";
+export * from "./visual-builder.js";

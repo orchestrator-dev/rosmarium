@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "../../db/index.js";
 import { pages, pageSections } from "../../db/schema/pages.js";
-import { PageDefinition, PageSection } from "@orchestrator.dev/types/visual-builder";
+import { PageDefinition, PageSection } from "@orchestrator.dev/types";
 
 export const pageService = {
     async createPage(data: Omit<PageDefinition, "id" | "sections"> & { sections?: Omit<PageSection, "id">[] }) {
@@ -18,6 +18,7 @@ export const pageService = {
                 })
                 .returning();
 
+            if (!page) throw new Error("Page not found");
             if (data.sections && data.sections.length > 0) {
                 await tx.insert(pageSections).values(
                     data.sections.map((section, index) => ({

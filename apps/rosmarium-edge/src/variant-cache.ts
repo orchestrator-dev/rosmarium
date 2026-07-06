@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // In-memory or Redis-backed cache for Edge Variants
 
 export interface CachedVariant {
@@ -21,7 +22,7 @@ export const variantCache = {
             const API_URL = (globalThis as any).ROSMARIUM_API_URL || "http://localhost:3001";
             const response = await fetch(`${API_URL}/api/personalization/variants/entry/${entryId}`);
             if (response.ok) {
-                const variants = await response.json();
+                const variants = (await response.json()) as CachedVariant[];
                 this._cache.set(entryId, variants);
                 return variants;
             }

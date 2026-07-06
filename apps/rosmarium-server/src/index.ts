@@ -17,7 +17,7 @@ const start = async () => {
         const wsServer = new WebSocketServer({ server: app.server, path: "/graphql" });
         useServer(
             {
-                schema: getSchema(),
+                schema: getSchema() as unknown as Parameters<typeof useServer>[0]["schema"],
                 context: (ctx) => createContext(ctx.extra.request as unknown as Request),
             },
             wsServer,

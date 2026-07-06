@@ -4,18 +4,16 @@ import { remoteSources } from "../../db/schema/index.js";
 import type { RemoteSourceModel, NewRemoteSourceModel } from "../../db/schema/index.js";
 
 export const sourceService = {
-    async createSource(data: NewRemoteSourceModel): Promise<RemoteSourceModel> {
-        const [source] = await db
-            .insert(remoteSources)
-            .values(data)
-            .returning();
+    async createSource(data: typeof remoteSources.$inferInsert) {
+        const [source] = await db.insert(remoteSources).values(data).returning();
         return source;
     },
 
-    async getSource(id: string): Promise<RemoteSourceModel | undefined> {
-        return db.query.remoteSources.findFirst({
-            where: (rs, { eq }) => eq(rs.id, id),
+    async getSource(id: string) {
+        const source = await db.query.remoteSources.findFirst({
+            where: eq(remoteSources.id, id),
         });
+        return source;
     },
 
     async listSources(): Promise<RemoteSourceModel[]> {
@@ -24,7 +22,7 @@ export const sourceService = {
         });
     },
 
-    async updateSource(id: string, data: Partial<NewRemoteSourceModel>): Promise<RemoteSourceModel> {
+    async updateSource(id: string, data: Partial<typeof remoteSources.$inferInsert>) {
         const [source] = await db
             .update(remoteSources)
             .set({ ...data, updatedAt: new Date() })

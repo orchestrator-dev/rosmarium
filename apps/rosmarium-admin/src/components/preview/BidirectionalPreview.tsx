@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Box, Typography, Button, Paper } from '@mui/material';
-import { PreviewV2Client, PreviewMessage } from '@orchestrator.dev/sdk/preview-v2';
+import { PreviewV2Client, PreviewMessage } from '@orchestrator.dev/rosmarium-sdk';
 
 interface BidirectionalPreviewProps {
   previewUrl: string;

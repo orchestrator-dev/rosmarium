@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "../../db/index.js";
 import { segments } from "../../db/schema/personalization.js";
-import { AudienceSegment } from "@orchestrator.dev/types/personalization";
+import { AudienceSegment } from "@orchestrator.dev/types";
 
 export const segmentService = {
     async createSegment(data: Omit<AudienceSegment, "id">) {

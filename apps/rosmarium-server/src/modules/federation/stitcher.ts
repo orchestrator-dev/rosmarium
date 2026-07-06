@@ -33,7 +33,7 @@ export const stitcherService = {
                         const data = await res.json();
                         
                         // Cache for configured TTL
-                        const ttl = source.cacheConfig?.ttl || 300;
+                        const ttl = (source.cacheConfig as { ttl?: number })?.ttl || 300;
                         await federationCacheService.setCachedResult(source.id, cacheKey, data, ttl as number);
 
                         return new Response(JSON.stringify(data), { headers: { "Content-Type": "application/json" } });

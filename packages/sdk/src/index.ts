@@ -3,3 +3,4 @@ export class RosmariumClient {
 }
 
 export * from './preview.js';
+export * from './preview-v2.js';

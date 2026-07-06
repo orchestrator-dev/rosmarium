@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Button, Drawer, List, ListItem, ListItemText, Divider, IconButton, Paper } from '@mui/material';
+import { Box, Typography, Button, Drawer, List, ListItem, ListItemButton, ListItemText, Divider, IconButton, Paper } from '@mui/material';
 import DragIndicatorIcon from '@mui/icons-material/DragIndicator';
 
 export default function PageBuilder() {
@@ -31,7 +31,7 @@ export default function PageBuilder() {
                 <Divider />
                 <List>
                     {components.map((comp) => (
-                        <ListItem key={comp.id} button onClick={() => addSection(comp)} sx={{ borderBottom: '1px solid #eee' }}>
+                        <ListItemButton key={comp.id} onClick={() => addSection(comp)} sx={{ borderBottom: '1px solid #eee' }}>
                             <ListItemText 
                                 primary={comp.name} 
                                 secondary={comp.category} 
@@ -39,7 +39,7 @@ export default function PageBuilder() {
                             <IconButton size="small">
                                 <DragIndicatorIcon />
                             </IconButton>
-                        </ListItem>
+                        </ListItemButton>
                     ))}
                     {components.length === 0 && (
                         <ListItem>

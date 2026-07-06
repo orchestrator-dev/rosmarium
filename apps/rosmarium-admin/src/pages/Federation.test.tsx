@@ -1,7 +1,11 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, vi, afterEach } from 'vitest';
+import { render, screen, cleanup } from '@testing-library/react';
 import React from 'react';
 import Federation from './Federation';
+
+afterEach(() => {
+    cleanup();
+});
 
 // Mock fetch API
 global.fetch = vi.fn(() =>

@@ -21,6 +21,9 @@ export const sourceRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
         },
         async (request, reply) => {
             const source = await sourceService.createSource(request.body as any);
+            if (!source) {
+                return reply.status(500).send({ error: "Failed to create source" });
+            }
             return reply.code(201).send({ id: source.id });
         }
     );
@@ -51,9 +54,17 @@ export const sourceRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
             },
         },
         async (request, reply) => {
-            const source = await sourceService.getSource(request.params.id);
-            if (!source) return reply.notFound();
-            return reply.send(source);
+            try {
+                const { id } = request.params as { id: string };
+                const source = await sourceService.getSource(id);
+                if (!source) {
+                    return reply.status(404).send({ error: "Source not found" });
+                }
+                return reply.send(source);
+            } catch (err) {
+                request.log.error(err);
+                return reply.status(500).send({ error: "Failed to fetch source" });
+            }
         }
     );
 
@@ -69,8 +80,14 @@ export const sourceRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
             },
         },
         async (request, reply) => {
-            const source = await sourceService.updateSource(request.params.id, request.body as any);
-            return reply.send(source);
+            try {
+                const { id } = request.params as { id: string };
+                const source = await sourceService.updateSource(id, request.body as any);
+                return reply.send(source);
+            } catch (err) {
+                request.log.error(err);
+                return reply.status(500).send({ error: "Failed to update source" });
+            }
         }
     );
 
@@ -85,8 +102,14 @@ export const sourceRoutes: FastifyPluginAsyncTypebox = async (fastify) => {
             },
         },
         async (request, reply) => {
-            await sourceService.deleteSource(request.params.id);
-            return reply.code(204).send();
+            try {
+                const { id } = request.params as { id: string };
+                await sourceService.deleteSource(id);
+                return reply.code(204).send();
+            } catch (err) {
+                request.log.error(err);
+                return reply.status(500).send({ error: "Failed to delete source" });
+            }
         }
     );
 };

@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "../../db/index.js";
 import { components } from "../../db/schema/pages.js";
-import { ComponentDefinition } from "@orchestrator.dev/types/visual-builder";
+import { ComponentDefinition } from "@orchestrator.dev/types";
 
 export const componentService = {
     async registerComponent(data: Omit<ComponentDefinition, "id">) {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // Edge Analytics & Traits extraction
 
 export const extractTraits = (req: Request) => {

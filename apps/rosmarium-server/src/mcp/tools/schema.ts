@@ -1,6 +1,6 @@
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { z } from "zod";
-import { db } from "../../db/client.js";
+import { db } from "../../db/index.js";
 
 export const registerSchemaTools = (server: McpServer) => {
     server.tool(
@@ -23,7 +23,7 @@ export const registerSchemaTools = (server: McpServer) => {
         },
         async ({ slug }) => {
             const type = await db.query.contentTypes.findFirst({
-                where: (ct, { eq }) => eq(ct.slug, slug),
+                where: (ct, { eq }) => eq(ct.name, slug),
             });
             if (!type) {
                 throw new Error(`Content type ${slug} not found`);

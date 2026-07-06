@@ -1,8 +1,8 @@
 # Rosmarium COS — Current Development Phase
 
-## Active Phase: V3 Phase 0 — MCP Server & AI Agent Infrastructure
-**Target release:** v3.0.0
-**Duration:** Month 1 (of 12-month V3 cycle)
+## Active Phase: V3 Phase 1 — Unified GraphQL Mesh / Content Federation
+**Target release:** v3.1.0
+**Duration:** Months 2-4 (of 12-month V3 cycle)
 
 ## Completed V1 Phases
 - ✅ V1 Phase 1 — CMS Foundation
@@ -50,9 +50,16 @@
   - ✅ Content Sets schema & API
   - ✅ Admin UI with live metrics
 
+## Completed V3 Phases
+- ✅ V3 Phase 0 — MCP Server & AI Agent Infrastructure (v3.0.0 released)
+  - ✅ Native MCP Server with stdio transport
+  - ✅ 21 MCP Tools across Content, Schema, Search, AI, and Workflow
+  - ✅ 3 MCP Resources (content-types, locales, workflows)
+  - ✅ MCP Plugin Bridge (G28) for dynamic tool registration
+
 ## Planned V3 Phases (Enterprise DXP)
-- ⏳ V3 Phase 0 — MCP Server & AI Agent Infrastructure (Month 1) ← **CURRENT**
-- ⏳ V3 Phase 1 — Unified GraphQL Mesh / Content Federation (Months 2-4)
+- ✅ V3 Phase 0 — MCP Server & AI Agent Infrastructure (Month 1) ← **COMPLETED**
+- ⏳ V3 Phase 1 — Unified GraphQL Mesh / Content Federation (Months 2-4) ← **CURRENT**
 - ⏳ V3 Phase 2 — Visual Experience Orchestration (Months 5-7)
 - ⏳ V3 Phase 3 — Edge Personalization & Analytics (Months 8-9)
 - ⏳ V3 Phase 4 — Agentic Enterprise Operations (Months 10-11)
@@ -61,8 +68,8 @@
 ## Notes
 V1 and V2 (including all 26 gap items, scaling, edge, enterprise features) are now
 officially complete. V2.1 added the intelligent web ingestion pipeline. V2.2.0
-delivered structural and security improvements.
+delivered structural and security improvements. V3 Phase 0 delivered the native MCP
+server and AI agent infrastructure in v3.0.0.
 
-Current priority: **V3 Phase 0 — MCP Server!** This is the #1 competitive gap.
-Strapi v5.47 and Sanity already ship native MCP servers. Rosmarium must match this
-to maintain its "AI-native" positioning.
+Current priority: **V3 Phase 1 — Unified GraphQL Mesh / Content Federation!** This
+builds upon the remote data sources to deliver an enterprise GraphQL federation mesh.

@@ -1,5 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { extractTraits } from "./traits.js";
-import { variantCache, CachedVariant } from "./variant-cache.js";
+import { variantCache } from "./variant-cache.js";
 
 // Evaluates a condition against user traits
 const evaluateCondition = (condition: any, traits: any): boolean => {

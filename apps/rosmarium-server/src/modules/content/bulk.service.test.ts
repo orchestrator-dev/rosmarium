@@ -1,7 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { contentBulkService } from "./bulk.service.js";
 import { db } from "../../db/index.js";
-import { rosmariumEvents } from "../../lib/events.js";
 import { intelligenceService } from "../intelligence/intelligence.service.js";
 
 vi.mock("../../db/index.js", () => ({
@@ -35,14 +34,12 @@ describe("contentBulkService", () => {
 
     it("should process publish action successfully", async () => {
         const mockEntries = [{ id: "e1", data: {} }];
-        // @ts-ignore
         db.select.mockReturnValue({
             from: vi.fn().mockReturnValue({
                 where: vi.fn().mockResolvedValue(mockEntries),
             }),
         });
 
-        // @ts-ignore
         db.transaction.mockImplementation(async (cb) => {
             await cb({
                 update: vi.fn().mockReturnValue({
@@ -70,14 +67,12 @@ describe("contentBulkService", () => {
 
     it("should process delete action successfully", async () => {
         const mockEntries = [{ id: "e1", data: {} }];
-        // @ts-ignore
         db.select.mockReturnValue({
             from: vi.fn().mockReturnValue({
                 where: vi.fn().mockResolvedValue(mockEntries),
             }),
         });
 
-        // @ts-ignore
         db.transaction.mockImplementation(async (cb) => {
             await cb({
                 delete: vi.fn().mockReturnValue({
@@ -102,7 +97,6 @@ describe("contentBulkService", () => {
 
     it("should process tag action successfully", async () => {
         const mockEntries = [{ id: "e1", data: { text: "hello" } }];
-        // @ts-ignore
         db.select.mockReturnValue({
             from: vi.fn().mockReturnValue({
                 where: vi.fn().mockResolvedValue(mockEntries),
@@ -121,7 +115,6 @@ describe("contentBulkService", () => {
 
     it("should process summarize action successfully", async () => {
         const mockEntries = [{ id: "e1", data: { text: "hello" } }];
-        // @ts-ignore
         db.select.mockReturnValue({
             from: vi.fn().mockReturnValue({
                 where: vi.fn().mockResolvedValue(mockEntries),
