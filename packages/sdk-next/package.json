@@ -1,6 +1,7 @@
 {
   "name": "@orchestrator.dev/rosmarium-sdk-next",
-  "version": "3.3.0",
+  "version": "3.4.0",
+  "description": "Rosmarium COS Next.js App Router integration — Server Components, Draft Mode, and On-Demand Revalidation",
   "publishConfig": {
     "access": "public"
   },

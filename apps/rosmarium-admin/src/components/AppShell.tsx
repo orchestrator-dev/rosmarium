@@ -27,6 +27,7 @@ import {
   AccountTree as AccountTreeIcon,
   CallSplit as CallSplitIcon,
   Download as DownloadIcon,
+  SmartToy as SmartToyIcon,
 } from '@mui/icons-material';
 import { Outlet, useNavigate, useLocation, Link as RouterLink } from 'react-router-dom';
 import { BranchSwitcher } from './branches/BranchSwitcher';
@@ -41,7 +42,9 @@ const menuItems = [
   { text: 'Knowledge Graph', icon: <GraphIcon />, path: '/graph' },
   { text: 'Page Builder', icon: <DashboardIcon />, path: '/pages' },
   { text: 'Personalization', icon: <CallSplitIcon />, path: '/personalization' },
+  { text: 'Agents', icon: <SmartToyIcon />, path: '/agents' },
 ];
+
 
 const settingsItems = [
   { text: 'Content Types', icon: <SchemaIcon />, path: '/settings/content-types' },

@@ -23,6 +23,8 @@ import { IngestorPage } from './pages/Ingestor';
 import { Federation as FederationPage } from './pages/Federation';
 import PageBuilder from './pages/PageBuilder';
 import Personalization from './pages/Personalization';
+import { AgentsPage } from './pages/Agents';
+
 
 import { LoginPage } from './pages/Login';
 
@@ -51,6 +53,7 @@ export function App() {
               <Route path="federation" element={<FederationPage />} />
               <Route path="pages" element={<PageBuilder />} />
               <Route path="personalization" element={<Personalization />} />
+              <Route path="agents" element={<AgentsPage />} />
               
               <Route path="settings/content-types" element={<ContentTypesPage />} />
               <Route path="settings/webhooks" element={<WebhooksPage />} />

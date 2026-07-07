@@ -26,6 +26,7 @@ import ingestorRoutes from "./ingestor.js";
 import { sourceRoutes } from "../modules/federation/source.routes.js";
 import { pageRoutes } from "../modules/pages/page.routes.js";
 import { personalizationRoutes } from "../modules/personalization/personalization.routes.js";
+import { agentRoutes } from "../modules/agents/agent.routes.js";
 
 export const registerRoutes = async (app: FastifyInstance) => {
     await app.register(healthRoutes);
@@ -54,4 +55,7 @@ export const registerRoutes = async (app: FastifyInstance) => {
     await app.register(ingestorRoutes);
     await app.register(sourceRoutes, { prefix: "/api/federation/sources" });
     await app.register(pageRoutes);
+    await app.register(personalizationRoutes);
+    await app.register(agentRoutes);
 };
+

@@ -20,3 +20,4 @@ export * from "./content-sets";
 export * from "./remote-sources";
 export * from "./pages";
 export * from "./personalization";
+export * from "./agent-tasks";

@@ -162,6 +162,13 @@
       "when": 1782190960059,
       "tag": "0023_sharp_makkari",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1783455381294,
+      "tag": "0024_tan_mad_thinker",
+      "breakpoints": true
     }
   ]
 }

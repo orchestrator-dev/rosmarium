@@ -1,6 +1,7 @@
 {
   "name": "@orchestrator.dev/rosmarium-sdk-nuxt",
-  "version": "3.3.0",
+  "version": "3.4.0",
+  "description": "Rosmarium COS Nuxt 3 integration — server engine, composables, and universal rendering support",
   "publishConfig": {
     "access": "public"
   },

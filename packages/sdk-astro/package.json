@@ -1,7 +1,7 @@
 {
   "name": "@orchestrator.dev/rosmarium-sdk-astro",
-  "version": "3.3.0",
-  "description": "Astro integration for Rosmarium COS — native data loader, component hydration, and preview support",
+  "version": "3.4.0",
+  "description": "Rosmarium COS Astro integration — content fetching, image optimization, and preview mode for Astro sites",
   "publishConfig": {
     "access": "public"
   },

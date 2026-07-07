@@ -8,3 +8,4 @@ export * from "./content.js";
 export * from "./federation.js";
 export * from "./personalization.js";
 export * from "./visual-builder.js";
+export * from "./agents.js";
