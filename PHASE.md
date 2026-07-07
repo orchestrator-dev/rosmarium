@@ -1,8 +1,8 @@
 # Rosmarium COS — Current Development Phase
 
-## Active Phase: V3 Phase 1 — Unified GraphQL Mesh / Content Federation
-**Target release:** v3.1.0
-**Duration:** Months 2-4 (of 12-month V3 cycle)
+## Active Phase: V3 Phase 3 — Edge Personalization & Analytics
+**Target release:** v3.3.0
+**Duration:** Months 8-9 (of 12-month V3 cycle)
 
 ## Completed V1 Phases
 - ✅ V1 Phase 1 — CMS Foundation
@@ -56,12 +56,20 @@
   - ✅ 21 MCP Tools across Content, Schema, Search, AI, and Workflow
   - ✅ 3 MCP Resources (content-types, locales, workflows)
   - ✅ MCP Plugin Bridge (G28) for dynamic tool registration
+- ✅ V3 Phase 1 — Unified GraphQL Mesh / Content Federation (v3.1.0 released)
+  - ✅ Remote Source Registration (G29) with REST, OpenAPI, and GraphQL support
+  - ✅ Pothos-Native Schema Stitching (G30) with namespacing and delegation
+  - ✅ Smart Federated Cache (G31) with TTL, SWR, and circuit breaking
+- ✅ V3 Phase 2 — Visual Experience Orchestration (v3.2.0 released)
+  - ✅ Component Registry & Page Model (G32, G33)
+  - ✅ Drag-and-Drop Page Builder UI & Device Preview
+  - ✅ Bidirectional Live Preview 2.0 SDK Protocol (G34)
 
 ## Planned V3 Phases (Enterprise DXP)
 - ✅ V3 Phase 0 — MCP Server & AI Agent Infrastructure (Month 1) ← **COMPLETED**
-- ⏳ V3 Phase 1 — Unified GraphQL Mesh / Content Federation (Months 2-4) ← **CURRENT**
-- ⏳ V3 Phase 2 — Visual Experience Orchestration (Months 5-7)
-- ⏳ V3 Phase 3 — Edge Personalization & Analytics (Months 8-9)
+- ✅ V3 Phase 1 — Unified GraphQL Mesh / Content Federation (Months 2-4) ← **COMPLETED**
+- ✅ V3 Phase 2 — Visual Experience Orchestration (Months 5-7) ← **COMPLETED**
+- ⏳ V3 Phase 3 — Edge Personalization & Analytics (Months 8-9) ← **CURRENT**
 - ⏳ V3 Phase 4 — Agentic Enterprise Operations (Months 10-11)
 - ⏳ V3 Phase 5 — Ecosystem & Plugin Marketplace (Month 12)
 
@@ -69,7 +77,7 @@
 V1 and V2 (including all 26 gap items, scaling, edge, enterprise features) are now
 officially complete. V2.1 added the intelligent web ingestion pipeline. V2.2.0
 delivered structural and security improvements. V3 Phase 0 delivered the native MCP
-server and AI agent infrastructure in v3.0.0.
+server and AI agent infrastructure in v3.0.0. V3 Phase 1 delivered the Unified GraphQL Mesh and Content Federation in v3.1.0. V3 Phase 2 delivered Visual Experience Orchestration in v3.2.0.
 
-Current priority: **V3 Phase 1 — Unified GraphQL Mesh / Content Federation!** This
-builds upon the remote data sources to deliver an enterprise GraphQL federation mesh.
+Current priority: **V3 Phase 3 — Edge Personalization & Analytics!** This
+delivers 1:1 tailored content from edge nodes with sub-50ms response times.

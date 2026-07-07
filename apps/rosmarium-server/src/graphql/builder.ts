@@ -4,7 +4,7 @@ import ValidationPlugin from "@pothos/plugin-validation";
 import WithInputPlugin from "@pothos/plugin-with-input";
 import type { GraphQLContext } from "./context.js";
 import type { ParsedContentType } from "../modules/content/registry.js";
-import type { ContentEntry } from "../db/schema/index.js";
+import type { ContentEntry, RemoteSourceModel } from "../db/schema/index.js";
 
 type PageInfo = { hasNextPage: boolean; endCursor: string | null };
 type EntryEdge = { node: ContentEntry; cursor: string };
@@ -20,6 +20,8 @@ export const builder = new SchemaBuilder<{
         EntryConnection: EntryConnection;
         PageInfo: PageInfo;
         DeletionPayload: DeletionPayload;
+        RemoteSource: RemoteSourceModel;
+        RemoteSourceHealthResult: { healthy: boolean; status: string; message?: string };
     };
     Scalars: {
         DateTime: { Input: Date; Output: Date };

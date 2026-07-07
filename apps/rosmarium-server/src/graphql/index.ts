@@ -14,10 +14,13 @@ import "./types/content-type.js";
 import "./types/content-entry.js";
 import "./types/comment.js";
 import "./types/pagination.js";
+import "./types/remote-source.js";
 import "./queries/content-types.js";
 import "./queries/content-entries.js";
+import "./queries/remote-sources.js";
 import "./mutations/content-types.js";
 import "./mutations/content-entries.js";
+import "./mutations/remote-sources.js";
 import "./subscriptions/content.js";
 import type { GraphQLSchema } from "graphql";
 // ─────────────────────────────────────────────────────────────────────────────

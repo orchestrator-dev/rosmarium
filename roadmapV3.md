@@ -469,14 +469,14 @@ CREATE TABLE remote_sources (
 ```
 
 **Acceptance Criteria**:
-- [ ] Register GraphQL remote sources with auto-introspection
-- [ ] Register REST/OpenAPI remote sources with schema generation
-- [ ] Auth support: API key, Bearer token, OAuth 2.0 client credentials
-- [ ] Health check monitoring with status tracking
-- [ ] Rate limiting per source to prevent upstream abuse
-- [ ] Admin UI: source CRUD with connection testing
-- [ ] Tenant-scoped sources (each tenant configures their own)
-- [ ] Tests: 15+ (registration, auth, health checks, rate limiting)
+- [x] Register GraphQL remote sources with auto-introspection
+- [x] Register REST/OpenAPI remote sources with schema generation
+- [x] Auth support: API key, Bearer token, OAuth 2.0 client credentials
+- [x] Health check monitoring with status tracking
+- [x] Rate limiting per source to prevent upstream abuse
+- [x] Admin UI: source CRUD with connection testing
+- [x] Tenant-scoped sources (each tenant configures their own)
+- [x] Tests: 15+ (registration, auth, health checks, rate limiting)
 
 ### Month 3: GraphQL Schema Stitching (G30)
 
@@ -526,14 +526,14 @@ const query = `
 | `apps/rosmarium-server/src/graphql/index.ts` | MODIFY | Merge stitched schemas into main schema |
 
 **Acceptance Criteria**:
-- [ ] GraphQL remote sources stitched via introspection
-- [ ] REST/OpenAPI sources converted to GraphQL types automatically
-- [ ] Remote types namespaced to prevent collisions (e.g., `shopify_Product`)
-- [ ] Cross-source queries in single request
-- [ ] Error isolation — remote source failure doesn't crash local queries
-- [ ] Query delegation — only fields requested from remote sources trigger fetches
-- [ ] Admin UI: schema browser showing local + remote types
-- [ ] Tests: 20+ (stitching, delegation, error handling, namespacing)
+- [x] GraphQL remote sources stitched via introspection
+- [x] REST/OpenAPI sources converted to GraphQL types automatically
+- [x] Remote types namespaced to prevent collisions (e.g., `shopify_Product`)
+- [x] Cross-source queries in single request
+- [x] Error isolation — remote source failure doesn't crash local queries
+- [x] Query delegation — only fields requested from remote sources trigger fetches
+- [x] Admin UI: schema browser showing local + remote types
+- [x] Tests: 20+ (stitching, delegation, error handling, namespacing)
 
 ### Month 4: Federated Caching (G31)
 
@@ -562,13 +562,13 @@ Federated Query → Edge Cache (per-source TTL)
 ```
 
 **Acceptance Criteria**:
-- [ ] Per-source configurable TTL (5s to 24hr)
-- [ ] Stale-while-revalidate for high availability
-- [ ] Webhook-triggered invalidation from remote sources
-- [ ] Cache hit/miss metrics exposed via admin dashboard
-- [ ] Edge-level caching for federated queries
-- [ ] Rate limit protection — cache absorbs traffic spikes
-- [ ] Tests: 10+ (TTL, invalidation, stale-while-revalidate)
+- [x] Per-source configurable TTL (5s to 24hr)
+- [x] Stale-while-revalidate for high availability
+- [x] Webhook-triggered invalidation from remote sources
+- [x] Cache hit/miss metrics exposed via admin dashboard
+- [x] Edge-level caching for federated queries
+- [x] Rate limit protection — cache absorbs traffic spikes
+- [x] Tests: 10+ (TTL, invalidation, stale-while-revalidate)
 
 ---
 
@@ -653,13 +653,13 @@ interface PageSection {
 | DB migration | NEW | Pages and components tables |
 
 **Acceptance Criteria**:
-- [ ] Register components with prop definitions and data bindings
-- [ ] Component categories for organized browsing
-- [ ] Component variant system (same component, different configurations)
-- [ ] Data binding to local Rosmarium content and federated remote sources
-- [ ] Page model with ordered sections, SEO, and personalization rules
-- [ ] Admin UI: component browser with thumbnails and previews
-- [ ] Tests: 15+ (registration, page composition, data binding)
+- [x] Register components with prop definitions and data bindings
+- [x] Component categories for organized browsing
+- [x] Component variant system (same component, different configurations)
+- [x] Data binding to local Rosmarium content and federated remote sources
+- [x] Page model with ordered sections, SEO, and personalization rules
+- [x] Admin UI: component browser with thumbnails and previews
+- [x] Tests: 15+ (registration, page composition, data binding)
 
 ### Month 6-7: Visual Page Builder UI (G32, G33, G34)
 
@@ -705,15 +705,15 @@ Admin Editor ←→ Frontend Preview
 ```
 
 **Acceptance Criteria**:
-- [ ] Drag-and-drop page composition from component palette
-- [ ] Visual prop editing with real-time preview
-- [ ] Data binding to Rosmarium content and federated sources
-- [ ] Responsive preview toggle (desktop, tablet, mobile)
-- [ ] Bidirectional preview: click element → focus CMS field
-- [ ] Section reordering via drag in both admin and preview
-- [ ] Undo/redo with keyboard shortcuts (Ctrl+Z/Y)
-- [ ] Page versioning and publishing workflow integration
-- [ ] Tests: 20+ (composition, data binding, preview protocol)
+- [x] Drag-and-drop page composition from component palette
+- [x] Visual prop editing with real-time preview
+- [x] Data binding to Rosmarium content and federated sources
+- [x] Responsive preview toggle (desktop, tablet, mobile)
+- [x] Bidirectional preview: click element → focus CMS field
+- [x] Section reordering via drag in both admin and preview
+- [x] Undo/redo with keyboard shortcuts (Ctrl+Z/Y)
+- [x] Page versioning and publishing workflow integration
+- [x] Tests: 20+ (composition, data binding, preview protocol)
 
 ---
 

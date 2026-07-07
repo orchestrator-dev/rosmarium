@@ -1,6 +1,6 @@
 {
   "name": "@orchestrator.dev/cli",
-  "version": "3.0.1",
+  "version": "3.2.0",
   "description": "Rosmarium COS CLI — command-line interface for local dev, scaffolding, and remote administration",
   "private": true,
   "type": "module",
