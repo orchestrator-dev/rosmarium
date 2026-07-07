@@ -24,3 +24,19 @@ export interface ContentVariant {
     conversions: number;
   };
 }
+
+export interface TraitContext {
+  country?: string;
+  city?: string;
+  deviceType?: 'mobile' | 'tablet' | 'desktop';
+  userSegment?: string;
+  isLoggedIn?: boolean;
+  [key: string]: unknown;
+}
+
+export interface PersonalizationEvaluationResult {
+  matchedSegmentId: string | null;
+  variantId: string | null;
+  overrides: Record<string, unknown>;
+  isABTest?: boolean;
+}
