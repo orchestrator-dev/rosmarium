@@ -1,6 +1,6 @@
 {
   "name": "@orchestrator.dev/edge",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "private": true,
   "type": "module",
   "description": "Rosmarium COS Edge Runtime — lightweight content delivery and personalization for Cloudflare Workers / Fastly Compute",
